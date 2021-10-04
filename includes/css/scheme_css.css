@@ -1,0 +1,196 @@
+
+.doss_scheme {
+	display: block;
+	width: 95%;
+	margin-left: 2.5%;
+	/*border: solid;*/
+	padding: 0.5%;
+
+}
+
+.single {
+	float: left;
+	display:table;
+	width: 30%;
+	margin-left: 1%;
+	margin-right: 2%;
+	border: solid;
+	border-color: #EFAC34;
+	border-width: 4px;
+	position: relative;
+	border-radius: 30px;
+	padding: 0.25%;
+}
+
+
+.room_num_single {
+	float: left;
+	text-align: center;
+	display:table-cell;
+    vertical-align:middle;
+	font-size: 1.5em;
+	color: #324157;
+	border-right: solid #0093B7;
+	margin-left: 1%;
+	width: 35%;
+}
+
+.doss_check {
+	float: left;
+	display:table-cell;
+    vertical-align:middle;
+	font-size: 1.5em;
+	color: #EFAC34;
+	margin-left: 1%;
+	width: 25%;
+	text-align: center;
+
+}
+
+.room_num_text {
+	color: #004242;
+	font-weight: bold;
+
+}
+
+.double {
+	float: left;
+	display:table;
+	width: 30%;
+	margin-left: 1%;
+	margin-right: 2%;
+	border: solid;
+	border-color: #EFAC34;
+	border-width: 4px;
+	position: relative;
+	border-radius: 30px;
+	padding: 0.25%;
+}
+
+.room_num_double {
+	float: left;
+	text-align: center;
+	display:table-cell;
+    vertical-align:middle;
+	font-size: 1.5em;
+	color: #324157;
+	border-right: solid #0093B7;
+	margin-left: 1%;
+	width: 23%;
+}
+
+.doss_area {
+	width: 35%;
+	float: left;
+	text-align: center;
+	display:table-cell;
+    vertical-align:middle;
+	color: #324157;
+	border-right: solid;
+	margin-left: 1%;
+
+}
+
+.doss_check_d {
+	float: left;
+	display:table-cell;
+    vertical-align:middle;
+	font-size: 1.5em;
+	color: #EFAC34;
+	margin-left: 1%;
+	width: 25%;
+	align-content: center;
+
+}
+
+.doss_check_bed {
+	float: left;
+	display:table-cell;
+    vertical-align:middle;
+	font-size: 1.5em;
+	color: #324157;
+	margin-left: 1%;
+	width: 45%;
+	align-content: center;
+}
+
+.family_room {
+	float: left;
+	display:table;
+	width: 96%;
+	margin-left: 1%;
+	margin-right: 3%;
+	border: solid;
+	border-color: #EFAC34;
+	border-width: 4px;
+	position: relative;
+	border-radius: 30px;
+	padding: 0.25%;
+}
+
+
+.room_num_family {
+	float: left;
+	text-align: center;
+	display:table-cell;
+    vertical-align:middle;
+	font-size: 1.5em;
+	color: #324157;
+	border-right: solid #0093B7;
+	margin-left: 1%;
+	width: 6.3%;
+}
+
+.doss_area_family {
+	width: 22%;
+	float: left;
+	text-align: center;
+	display:table-cell;
+    vertical-align:middle;
+	color: #324157;
+	border-right: solid;
+	margin-left: 1%;
+
+}
+
+
+/*
+
+.bed_area {
+	border:  solid;
+	border-radius: 25px;
+}
+
+.bed_icon {
+	font-size: 2em;
+	color: orange;
+	display:table-cell;
+    vertical-align:middle;
+}
+
+
+.check_icon {
+	display:table-cell;
+    vertical-align:middle;
+    text-align: center;
+
+}
+
+.info_icon {
+	display:table-cell;
+    vertical-align:middle;
+    font-size: 2em;
+}
+
+input[type="radio"]  {
+    -ms-transform: scale(0.6); /* IE 9 */
+    -webkit-transform: scale(0.6); /* Chrome, Safari, Opera */
+    transform: scale(0.6);
+}
+
+.bed_icon_2 {
+	color: orange;
+	display:table-cell;
+    vertical-align:middle;
+    text-align: center;
+}*/

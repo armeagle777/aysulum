@@ -1,0 +1,463 @@
+* {box-sizing: border-box}
+body {font-family: arial, sans-serif;}
+
+/* Style the tab */
+.tab {
+  float: left;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  width: 15%;
+  height: auto;
+  min-height: 600px;
+  font-size: 0.9em;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  display: block;
+  background-color: inherit;
+  color: black;
+  padding: 22px 16px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+ 
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  float: left;
+  padding: 0px 12px;
+  border: 1px solid #ccc;
+  width: 85%;
+  min-height: 600px;
+  height: auto;
+
+}
+
+.case_area {
+  width: 96%;
+  margin-left: 2%;
+}
+
+
+.sub_title {
+  font-size: 0.9em;
+  color: #707070;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: solid 3px #FABB4D;
+}
+
+.sub_title_room {
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
+  color: #314056;
+  margin-top: 5px;
+  padding-bottom: 5px;
+  border-bottom: solid 3px #FABB4D;
+}
+
+.room_num_th {
+  font-size: 0.8em;
+  text-align: center;
+  color: #324157;
+
+}
+
+.table_a {
+  font-size: 0.8em;
+  color: #324157;
+  width: 50%;
+  height: 10px;
+
+}
+
+.table_a td, th {
+   overflow: hidden;
+    height: 14px;
+    white-space: nowrap;
+}
+
+
+.table_a1 {
+  font-size: 0.8em;
+  color: #324157;
+  width: 25%;
+  height: 10px;
+
+}
+
+.table_a1 td, th {
+   overflow: hidden;
+    height: 14px;
+    white-space: nowrap;
+}
+
+
+.table_a2 {
+  font-size: 0.8em;
+  color: #324157;
+  height: 10px;
+
+}
+
+.table_a2 td, th {
+   overflow: hidden;
+    height: 14px;
+    white-space: nowrap;
+}
+
+.pers_table {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  width: 33%;
+}
+
+
+.coi_table {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+}
+
+.b_table {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  width: 25%;
+}
+
+.b_table1 {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  width: 16.5%;
+}
+
+.b_table_modal {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  vertical-align: middle;
+  width: 20%;
+}
+
+.special_needs_person {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  width: 20%;
+}
+
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 5;
+}
+
+.dropdown-content a {
+  font-size: 0.8em;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: auto;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+.control-label {
+    margin-top: 0.55em;
+    text-align: right;
+    font-size: 0.9em;
+        }
+
+
+.fam_members {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  width: 22%;
+}
+
+.born {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  width: 14%;
+}
+.role {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  width: 8%;
+}
+
+.label_pers_page {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: left;
+  font-weight: bold;
+}
+
+.warning {
+  font-size: 1.1em;
+  color: red;
+  text-align: center;
+}
+
+.warning2 {
+  font-size: 1.3em;
+  color: #324157;
+  text-align: center;
+  font-weight: bold;
+}
+
+.label_family_1 {
+  font-size: 0.8em;
+  color: #324157;
+  text-align: center;
+  font-weight: bold;
+}
+
+
+
+table td {
+  position: relative;
+  font-size: 0.9em;
+}
+
+.family_members_td {
+  font-size: 0.9em;
+  text-align:center;
+  vertical-align: middle;
+}
+
+.family_members_td input[type="checkbox"] {
+    width:20px;
+    height:20px;
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    
+}
+
+
+.photo {
+  width: 5cm; 
+  height: 6cm; 
+  border: solid; 
+  display:table-cell; 
+  vertical-align:middle; 
+  text-align:center;
+  margin-left: auto;
+  margin-right: auto;  
+  background: #707070 url(../images/Blank-Profile.jpg);
+  background-size: contain;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+#pPhoto_label{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color:  #FABB4D;
+  margin: 0;
+}
+
+.btn_area {
+  width: 96%;
+  margin-left: 2%;
+  margin-top: 1%;
+  margin-bottom: 10px;
+
+}
+
+.right_btns {
+  display: block;
+  width: 50%;
+  float: right;
+ 
+}
+
+.r_btns{
+  float: right;
+  margin-left: 1%;
+  font-size: 1.15rem;
+}
+
+.left_btns {
+  display: block;
+  width: 50%;
+  float: left;
+  
+}
+
+.modal_text {
+  text-align: center;
+  font-size: 2em;
+  color: #324157;
+}
+
+.second_menu {
+  color: red;
+
+}
+
+.first_menu {
+  color: #007BFF;
+}
+
+
+.table_drafts {
+  font-size: 0.8em;
+  color: #324157;
+
+  height: 10px;
+
+}
+
+.table_drafts td, th {
+   overflow: hidden;
+    height: 14px;
+    white-space: nowrap;
+}
+.error-message{
+  color: red;
+  font-size: 12px;
+  margin: 0;
+  visibility: hidden;
+}
+.validation{
+  margin-bottom: 0;
+}
+.none_padding_li{
+  padding: 0!important;
+}
+.err_msg{
+  color: red;
+  font-size: 12px;
+  margin-left: 5px;
+  visibility: hidden;
+}
+
+
+.gerb_area {
+  height: 100px;
+  position: relative;
+  
+}
+.gerb_vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.order_date_num_line{
+  height: 25px;
+  position: relative;
+ 
+}
+
+.order_ms_title {
+  font-size: 1em;
+  color: #707070;
+  text-align: center;
+  font-weight: bold;
+    
+}
+
+.order_title {
+  font-size: 1em;
+  text-align: center;
+  font-weight: bold;  
+}
+
+.order_date {
+  float: left;
+  font-size: 1em;
+  font-weight: bold;
+  width: 25%;
+  text-align: left;
+  margin-left: 5%;
+}
+
+.order_num {
+  float: right;
+  text-align: right;
+  font-size: 1em;
+  font-weight: bold;
+  width: 25%;
+  margin-right: 5%;
+}
+
+.order_body{
+  width: 90%;
+  margin-left: 5%;
+  height: 25px;
+}
+
+.order_labels {
+  float: left;
+  font-size: 0.8em;
+  font-weight: bold;
+  width: 10%;
+  text-align: left;
+  margin-left: 1%;
+  
+}
+
+.main_text {
+  float: right;
+  font-size: 0.8em;
+  font-weight: bold;
+  width: 80%;
+  text-align: center;
+  margin-left: 5%;
+  border-bottom: solid;
+}
+
+.order_free_text {
+  font-size: 0.8em;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  margin-left: 1%;
+  margin-top: 1%;
+}

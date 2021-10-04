@@ -1,0 +1,98 @@
+<?php
+require_once 'config/connect.php';
+
+$u_id = $_SESSION['user_id'];
+
+$query_cases = "SELECT a.case_id, b.f_name_arm, b.l_name_arm, c.sign_status, d.status, c.sign_date, e.case_status, a.input_date, c.sign_by, f.f_name AS SIGNER_NAME, f.l_name AS SIGNER_LNAME, a.officer, g.f_name AS OFFICER_NAME, g.l_name AS OFFICER_LNAME, c.processor, h.f_name AS PROCESSOR_NAME, h.l_name AS PROCESSOR_LNAME, k.deadline FROM tb_case a INNER JOIN tb_person b ON a.case_id = b.case_id INNER JOIN tb_process c ON a.case_id = c.case_id INNER JOIN tb_sign_status d ON d.status_id = c.sign_status INNER JOIN tb_case_status e ON a.case_status = e.case_status_id INNER JOIN users f ON c.sign_by = f.id LEFT JOIN users g ON a.officer = g.id INNER JOIN users h ON c.processor = h.id LEFT JOIN tb_deadline k ON a.case_id = k.case_id 
+WHERE b.role = 1 AND c.actual = 1 AND k.actual_dead = 1 AND c.sign_by = $u_id ORDER BY c.sign_status DESC";
+$query_cases_result = $conn->query($query_cases);
+
+?>
+
+
+<body>
+	<table class="table table-stripped table-bordered" id="outbox">
+			<thead>
+			<tr style="font-size: 0.9em; font-weight: normal; color: #828282; text-align: center; vertical-align: middle;">
+				<th width="7%">Գործ #</th>
+				<th width="10%">ապաստան հայցողի ա․ա․հ․</th>
+				<th width="15%">գործառույթ</th>
+				<th width="7%">գործառույթի ամսաթիվ</th>
+				<th width="10%">գրանցման ամսաթիվ</th>
+				<th width="10%">վերջնաժամկետ</th>
+				<th width="10%">ստացող</th>
+				<th width="10%">գործը վարող</th>
+				
+			</tr>
+			</thead>
+			<?php 
+			while ($row = mysqli_fetch_array($query_cases_result)) {
+				$sign_date = $row["sign_date"];
+				$new_sign_date = date("d.m.Y", strtotime($sign_date));
+
+				$input = $row["input_date"];
+				$new_input = date("d.m.Y", strtotime($input));
+
+				$deadline = $row["deadline"];
+				$formated_deadline = date("d.m.Y", strtotime($deadline));
+			?>
+			<tbody>
+			<tr style="font-size: 1em; color:#324157; text-align: center; " class="curs_pointer">
+				<td><?= $row["case_id"] ?></td>
+				<td><?= $row["f_name_arm"] .' '. $row["l_name_arm"] ?></td>
+				<td><?= $row["status"] ?></td>
+				<td><?php echo $new_sign_date; ?></td>
+				<td><?php echo $new_input; ?></td>
+				<td><?php echo $formated_deadline; ?></td>
+				<td><?= $row["PROCESSOR_NAME"] .' '.$row["PROCESSOR_LNAME"] ?></td>
+				<td><?= $row["OFFICER_NAME"] .' '. $row["OFFICER_LNAME"] ?></td>
+				
+
+			</tr>
+			</tbody>
+			<?php 
+			} 
+			?>
+
+	</table>
+
+<script>
+	
+
+	 $(document).ready(function () {             
+          $('.dataTables_filter input[type="search"]').css(
+          {'width':'500px','display':'inline-block'}
+      );  
+      });
+
+	 var table = $('#outbox').DataTable({
+    		"pageLength": 25,
+          	"lengthChange": false,
+          	"bInfo": true,
+          	"pagingType": 'full_numbers',
+      		"responsive": true,
+      		 "order": [[ 0, "desc" ]],
+          	
+          "language": {
+          	 "search": "_INPUT_",            // Removes the 'Search' field label
+              "searchPlaceholder": "ՈՐՈՆԵԼ",   // Placeholder for the search box
+          	"paginate": {
+      			"next": '<i class="fas fa-arrow-right"></i>', // or '→'
+      			"previous": '<i class="fas fa-arrow-left"></i>', // or '←' 
+      			"first": '<i class="fas fa-chevron-left"></i>',
+      			"last": '<i class="fas fa-chevron-right"></i>'
+    },
+    				"info": " _PAGE_ էջ _PAGES_ ից",
+    				"infoEmpty": "",
+      			"zeroRecords": "Ելից գրություններ չկան։",
+          }
+    	});
+       
+      $('#outbox').on( 'click', 'tr', function () {
+          var data = table.row( this ).data()[0];
+          location.replace(`user.php?page=cases&homepage=case_page&case=${data}`);
+          //alert( 'Clicked row id '+data[0]+'\'s row' );
+      } );
+
+</script>
+</body>

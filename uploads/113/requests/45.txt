@@ -1,0 +1,42 @@
+1. Կացարանի ուղեգրման համակարգից հանել ֆայլ կցելու անհրաժեշտությունը +
+2. Այլ մարմիններ ուղարկվող հարցումներում ավելացնել ֆայլ կցելու հնարավորություն & շրջանառել+
+3. կացարանում տեղավորվածների ցանկը +
+4. կացարանում տեղավորվածների տեղափոխություն +
+5. եթե հատուկ գործ է բաժնի պետին տալ հնարավորություն փոփոխել վերջնաժամկետը
+6. Քարտերի տպագրման համակարգում ավելացնել սահմանափակում քարտի երկարաձգման վրա, եթե գործող քարտի վերջնաժամկետը դեռևս չի սպառվել։
+7. Քարտերի երկարաձգման դիմումներ 
+8. Կացարանում բնակվելու դիմում +
+9. Ֆինանսական աջակցության դիմում
+10 դատական համակարգ
+				
+11. Որոշման նոր տեսակ թողնել անառց որոշման 	
+
+12. 
+
+
+button id = #reopened_case
+former_case_label = #former_case_label 
+attached_id input = #attached_case
+
+
+`wanted_moj`  => transfer_moj
+`wanted_court`=> deport_prescurator
+
+$person = $_POST['person']
+
+if tb_case.special = 0 
+{
+ chk_role = "SELECT personal_id, role FROM tb_person WHERE personal_id = $person";
+	$result_chk_role = $conn->query($chk_role);
+	if($result_chk_role->num_rows > 0){
+	$row_chk_role = $result_chk_role->fetch_assoc();
+	$case_id = $row_chk_role['case_id'];
+	$role_id = $row_chk_role['role'];
+	
+		if($role_id == 1){
+			$update_case_status = "UPDATE tb_case SET special = 1 WHERE case_id = $case_id";
+			$result_update_case_status = $conn->query($update_case_status);
+		}
+	}
+
+}
