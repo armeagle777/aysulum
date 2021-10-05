@@ -27,7 +27,13 @@ if(isset($_GET['page']) && file_exists('pages/'.$_GET['page'].'.php')){
             <!--CSS  -->
             <link rel="stylesheet" href="includes/css/style.css">
             <link rel="stylesheet" href="pages/bungie.css">
-            <link rel="stylesheet" href="includes/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--            <link rel="stylesheet" href="includes/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
+
+            <script>
+                //<![CDATA[
+                (window.jQuery) || document.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">');
+                //]]>
+            </script>
             <link rel="stylesheet"  href="includes/css/datatables.min.css">
             <link rel="stylesheet" type="text/css" href="includes/css/scheme_css.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css" integrity="sha512-yVvxUQV0QESBt1SyZbNJMAwyKvFTLMyXSyBHDO4BG5t7k/Lw34tyqlSDlKIrIENIzCl+RVUNjmCPG+V/GMesRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
