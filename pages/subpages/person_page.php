@@ -22,7 +22,7 @@ $departure_from_citizen    = '';
 $departure_from_residence    = '';
 $show_image    = 'includes/images/Blank-Profile.jpg';
 $sex   = 0;
-  $sql_main_person = "SELECT a.personal_id, a.case_id, a.f_name_arm AS anun, a.f_name_eng, a.l_name_arm, a.l_name_eng, a.m_name_arm, a.m_name_eng, a.image, a.b_day, a.b_month, a.b_year, a.sex, a.citizenship, a.previous_residence, a.citizen_adr, a.residence_adr, a.departure_from_citizen, a.departure_from_residence, a.arrival_date, a.doc_num, a.etnicity, a.religion, a.preferred_traslator_sex, a.preferred_interviewer_sex, a.invalid, a.pregnant, a.seriously_ill, a.trafficking_victim, a.violence_victim, a.comment, a.illegal_border, a.transfer_moj, a.deport_prescurator, a.role, a.prison, b.application_date, c.religion_arm, d.etnic_eng, e.country_arm AS NATION, f.country_arm AS STATE, g.der 
+  $sql_main_person = "SELECT a.personal_id, a.case_id, a.f_name_arm AS anun, a.f_name_eng, a.l_name_arm, a.l_name_eng, a.m_name_arm, a.m_name_eng, a.image, a.b_day, a.b_month, a.b_year, a.sex, a.citizenship, a.previous_residence, a.citizen_adr, a.residence_adr, a.departure_from_citizen, a.departure_from_residence, a.arrival_date, a.doc_num, a.etnicity, a.religion, a.preferred_traslator_sex, a.preferred_interviewer_sex, a.invalid, a.pregnant, a.seriously_ill, a.trafficking_victim, a.violence_victim, a.comment, a.illegal_border, a.transfer_moj, a.deport_prescurator, a.role, a.prison, b.application_date, c.religion_arm, d.etnic_eng, e.country_arm AS NATION, f.country_arm AS STATE, g.der, a.person_status, a.ident, a.pnum, a.doc_type, a.document_num, a.doc_issued_date, a.doc_valid, a.doc_issued_by, a.bpr_community, a.bpr_bnakavayr, a.bpr_street, a.bpr_house, a.bpr_aprt 
     FROM tb_person a INNER JOIN tb_case b ON a.case_id = b.case_id LEFT JOIN tb_religions c ON a.religion = c.religion_id LEFT JOIN tb_etnics d ON a.etnicity = d.etnic_id LEFT JOIN tb_country e ON a.citizenship = e.country_id LEFT JOIN tb_country f ON a.previous_residence = f.country_id LEFT JOIN tb_role g ON a.role = g.role_id WHERE a.personal_id = $personal_id";
   
   $result_main_person = $conn->query($sql_main_person);
@@ -46,6 +46,28 @@ $sex   = 0;
       $role = $row_p['role'];
       $role_text = $row_p['der'];
       $sex = $row_p['sex'];
+      
+      $person_status = $row_p['person_status'];
+      $ident = $row_p['ident'];
+      if($ident == '1'){
+        $ident_chk = 'checked';
+      }
+      $pnum  = '';
+      if(!empty($row_p['pnum'])) {
+        $pnum = $row_p['pnum'];
+      };
+      
+      $doc_type = $row_p['doc_type'];
+      $document_num = $row_p['document_num'];
+      $doc_issued_date = $row_p['doc_issued_date'];
+      $doc_valid = $row_p['doc_valid'];
+      $doc_issued_by = $row_p['doc_issued_by'];
+      $bpr_community = $row_p['bpr_community'];
+      $bpr_bnakavayr = $row_p['bpr_bnakavayr'];
+      $bpt_street = $row_p['bpr_street'];
+      $bpr_house  = $row_p['bpr_house'];
+      $bpr_aprt   = $row_p['bpr_aprt'];            
+
 
       $doc_num = $row_p['doc_num'];
       $citizenship = $row_p['citizenship'];
@@ -167,10 +189,47 @@ $sex   = 0;
   <li class="nav-item">
     <a class="nav-link" data-toggle="tab" href="#menu4">Վկայականներ</a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#menu5">Նույնականացում</a>
+  </li>
 </ul>
  
+
+
+     <!--  $person_status = $row_p['person_status'];
+      $ident = $row_p['ident'];
+      $pnum  = $row_p['pnum'];
+      $doc_type = $row_p['doc_type'];
+      $document_num = $row_p['document_num'];
+      $doc_issued_date = $row_p['doc_issued_date'];
+      $doc_valid = $row_p['doc_valid'];
+      $doc_issued_by = $row_p['doc_issued_by'];
+      $bpr_community = $row_p['bpr_community'];
+      $bpr_bnakavayr = $row_p['bpr_bnakavayr'];
+      $bpt_street = $row_p['bpr_street'];
+      $bpr_house  = $row_p['bpr_house'];
+      $bpr_aprt   = $row_p['bpr_aprt'];             -->
+
+
+
+
+
  <!-- Tab panes -->
   <div class="tab-content">
+      <div id="menu5" class="tab-pane fade"><br>
+        <div class="col-md-12">
+          <div class="row">
+             <div class="col-md-4">
+               <label>Նույնականացված է</label>
+               <input type="text" class="form-control" name="ident_status" >
+             </div> 
+
+
+
+          </div>
+        </div>
+      </div>
+
       <div id="home" class="tab-pane active"><br>
           <div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px; padding-bottom: 5px; padding-top: 5px;">
         <div class="row">
