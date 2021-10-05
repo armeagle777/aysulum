@@ -682,30 +682,27 @@ else {
              <?php }?>
                 
 
-             <?php 
+             <?php
 
-          if($_SESSION['role'] === 'devhead' && $holder_id == $_SESSION['user_id'] && $cover_status_id == '2')
-                        {
-                          $approveTranslateContent='<h5 class="sub_title" style="margin-top: 5px;">Թարգմանության հարցում </h5> ';
-                          $sql_translation_request = "SELECT * FROM tb_translate a INNER JOIN tb_cover_files b ON a.translate_id = b.translation_id WHERE b.cover_status = '2' AND a.case_id =  $case ORDER BY a.translate_id DESC LIMIT 1";
-                          $result_sql_translation_request = $conn->query($sql_translation_request);
+             if ($_SESSION['role'] === 'devhead' && $holder_id == $_SESSION['user_id'] && $cover_status_id == '2') {
+                 $approveTranslateContent = '<h5 class="sub_title" style="margin-top: 5px;">Թարգմանության հարցում </h5> ';
+                 $sql_translation_request = "SELECT * FROM tb_translate a INNER JOIN tb_cover_files b ON a.translate_id = b.translation_id WHERE b.cover_status = '2' AND a.case_id =  $case ORDER BY a.translate_id DESC LIMIT 1";
+                 $result_sql_translation_request = $conn->query($sql_translation_request);
 
                           
                           if($result_sql_translation_request->num_rows > 0)
                           {
-
                             while($cover_row = $result_sql_translation_request ->fetch_assoc())
                             {
-                              
                               $translation_id = $cover_row['translate_id'];
                               $translation_type_id = $cover_row['translate_type'];
                               $cover_file = $cover_row['file_name'];
                               $file_ids   = $cover_row['file_ids'];
                               if($translation_type_id == 1)
                               {
-                                $translation_type = 'Կոնսուլտացիա';
+                                $translation_type = 'Խորհրդատվություն';
                               }
-                              if($translation_type_id == 2)
+                              if($translation_type_id == 4)
                               {
                                   $translation_type = 'Արձանագրության ընթերցում';
                               }
@@ -715,30 +712,29 @@ else {
                               }
 
 
-                              if($translation_type_id == 4)
-                              {
-                                $translation_type = 'Գրավոր';
-                                $sql_sending_files = "SELECT a.file_name,a.case_id,a.file_path,b.file_type FROM files a INNER JOIN tb_file_type b ON a.file_type = b.file_type_id WHERE id IN ($file_ids)";
-                                $result_sent_files = $conn->query($sql_sending_files);
-                                
-                                if ($result_sent_files->num_rows > 0)
-                                {
-                                  $table_rows = '';
-                                  while($row_sent_files = $result_sent_files->fetch_assoc())
-                                  {
-                                    $file_persId='';
-                                    $thisCase_id=$row_sent_files['case_id'];
-                                    $file_type = $row_sent_files['file_type'];
-                                    $file_name = $row_sent_files['file_name'];
-                                    $file_path = $row_sent_files['file_path'];
-                                    $table_rows.= '
-                                    <tr style="font-size: 0.8em; color:#324157;">
-                                        <td>'.$file_type.'</td>
-                                        <td><a href="'.$file_path.'" class="form-control form-control-sm" download>'.$file_name.'</a></td>                                                    
-                                    </tr>';
-                                  }
+                                if ($translation_type_id == 2) {
+
+                                    $translation_type = 'Գրավոր';
+                                    $sql_sending_files = "SELECT a.file_name,a.case_id,a.file_path,b.file_type FROM files a 
+                                                        INNER JOIN tb_file_type b ON a.file_type = b.file_type_id WHERE a.id IN ($file_ids)";
+                                    $result_sent_files = $conn->query($sql_sending_files);
+
+                                    if($result_sent_files->num_rows > 0){
+                                        $table_rows = '';
+                                        while ($row_sent_files = $result_sent_files->fetch_assoc()) {
+                                            $file_persId = '';
+                                            $thisCase_id = $row_sent_files['case_id'];
+                                            $file_type = $row_sent_files['file_type'];
+                                            $file_name = $row_sent_files['file_name'];
+                                            $file_path = $row_sent_files['file_path'];
+                                            $table_rows .= '
+                                                        <tr style="font-size: 0.8em; color:#324157;">
+                                                            <td>' . $file_type . '</td>
+                                                            <td><a href="' . $file_path . '" class="form-control form-control-sm" download>' . $file_name . '</a></td>                                                    
+                                                        </tr>';
+                                        }
+                                    }
                                 }
-                              }
                               $approveTranslateContent.='<div class="row">
                                 <div class="col-md-6 mt-1">
                                   <label class="label_pers_page">Տեսակ</label>              
