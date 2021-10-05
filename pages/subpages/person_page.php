@@ -56,18 +56,46 @@ $sex   = 0;
       if(!empty($row_p['pnum'])) {
         $pnum = $row_p['pnum'];
       };
-      
+      $doc_type = '';
+      if(!empty($row_p['doc_type'])){
       $doc_type = $row_p['doc_type'];
+      }
+      $document_num = '';
+      if(!empty($row_p['document_num'])){
       $document_num = $row_p['document_num'];
+      }
+      $doc_issued_date = '';
+      if(!empty($row_p['doc_issued_date'])){
       $doc_issued_date = $row_p['doc_issued_date'];
+      }
+      $doc_valid = '';
+      if(!empty($row_p['doc_valid'])){
       $doc_valid = $row_p['doc_valid'];
+      }
+      $doc_issued_by = '';
+      if(!empty($row_p['doc_issued_by'])){
       $doc_issued_by = $row_p['doc_issued_by'];
+      }
+      $bpr_community = '';
+      if(!empty($row_p['bpr_community'])){
       $bpr_community = $row_p['bpr_community'];
+      }
+      $bpr_bnakavayr = '';
+      if(!empty($row_p['bpr_bnakavayr'])){
       $bpr_bnakavayr = $row_p['bpr_bnakavayr'];
+      }
+      $bpt_street = '';
+      if(!empty($row_p['bpr_street'])){
       $bpt_street = $row_p['bpr_street'];
+      }
+      $bpr_house = '';
+      if(!empty($row_p['bpr_house'])){
       $bpr_house  = $row_p['bpr_house'];
+      }
+      $bpr_aprt   = '';
+      if(!empty($row_p['bpr_aprt'])){
       $bpr_aprt   = $row_p['bpr_aprt'];            
-
+      }
 
       $doc_num = $row_p['doc_num'];
       $citizenship = $row_p['citizenship'];
