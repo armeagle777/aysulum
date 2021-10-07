@@ -1515,210 +1515,160 @@ WHERE a.case_id = $case";
 $(document).ready(function(){
 
 
-  
-
-    $('#mail_translate').on('click', function(e){
-    e.preventDefault();
-    var translate_caseId=$(this).attr('case');
-    var language = $(this).attr('language');
-    $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{translate_case:translate_caseId, language:language},
-        success:function(data)
-        {
-          $('#approve_special_type').html(data);
-          $("#approve_special_type").modal('show');;
-            
-        } 
-      });
-  })
+    $('#mail_translate').on('click', function (e) {
+        e.preventDefault();
+        var translate_caseId = $(this).attr('case');
+        var language = $(this).attr('language');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {translate_case: translate_caseId, language: language},
+                success: function (data) {
+                    $('#approve_special_type').html(data);
+                    $("#approve_special_type").modal('show');
+                }
+            });
+    })
 
 
+    $('#interview_modal').on('click', function (e) {
+        e.preventDefault();
+        var interview_caseId = $(this).attr('ref_case');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {interview_caseId},
+                success: function (data) {
 
+                    $('#approve_special_type').html(data);
+                    $("#approve_special_type").modal('show');
+                }
+            });
+    })
 
-  $('#interview_modal').on('click', function(e){
-    e.preventDefault();
-    var interview_caseId=$(this).attr('ref_case');
-   
-    $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{interview_caseId},
-        success:function(data)
-        {
-            
-          $('#approve_special_type').html(data);
-          $("#approve_special_type").modal('show');;
-            
-        } 
-      });
-  })
-
-      $("#approve_special_change").click(function()
-    {
-      var case_id   = $(this).attr('modal_id');
-     
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{special_change_devhead:case_id},
-        success:function(data)
-        {  
-            //console.log(appeal_id);
-            $('#approve_special_type').html(data);
-            $("#approve_special_type").modal({backdrop: "static"});
-            
-        } 
-      });
-    });    
-
-
-    $("#court_decission").click(function()
-    {
-      var case_id   = $(this).attr('modal_id');
-      var claim_id  = $(this).attr('claim');
-      var appeal_id = $(this).attr('appeal');
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{decision_3:case_id, claim_id:claim_id, appeal_id:appeal_id},
-        success:function(data)
-        {  
-            //console.log(appeal_id);
-            $('#approve_special_type').html(data);
-            $("#approve_special_type").modal({backdrop: "static"});
-            
-        } 
-      });
+    $("#approve_special_change").click(function () {
+        var case_id = $(this).attr('modal_id');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {special_change_devhead: case_id},
+                success: function (data) {
+                    //console.log(appeal_id);
+                    $('#approve_special_type').html(data);
+                    $("#approve_special_type").modal({backdrop: "static"});
+                }
+            });
     });
 
 
-    $("#asign_lawer").click(function()
-    {
-      var case_id = $(this).attr('modal_id');
-    
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{ms_lawyer:case_id},
-        success:function(data)
-        {  
-            
-            $('#approve_special_type').html(data);
-            $("#approve_special_type").modal({backdrop: "static"});
-            
-        } 
-      });
-    });
-
-    $("#court_accept").click(function()
-    {
-      var case_id = $(this).attr('modal_id');
-    
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{accept_claim:case_id},
-        success:function(data)
-        {  
-            
-            $('#approve_special_type').html(data);
-            $("#approve_special_type").modal({backdrop: "static"});
-            
-        } 
-      });
-    });
-
-    $("#court_claim").click(function()
-    {
-      var case_id = $(this).attr('modal_id');
-    
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{claim_court:case_id},
-        success:function(data)
-        {  
-            
-            $('#approve_special_type').html(data);
-            $("#approve_special_type").modal({backdrop: "static"});
-            
-        } 
-      });
-    });    
-
-
-    $("#change_case_type").click(function()
-    {
-      var case_id = $(this).attr('modal_id');
-    
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{request_change_special:case_id},
-        success:function(data)
-        {  
-            
-            $('#change_special_type').html(data);
-            $("#change_special_type").modal({backdrop: "static"});
-            
-        } 
-      });
+    $("#court_decission").click(function () {
+        var case_id = $(this).attr('modal_id');
+        var claim_id = $(this).attr('claim');
+        var appeal_id = $(this).attr('appeal');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {decision_3: case_id, claim_id: claim_id, appeal_id: appeal_id},
+                success: function (data) {
+                    //console.log(appeal_id);
+                    $('#approve_special_type').html(data);
+                    $("#approve_special_type").modal({backdrop: "static"});
+                }
+            });
     });
 
 
+    $("#asign_lawer").click(function () {
+        var case_id = $(this).attr('modal_id');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {ms_lawyer: case_id},
+                success: function (data) {
+                    $('#approve_special_type').html(data);
+                    $("#approve_special_type").modal({backdrop: "static"});
+                }
+            });
+    });
 
+    $("#court_accept").click(function () {
+        var case_id = $(this).attr('modal_id');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {accept_claim: case_id},
+                success: function (data) {
+                    $('#approve_special_type').html(data);
+                    $("#approve_special_type").modal({backdrop: "static"});
+                }
+            });
+    });
 
-
-    $("#change_deadline").click(function()
-    {
-      var case_id = $(this).attr('modal_id');
-    
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{change_deadline:case_id},
-        success:function(data)
-        {  
-            
-            $('#change_deadline_special').html(data);
-            $("#change_deadline_special").modal({backdrop: "static"});
-            
-        } 
-      });
+    $("#court_claim").click(function () {
+        var case_id = $(this).attr('modal_id');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {claim_court: case_id},
+                success: function (data) {
+                    $('#approve_special_type').html(data);
+                    $("#approve_special_type").modal({backdrop: "static"});
+                }
+            });
     });
 
 
+    $("#change_case_type").click(function () {
+        var case_id = $(this).attr('modal_id');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {request_change_special: case_id},
+                success: function (data) {
+                    $('#change_special_type').html(data);
+                    $("#change_special_type").modal({backdrop: "static"});
+                }
+            });
+    });
 
 
+    $("#change_deadline").click(function () {
+        var case_id = $(this).attr('modal_id');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {change_deadline: case_id},
+                success: function (data) {
+                    $('#change_deadline_special').html(data);
+                    $("#change_deadline_special").modal({backdrop: "static"});
+                }
+            });
+    });
 
-   $("#return_redev").click(function()
-    {
-      var case_id = $(this).attr('re_case');
-      var srole   = $(this).attr('sender_role');
-      $.ajax(
-      {
-        url:"config/config.php",
-        method:"POST",
-        data:{re_case:case_id, role:srole},
-        success:function(data)
-        {  
-            console.log(srole);
-            $('#return_to_redev').html(data);
-            $("#return_to_redev").modal({backdrop: "static"});
-            
-        } 
-      });
+
+    $("#return_redev").click(function () {
+        var case_id = $(this).attr('re_case');
+        var srole = $(this).attr('sender_role');
+        $.ajax(
+            {
+                url: "config/config.php",
+                method: "POST",
+                data: {re_case: case_id, role: srole},
+                success: function (data) {
+                    console.log(srole);
+                    $('#return_to_redev').html(data);
+                    $("#return_to_redev").modal({backdrop: "static"});
+                }
+            });
     });  
 
   $("#upload_file").on("click", function(event)

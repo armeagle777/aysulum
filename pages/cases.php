@@ -164,6 +164,7 @@
                             {
                         ?>
                                 <li><a href="?page=cases&homepage=interview"><i class="fas fa-microphone"></i> Հարցազրույց</a></li>
+                                <li><a href="?page=cases&homepage=advice"><i class="fa fa-phone"></i> Խորհրդատվություն</a></li>
                         <?php
                             }
                         ?> 
@@ -180,7 +181,7 @@
                 </div>
                 <div id="right"></div>
             </div>
- 
+
            
             
     
@@ -192,12 +193,12 @@
     
 </div>
 <div class="new_case">
-    <?php include_once('subpages/'.$homepage.'.php'); ?>    
+    <?php include_once('subpages/'.$homepage.'.php'); ?>
 </div>
 <script src="pages/bungie.js"></script>
 <script>
     $(document).ready(function(){
- 
+
 
 
     $(document).ready(function(){

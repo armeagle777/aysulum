@@ -7245,7 +7245,10 @@ if (isset($_POST['save_special_change'])) {
 
 
 }
-############## translation sending ###############
+
+
+
+############## written translation button onclick ###############
 if (isset($_POST['translate_case'])) {
     $case_id = $_POST['translate_case'];
     $language = $_POST['language'];
@@ -7344,7 +7347,7 @@ if (isset($_POST['translate_case'])) {
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">ՓԱԿԵԼ</button>          
-          <input type="submit" name="send_approve_translate" id="send_approve_translate" class="btn btn-primary" form="translation_modal" value="ՈւՂԱՐԿԵԼ">;
+          <input type="submit" name="send_approve_translate" translate_type="written" id="send_approve_translate" class="btn btn-primary" form="translation_modal" value="ՈւՂԱՐԿԵԼ">;
         </div>
       </div>
       </form>
@@ -7355,6 +7358,28 @@ if (isset($_POST['translate_case'])) {
 
 }
 
+########### Registration of advice translation by officer  ##############
+if (isset($_POST['sendToapproveAdvice'])) {
+    //INSERT INTO `tb_translate`(`translate_type`, `user_from`, `user_to`, `translator_company`)
+    //INSERT INTO `tb_cover_files`(`type`, `file_name`, `case_id`, `cover_status`, `translation_id`)
+    //($language, $serviceDate, '11:40', '12:30', $devHeadFullName, $createrFullName);
+    $user_from = $_SESSION['user_id'];
+    $receiver_id = '';
+    $devHeadFullName = '';
+    $createrFullName = mb_substr($_SESSION['user_fName'], 0, 1) . '. ' . $_SESSION['user_lName'];
+    $sql_devhead = "SELECT * FROM users WHERE user_type = 'devhead' AND user_status = '1'";
+    $result_sql_devhead = $conn->query($sql_devhead);
+    if ($result_sql_devhead->num_rows > 0) {
+        $roq = $result_sql_devhead->fetch_assoc();
+        $receiver_id = $roq['id'];
+        $devHeadFName = mb_substr($roq['f_name'], 0, 1) . '. ';
+        $devHeadLName = $roq['l_name'];
+        $devHeadFullName = $devHeadFName . $devHeadLName;
+    }
+
+}
+
+########### Request  for  translation   ##############
 if (isset($_POST['send_approve_translate'])) {
     $all_ids = $_POST['send_file'];
     $sheetsCount = count($all_ids);
@@ -7381,7 +7406,7 @@ if (isset($_POST['send_approve_translate'])) {
 
     $sql_insert_translate = "INSERT INTO `tb_translate`(`case_id`, `translate_type`, `user_from`, `user_to`, `translator_company`, `file_ids`) VALUES ('$case_id', '2', '$user_from', '$receiver_id', '$translator', '$separate_file_id')";
 
-    if ($conn->query($sql_insert_translate) === TRUE) {
+    if ($conn->query($sql_insert_translate) === TRUE){
         $last_translation_id = $conn->insert_id;
         $newPdfName = $last_translation_id . $newPdfName;
         //Creating cover PDF file
@@ -7393,18 +7418,20 @@ if (isset($_POST['send_approve_translate'])) {
         // Write some HTML code:
         $templateName = 'template_' . $translator;
 
+        require('templates/khndragir/1/' . $templateName . '.php');
+        $pdfPage = $$templateName($language, $serviceDate, '11:40', '12:30', $devHeadFullName, $createrFullName);
 //        require('templates/khndragir/3/' . $templateName . '.php');
 //        $pdfPage = $$templateName($language, $caseFullName, $serviceDate, '11:40', '12:30', $devHeadFullName, $createrFullName);
-         require('templates/khndragir/2/'.$templateName.'.php');
-         $pdfPage=$$templateName($language, $caseFullName, $serviceDate, $sheetsCount, $devHeadFullName,  $createrFullName);
+//         require('templates/khndragir/2/'.$templateName.'.php');
+//         $pdfPage=$$templateName($language, $caseFullName, $serviceDate, $sheetsCount, $devHeadFullName,  $createrFullName);
         $mpdf->WriteHTML($pdfPage);
         // Output a PDF file directly to the browser
         if (!file_exists('../uploads/' . $case_id . '/cover')) {
             mkdir('../uploads/' . $case_id . '/cover', 0777, true);
         }
         $newCoverFileName = "../uploads/" . $case_id . "/cover/$newPdfName";
-//        $mpdf->Output();
-//        exit;
+        $mpdf->Output();
+        exit;
          $mpdf->Output("$newCoverFileName", \Mpdf\Output\Destination::FILE);
 
 
@@ -7434,7 +7461,7 @@ if (isset($_POST['send_approve_translate'])) {
 
 }
 
-######################################################
+################## Approving written translation by Devhead #######################
 
 if (isset($_POST['send_email'])) {
 
