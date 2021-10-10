@@ -719,8 +719,8 @@ else {
                                                         INNER JOIN tb_file_type b ON a.file_type = b.file_type_id WHERE a.id IN ($file_ids)";
                                     $result_sent_files = $conn->query($sql_sending_files);
 
+                                    $table_rows = '';
                                     if($result_sent_files->num_rows > 0){
-                                        $table_rows = '';
                                         while ($row_sent_files = $result_sent_files->fetch_assoc()) {
                                             $file_persId = '';
                                             $thisCase_id = $row_sent_files['case_id'];
@@ -760,18 +760,22 @@ else {
                                       </div> 
                                     </div>    
                                   </div>              
-                                </form>
-                                <div class="col-md-12">
-                                  <label class="label_pers_page">Կցված փաստաթղթեր</label>
-                                  <table class="table">
-                                    <tr style=" font-size: 0.8em; color: #324157; text-align: center; vertical-align: middle;">
-                                        <th>տեսակ</th>
-                                        <th>անվանում</th>
-                                    </tr>
-                                   '.$table_rows.'
-                                  </table>
-                                </div>
-                              </div>';
+                                </form>';
+								if($translation_type_id == 2){
+									$approveTranslateContent.='<div class="col-md-12">
+								                                  <label class="label_pers_page">Կցված փաստաթղթեր</label>
+								                                  <table class="table">
+								                                    <tr style=" font-size: 0.8em; color: #324157; text-align: center; vertical-align: middle;">
+								                                        <th>տեսակ</th>
+								                                        <th>անվանում</th>
+								                                    </tr>
+								                                   '.$table_rows.'
+								                                  </table>
+								                                </div>';
+								}
+
+
+	                            $approveTranslateContent.='</div>';
                               
                             }            
                       
