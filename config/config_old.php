@@ -565,5 +565,36 @@ $modal_old.='<div class="modal-dialog modal-xl">
   }
   
 
+//Uploading file type select on change
+  if (isset($_POST["file_type_select"])) {
+    $file_type_select = $_POST["file_type_select"];
+    $case = $_POST["my_case"];
+    $file_type_select_response = "";
+    if ($file_type_select == 2) {
+      $sql_case_members = "SELECT * FROM old_case_person WHERE old_case_id = $case";
+      $result_sql_members = $conn->query($sql_case_members);
+      $file_type_select_response .= '<select name="select_member" id="select_member" class="form-control">
+                                    <option selected disabled hidden>Ընտրե՛ք ընտանիքի անդամին </option>';
+      while ($row5 = $result_sql_members->fetch_assoc()) {
+        $file_type_select_response .= "<option value=" . $row5['old_person_id'] . ">" . $row5['f_name_arm'] . ' ' . $row5['l_name_arm'] . "</option>";
+      }
+      $file_type_select_response .= '</select>';
+    }
+    $file_type_query = "SELECT * FROM tb_file_type WHERE file_filter=$file_type_select";
+    $result_file_type_select = $conn->query($file_type_query);
+    if ($result_file_type_select->num_rows > 0) {
+      $file_type_select_response .= '<select class="form-control" name="file_type" id="case_file_types">
+                                  <option value="" selected disabled hidden>Նշե՛ք տեսակը</option>';
+      while ($row_file_type_select = $result_file_type_select->fetch_assoc()) {
+        $file_type_select_response .= '<option value="' . $row_file_type_select["file_type_id"] . '">' . $row_file_type_select["file_type"] . '</option>';
+
+      }
+      $file_type_select_response .= '</select>';
+    }
+    echo $file_type_select_response;
+  }
+
+  ###################
+
 
 ?>

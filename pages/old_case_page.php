@@ -166,9 +166,40 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
   <button class="tablinks" onclick="openCity(event, 'functions')" id="defaultOpen"> Գործի մասին </button>
   <button class="tablinks" onclick="openCity(event, 'decisions')"> Ընդունված որոշումներ </button>
   <button class="tablinks" onclick="openCity(event, 'person')"> Ընդգրկված անձինք </button>
+  <button class="tablinks" onclick="openCity(event, 'attach_file')"> Կցել փաստաթուղթ </button>
   
 </div>
 
+<div id="attach_file" class="tabcontent">
+  <div class="row">
+    <div class="col-md-4"> <!-- attach file div -->
+      <form method="POST" action="config/config_old.php" enctype="multipart/form-data">
+        <input type="hidden" name="case_num" id="case_num" value="<?php echo $case_id?>">
+        <div class="col-md-12 mt-3">
+          <select class="form-control" name="file_person_case" id="file_type_select">
+            <option value="" selected disabled hidden>Նշե՛ք տիպը</option>
+            <option value="1">Գործի վերաբերյալ</option>
+            <option value="2">Անձի վերաբերյալ</option>
+          </select>  
+        </div>
+        <div class="col-md-12">
+          <div id="dropdown_container" >
+                    
+          </div>  
+        </div>
+
+        <div class="col-md-12">
+          <input type="submit" class="btn btn-success" name="save_doc">
+        </div>
+
+      </form>
+    </div>
+
+    <div class="col-md-8"> <!-- attached files div -->
+      
+    </div>
+  </div>
+</div>
 
 <div id="functions" class="tabcontent">
   <h5 class="sub_title" style="margin-top: 5px; margin-bottom: 5px;"> Գործի մասին </h5>
@@ -457,6 +488,53 @@ document.getElementById("defaultOpen").click();
                     var image = document.getElementById('output');
                     image.src = URL.createObjectURL(event.target.files[0]);
                 };
+
+$("#upload_file").on("click", function(event)
+  {
+    var file_type=$("#file_type_select").val();    
+    if(!file_type )
+    {
+      alert("<Ֆայլի տիպը> պարտադիր դաշտ է");
+      event.preventDefault()
+      return;
+    }else if(file_type == 1)
+    {
+      var case_file_types = $("#case_file_types").val();
+      if(!case_file_types)
+      {
+        alert("<Ֆայլի տեսակը> պարտադիր դաշտ է");
+        event.preventDefault()
+        return;
+      }
+    }else
+    {
+      var case_file_types = $("#case_file_types").val();
+      var select_member = $("#select_member").val();
+      if(!case_file_types || !select_member)
+      {
+        alert("<Ֆայլի տեսակը> և <ընտանիքի անդամը> պարտադիր լրացման դաշտ են");
+        event.preventDefault()
+        return;
+      }
+    }
+  })
+
+
+$("#file_type_select").on("change", function(){
+    var file_type_select=$("#file_type_select").val();
+    var my_case = $("#case_num").val();
+    $.ajax(
+      {
+        url:"config/config_old.php",
+        method:"POST",
+        data:{file_type_select,my_case},
+        success:function(data)
+        { 
+            $('#dropdown_container').html(data);
+            
+        } 
+      });
+  })
 
 
 </script>
