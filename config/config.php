@@ -692,7 +692,10 @@ WHERE a.personal_id = $personal_id";
 		$l_name_eng = $_POST['l_name_eng'];
 		$m_name_eng = $_POST['m_name_eng'];
 		$select_religion = $_POST['select_religion'];
-		$select_etnic = $_POST['select_etnic'];
+		$select_etnic = 480;
+		if(is_numeric($_POST['select_etnic'])){
+			$select_etnic = $_POST['select_etnic'];
+		}		
 		$doc_num = $_POST['doc_num'];
 		$select_state = $_POST['select_state'];
 		$select_prev = $_POST['select_prev'];
