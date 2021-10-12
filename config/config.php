@@ -2253,6 +2253,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		$f_name_eng = strtoupper($_POST['f_name_eng']);
 		$l_name_eng = strtoupper($_POST['l_name_eng']);
 		$m_name_eng = strtoupper($_POST['m_name_eng']);
+		$arrival_date='0000-00-00';
 		$role = $_POST['select_role'];
 		$b_day = $_POST['bday'];
 		$b_month = $_POST['bmonth'];
@@ -2264,7 +2265,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		$residence_adr = $_POST['adr_res'];
 		$departure_from_citizen = $_POST['citizen_departure_date'];
 		$departure_from_residence = $_POST['res_departure_date'];
-		$arrival_date = $_POST['arrival_date'];
+		
 		$doc_num = $_POST['doc_num'];
 		$etnicity = $_POST['select_etnic'];
 		$religion = $_POST['select_religion'];
@@ -2275,7 +2276,9 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		if (isset($_POST['invalid'])) {
 			$invalid = '1';
 		};
-
+		if($_POST['arrival_date'] != ''){
+			$arrival_date = $_POST['arrival_date'];
+		}
 		$pregnant = '0';
 		if (isset($_POST['pregnant'])) {
 			$pregnant = '1';

@@ -189,14 +189,33 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
         </div>
 
         <div class="col-md-12">
-          <input type="submit" class="btn btn-success" name="save_doc">
+          <input type="submit" class="btn btn-success" name="save_doc" value="ՎԵՐԲԵՌՆԵԼ">
         </div>
 
       </form>
     </div>
 
     <div class="col-md-8"> <!-- attached files div -->
-      
+      <h5 class="sub_title mt-3">Կցված փաստաթղթեր</h5>
+        <table class="table">
+          <tr>
+            <th>տիպ</th>
+            <th>տեսակ</th>
+            <th>վերբեռնվել է</th>
+            <th>վերբեռնող</th>
+            <th>ֆայլ</th>
+          </tr>
+
+
+
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
     </div>
   </div>
 </div>
