@@ -449,21 +449,48 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 <div id="translations" class="tabcontent">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-10">
         <h5 class="sub_title" style="margin-top: 5px;">Թարգմանության հարցումներ</h5>
-          <table class="table">
+          <table class="table" >
           <tr>
             <th class="label_pers_page">ամսաթիվ</th>
             <th class="label_pers_page">տեսակ</th>
             <th class="label_pers_page">նամակ</th>
+            <th class="label_pers_page" >կազմակերպություն</th>
+            <th class="label_pers_page">թարգմանության ա/թ</th>
+            <th class="label_pers_page">սկիզբ</th>
+            <th class="label_pers_page">ավարտ</th>
             <th class="label_pers_page">կարգավիճակ</th>
         </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>  
+	          <?php
+		          $query_translations = "SELECT * FROM `tb_cover_files`
+										INNER JOIN `tb_translate` ON tb_cover_files.translation_id = tb_translate.translate_id    
+										INNER JOIN `tb_translation_type` ON tb_translate.translate_type = tb_translation_type.ttype_id 
+										INNER JOIN `tb_translators` ON tb_translate.translator_company = tb_translators.translator_id  
+										WHERE tb_cover_files.case_id=$case ORDER BY tb_cover_files.cover_file_id DESC ";
+				  $result_translations= $conn -> query($query_translations);
+				  if($result_translations->num_rows > 0){
+					  while($row_translations = $result_translations->fetch_assoc()){
+						  list($year, $month,$day) = explode('-',explode(' ', $row_translations['translate_date'])[0]);
+						  $translate_date = $day.'.'.$month.'.'.$year;
+						  list($year, $month,$day) = explode('-',explode(' ', $row_translations['filled_in_date'])[0]);
+						  $filled_in_date = $day.'.'.$month.'.'.$year;
+						  $href='uploads/'.$case.'/cover/'.$row_translations['file_name'];
+			  ?>
+							  <tr>
+								  <td><?php echo $filled_in_date; ?></td>
+								  <td><?php echo $row_translations['trans_type']; ?></td>
+								  <td><a href="<?php echo  $href ?>" download><?php echo $row_translations['file_name']; ?></a></td>
+								  <td><?php echo $row_translations['translator_name_arm']; ?></td>
+								  <td><?php echo $translate_date; ?></td>
+								  <td><?php echo $row_translations['translate_time_from']; ?></td>
+								  <td><?php echo $row_translations['translate_time_to']; ?></td>
+								  <td></td>
+							  </tr>
+			  <?php
+					  }
+				  }
+	          ?>
           </table>  
         </div>
 

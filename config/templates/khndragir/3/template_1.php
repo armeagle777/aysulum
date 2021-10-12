@@ -3,6 +3,8 @@
 $template_1 = function($lang,$refugee, $serviceDate, $timeFrom, $timeTo, $devHead, $sheetCreater)
 {
     $thisDate= date("d.m.Y");
+	list($year, $month, $day) = explode("-", $serviceDate);
+	$serviceDate = $day.'.'.$month.'.'.$year;
     $pdfBody='<style>
                     .container{
                         border: 2px solid #000;

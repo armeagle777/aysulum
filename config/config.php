@@ -693,9 +693,9 @@ WHERE a.personal_id = $personal_id";
 		$m_name_eng = $_POST['m_name_eng'];
 		$select_religion = $_POST['select_religion'];
 		$select_etnic = 480;
-		if(is_numeric($_POST['select_etnic'])){
+		if (is_numeric($_POST['select_etnic'])) {
 			$select_etnic = $_POST['select_etnic'];
-		}		
+		}
 		$doc_num = $_POST['doc_num'];
 		$select_state = $_POST['select_state'];
 		$select_prev = $_POST['select_prev'];
@@ -2256,7 +2256,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		$f_name_eng = strtoupper($_POST['f_name_eng']);
 		$l_name_eng = strtoupper($_POST['l_name_eng']);
 		$m_name_eng = strtoupper($_POST['m_name_eng']);
-		$arrival_date='0000-00-00';
+		$arrival_date = '0000-00-00';
 		$role = $_POST['select_role'];
 		$b_day = $_POST['bday'];
 		$b_month = $_POST['bmonth'];
@@ -2268,7 +2268,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		$residence_adr = $_POST['adr_res'];
 		$departure_from_citizen = $_POST['citizen_departure_date'];
 		$departure_from_residence = $_POST['res_departure_date'];
-		
+
 		$doc_num = $_POST['doc_num'];
 		$etnicity = $_POST['select_etnic'];
 		$religion = $_POST['select_religion'];
@@ -2279,7 +2279,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		if (isset($_POST['invalid'])) {
 			$invalid = '1';
 		};
-		if($_POST['arrival_date'] != ''){
+		if ($_POST['arrival_date'] != '') {
 			$arrival_date = $_POST['arrival_date'];
 		}
 		$pregnant = '0';
@@ -7417,7 +7417,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 		$separate_file_id = null;
 		$translator = $_POST['select_translator'];
 		$language = $_POST['translate_language'];
-		$serviceDate = date("d.m.Y", strtotime($_POST['service_date']));
+		$serviceDate = $_POST['service_date'];
 		$case_id = $_POST['cases'];
 		$caseFullName = $_POST['caseFullName'];
 		$newPdfName = '_unsigned.pdf';
@@ -7432,7 +7432,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 			$all_ids = $_POST['send_file'];
 			$sheetsCount = count($all_ids);
 			$separate_file_id = implode(',', $all_ids);
-		}else{
+		} else {
 			$adviceTimeFrom = $_POST['adviceTimeFrom'];
 			$adviceTimeTo = $_POST['adviceTimeTo'];
 		}
@@ -7460,13 +7460,13 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 			$mpdf = new \Mpdf\Mpdf();
 			// Write some HTML code:
 			$templateName = 'template_' . $translator;
-			require('templates/khndragir/'.$translation_type_select.'/' . $templateName . '.php');
+			require('templates/khndragir/' . $translation_type_select . '/' . $templateName . '.php');
 			if ($_POST['translation_type_select'] == 2) {
 				$pdfPage = $$templateName($language, $caseFullName, $serviceDate, $sheetsCount, $devHeadFullName, $createrFullName);
 			} else if ($_POST['translation_type_select'] == 3) {
 				$pdfPage = $$templateName($language, $caseFullName, $serviceDate, $adviceTimeFrom, $adviceTimeTo, $devHeadFullName, $createrFullName);
 			} else if ($_POST['translation_type_select'] == 4) {
-				$pdfPage = $$templateName($language,$caseFullName, $serviceDate, $adviceTimeFrom, $adviceTimeTo, $devHeadFullName, $createrFullName);
+				$pdfPage = $$templateName($language, $caseFullName, $serviceDate, $adviceTimeFrom, $adviceTimeTo, $devHeadFullName, $createrFullName);
 			}
 			$mpdf->WriteHTML($pdfPage);
 			// Output a PDF file directly to the browser
@@ -7487,7 +7487,20 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 					$sql_new_process = "INSERT INTO `tb_process`(`case_id`, `sign_status`, `sign_by`, `processor`, `comment_to`, `actual`, `comment_status`) VALUES ('$case_id', '30', '$user_from', '$receiver_id', 'Խնդրում եմ հաստատել։', '1', '1')";
 					if ($conn->query($sql_new_process) === TRUE) {
 						// $last_request_id = $conn->insert_id;
-						notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, NULL, 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
+
+						if ($_POST['translation_type_select'] != 2) {
+							$text_color = '#FFFF00';
+							$border_color = '#FF0000';
+							$date_from=$_POST['service_date'].' '.$adviceTimeFrom.':00';
+							$date_to= $_POST['service_date'].' '.$adviceTimeTo.':00';
+							$query_translation_calendar = "INSERT INTO `tb_calendar`(`case_id`, `user_id`,  `inter_comment`, `inter_date_from`, `inter_date_to`, `text_color`, `border_color`) VALUES ($case_id,$user_from,'Թարգմանության խնդրագիր',  '$date_from', '$date_to', '$text_color', '$border_color')";
+							if ($conn->query($query_translation_calendar) === TRUE) {
+								notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, NULL, 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
+							}else{
+								echo "Error: " . $query_translation_calendar . "<br>" . $conn->error;
+							}
+						}
+
 					} else {
 						echo "Error: " . $sql_new_process . "<br>" . $conn->error;
 					}
