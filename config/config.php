@@ -7356,6 +7356,12 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 				$file_path = '../uploads/' . $case_id . '/' . $personal_id . '/' . $file_name;
 			} else {
 				$full_name = 'Գործի վերաբերյալ';
+				$query_refugee_full_name = "SELECT f_name_arm, l_name_arm FROM `tb_person` WHERE case_id=$case_id AND role=1";
+				$result_full_name=$conn -> query($query_refugee_full_name);
+				if($result_full_name -> num_rows > 0){
+					$row_full_name= $result_full_name->fetch_assoc();
+					$refugeeFullName = $row_full_name['f_name_arm'].' '.$row_full_name['l_name_arm'];
+				}
 			}
 
 
@@ -7368,9 +7374,10 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
                 </tr>';
 		}
 
-
+		
 		$send_translate .= '</table>
          <input type="text" name="caseFullName" hidden value="' . $refugeeFullName . '" />
+		 
             </div>
             
                 
@@ -7498,7 +7505,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 					
 						}
 						
-						notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, NULL, 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
+						notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, '', 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
 
 					} else {
 						echo "Error: " . $sql_new_process . "<br>" . $conn->error;
@@ -7569,7 +7576,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 							array_unshift($attachedFilePaths, $location);
 						}
 						sendMail($gmail_login, $gmail_pass, $gmail_host, $gmail_port, $mail_receiver, $mail_subject, $mail_body, $attachedFilePaths);
-						notify($conn, 'Թարգմանության', 'Թարգմանության հարցումը հաստատված է։', 0, $user_from, $officer, $case_id, NULL, 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
+						notify($conn, 'Թարգմանության', 'Թարգմանության հարցումը հաստատված է։', 0, $user_from, $officer, $case_id, '', 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
 					} else {
 						echo "Error: " . $sql_new_process . "<br>" . $conn->error;
 					}
