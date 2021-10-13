@@ -45,7 +45,7 @@ function sendMail($login,$pass,$host,$port,$to,$subject,$body,$attachments)
 
     $mail->Username=$login;
     $mail->Password=$pass;
-
+    $mail->CharSet = 'UTF-8';
     $mail->setFrom($login);
     $mail->addAddress($to);
     $mail->addReplyTo($login);
