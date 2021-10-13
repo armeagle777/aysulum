@@ -597,4 +597,45 @@ $modal_old.='<div class="modal-dialog modal-xl">
   ###################
 
 
+if(isset($_POST['save_doc'])){
+    if (isset($_FILES['file']['name'])) {
+      $persId = NULL;
+      $now = date_create()->format('Y-m-d H:i:s');
+      if (isset($_POST["select_member"])) {
+        $persId = $_POST["select_member"];
+      }
+      #opinion_id
+      $case_id = $_POST['case_num'];
+      $uploader = $_SESSION['user_id'];
+      $file_type = $_POST['file_type'];
+      $file_person_case = $_POST["file_person_case"];
+      # Get file name
+      $filename = date('dmYHis') . str_replace(" ", "", basename($_FILES["file"]["name"]));
+      # Location
+      $location = "../old_cases/" . $case_id;
+      if ($file_person_case == 2) {
+        $location .= "/" . $persId;
+      }
+      # create directoy if not exists in upload/ directory
+      if (!is_dir($location)) {
+        mkdir($location, 0755);
+      }
+
+      $location .= "/" . $filename;
+      $file_path = trim($location, "../");
+      # Upload file
+      if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
+        $sql_application = "INSERT INTO `tb_old_files`(`old_case_id`, `uploaded_by`, `old_person_id`, `filename`, `file_type`, `file_path`) VALUES ('$case_id', '$uploader', " . var_export($persId, true) . ", '$filename', '$file_type',   '$file_path')";
+
+        if ($conn->query($sql_application) === TRUE) {
+          header('location: ../user.php?page=old_case_page&old_case=' . $case_id);
+        } else {
+          echo "Error: " . $sql_application . "<br>" . $conn->error;
+        }
+      } else {
+        echo "failed to uplpad";
+      }
+    }
+}
+
 ?>

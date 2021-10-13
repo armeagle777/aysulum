@@ -7487,19 +7487,18 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 					$sql_new_process = "INSERT INTO `tb_process`(`case_id`, `sign_status`, `sign_by`, `processor`, `comment_to`, `actual`, `comment_status`) VALUES ('$case_id', '30', '$user_from', '$receiver_id', 'Խնդրում եմ հաստատել։', '1', '1')";
 					if ($conn->query($sql_new_process) === TRUE) {
 						// $last_request_id = $conn->insert_id;
-
+						
 						if ($_POST['translation_type_select'] != 2) {
 							$text_color = '#FFFF00';
 							$border_color = '#FF0000';
 							$date_from=$_POST['service_date'].' '.$adviceTimeFrom.':00';
 							$date_to= $_POST['service_date'].' '.$adviceTimeTo.':00';
-							$query_translation_calendar = "INSERT INTO `tb_calendar`(`case_id`, `user_id`,  `inter_comment`, `inter_date_from`, `inter_date_to`, `text_color`, `border_color`) VALUES ($case_id,$user_from,'Թարգմանության խնդրագիր',  '$date_from', '$date_to', '$text_color', '$border_color')";
-							if ($conn->query($query_translation_calendar) === TRUE) {
-								notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, NULL, 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
-							}else{
-								echo "Error: " . $query_translation_calendar . "<br>" . $conn->error;
-							}
+							$query_translation_calendar = "INSERT INTO `tb_calendar`(`case_id`, `user_id`,  `inter_comment`, `inter_date_from`, `inter_date_to`, `text_color`, `border_color`) VALUES ($case_id,$user_from,'$language', '$date_from', '$date_to', '$text_color', '$border_color')";
+							$conn->query($query_translation_calendar);
+					
 						}
+						
+						notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, NULL, 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
 
 					} else {
 						echo "Error: " . $sql_new_process . "<br>" . $conn->error;

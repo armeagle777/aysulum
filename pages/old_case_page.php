@@ -155,8 +155,17 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
       }
       $optfinaldec.="</select>";
 
-      $sql_family = "SELECT a.old_person_id, a.old_case_id, a.f_name_arm, a.l_name_arm, a.sex, a.b_day, a.b_month, a.b_year, a.role, a.card_num, a.doc_num, b.der FROM old_case_person a INNER JOIN tb_role b ON a.role = b.role_id WHERE a.old_case_id = $case_id";
+      $sql_family = "SELECT a.old_person_id, a.old_case_id, a.f_name_arm, a.l_name_arm, a.sex, a.b_day, a.b_month, a.b_year, a.role, a.card_num, a.doc_num, b.der FROM old_case_person a 
+                    INNER JOIN tb_role b ON a.role = b.role_id 
+                    WHERE a.old_case_id = $case_id";
       $result_sql_family = $conn->query($sql_family);  
+
+      $sql_files = "SELECT a.old_file_id, a.old_case_id, a.uploaded_on, a.uploaded_by, a.old_person_id, a.filename, a.file_path, a.file_type, b.file_type AS TYPETEXT, c.f_name, c.l_name
+                    FROM tb_old_files a 
+                    INNER JOIN tb_file_type b ON a.file_type = b.file_type_id
+                    INNER JOIN users c ON a.uploaded_by = c.id
+                    WHERE a.old_case_id = $case_id";
+      $result_files = $conn->query($sql_files);
 
 ?>
 
@@ -186,9 +195,15 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
           <div id="dropdown_container" >
                     
           </div>  
+
+          <div class="form-group custom-file mt-2">
+                  <input type="file" name="file" class="custom-file-input" id="customFile" required="required" />
+                  <label class="custom-file-label" for="customFile">Ընտրե՛ք ֆայլը</label>
+          </div>
+
         </div>
 
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <input type="submit" class="btn btn-success" name="save_doc" value="ՎԵՐԲԵՌՆԵԼ">
         </div>
 
@@ -198,23 +213,37 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
     <div class="col-md-8"> <!-- attached files div -->
       <h5 class="sub_title mt-3">Կցված փաստաթղթեր</h5>
         <table class="table">
-          <tr>
+          <tr class="label_pers_page">
             <th>տիպ</th>
             <th>տեսակ</th>
             <th>վերբեռնվել է</th>
             <th>վերբեռնող</th>
             <th>ֆայլ</th>
           </tr>
+          <?php 
+          while ($row = $result_files->fetch_assoc()) {
+            $type = 'Գործի մասին';
+            if(!empty($row['old_person_id'])){
+              $type = 'Անձի վերաբերյալ';
+            }
+            $doc_type = $row['TYPETEXT'];
+            $upload_date = date('d.m.Y', strtotime($row['uploaded_on']));
+            $uploader    = $row['f_name'] .' '. $row['l_name'];
+            $file_name   = $row['filename'];
+            $filepath    = $row['file_path'];
+          
+          ?>
 
 
-
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+          <tr >
+            <td><?php echo $type ?></td>
+            <td><?php echo $doc_type ?></td>
+            <td><?php echo $upload_date ?></td>
+            <td><?php echo $uploader ?></td>
+            <td><a href="<?php echo $filepath ?>" download><?php echo $file_name ?></a></td>
           </tr>
+
+        <?php } ?>
         </table>
     </div>
   </div>
