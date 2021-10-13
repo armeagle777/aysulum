@@ -105,7 +105,7 @@ function changeLocation($page,$homepage,$locationSubdataName='',$locationSubdata
 function notify($connection,$comment_subject,$comment_text,$comment_status,$comment_from,$comment_to,$case_id,$request_id,$note_type,$readed,$successFunc,$successFuncParams)
 { 
     $sql_notify =   "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `request_id`, `note_type`, `readed`) 
-                    VALUES ('$comment_subject', '$comment_text', '$comment_status', '$comment_from', '$comment_to', '$case_id', '$request_id', '$note_type', '$readed') ";
+                    VALUES ('$comment_subject', '$comment_text', '$comment_status', '$comment_from', '$comment_to', '$case_id',NULLIF('$request_id', ''), '$note_type', '$readed') ";
     if($connection->query($sql_notify) === TRUE) {
         $connection->close();
         call_user_func_array($successFunc, $successFuncParams);
