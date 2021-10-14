@@ -7,7 +7,31 @@ body{
     font-family:Arial;
     background-color: #F0F0F0; 
   }
-
+.dt_content{
+    display: flex;
+    flex-direction: row;
+}
+.dt_download_a{
+    margin: 0 5px;
+}
+.dt_download_a:hover{
+    text-decoration: none;
+}
+.translate_documents_td{
+    max-width: 400px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+td.details-control {
+    background: url('../../images/plus.png') no-repeat center center;
+    background-size: 20px;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('../../images/minus.png') no-repeat center center;
+    background-size: 20px;
+}
   /* Header styles */
   .topnav1 {
     overflow: hidden;

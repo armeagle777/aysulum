@@ -20,3 +20,7 @@ VALUES
 ('Ուղարկվել է հաստատման'),
 ('Ուղարկվել է թարգմանության'),
 ('Ստացվել է պատասխան');
+
+
+ALTER TABLE tb_translate ADD COLUMN  sign_status INT(1);
+ALTER TABLE tb_translate ADD COLUMN  mailed_to_translators DATETIME;

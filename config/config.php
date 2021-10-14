@@ -7357,10 +7357,10 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 			} else {
 				$full_name = 'Գործի վերաբերյալ';
 				$query_refugee_full_name = "SELECT f_name_arm, l_name_arm FROM `tb_person` WHERE case_id=$case_id AND role=1";
-				$result_full_name=$conn -> query($query_refugee_full_name);
-				if($result_full_name -> num_rows > 0){
-					$row_full_name= $result_full_name->fetch_assoc();
-					$refugeeFullName = $row_full_name['f_name_arm'].' '.$row_full_name['l_name_arm'];
+				$result_full_name = $conn->query($query_refugee_full_name);
+				if ($result_full_name->num_rows > 0) {
+					$row_full_name = $result_full_name->fetch_assoc();
+					$refugeeFullName = $row_full_name['f_name_arm'] . ' ' . $row_full_name['l_name_arm'];
 				}
 			}
 
@@ -7374,7 +7374,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
                 </tr>';
 		}
 
-		
+
 		$send_translate .= '</table>
          <input type="text" name="caseFullName" hidden value="' . $refugeeFullName . '" />
 		 
@@ -7418,7 +7418,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 	}
 
 	########### Request  for  translation   ##############
-	if (isset($_GET['cmd']) && $_GET['cmd']=='send_approve_translate') {
+	if (isset($_GET['cmd']) && $_GET['cmd'] == 'send_approve_translate') {
 		//Variables
 		$separate_file_id = null;
 		$translator = $_POST['select_translator'];
@@ -7455,7 +7455,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 		}
 
 		//Inserting into tb_translate
-		$sql_insert_translate = "INSERT INTO `tb_translate`(`case_id`, `translate_type`, `user_from`, `user_to`, `translator_company`, `file_ids`, `translate_date`, `translate_time_from`, `translate_time_to`) VALUES ('$case_id', '$translation_type_select', '$user_from', '$receiver_id', '$translator', '$separate_file_id','$serviceDate','$adviceTimeFrom','$adviceTimeTo')";
+		$sql_insert_translate = "INSERT INTO `tb_translate`(`case_id`, `translate_type`, `user_from`, `user_to`, `translator_company`, `file_ids`, `translate_date`, `translate_time_from`, `translate_time_to`, `sign_status`) VALUES ('$case_id', '$translation_type_select', '$user_from', '$receiver_id', '$translator', '$separate_file_id','$serviceDate','$adviceTimeFrom','$adviceTimeTo', '2')";
 		if ($conn->query($sql_insert_translate) === TRUE) {
 			$last_translation_id = $conn->insert_id;
 			$newPdfName = $last_translation_id . $newPdfName;
@@ -7493,15 +7493,15 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 					$sql_new_process = "INSERT INTO `tb_process`(`case_id`, `sign_status`, `sign_by`, `processor`, `comment_to`, `actual`, `comment_status`) VALUES ('$case_id', '30', '$user_from', '$receiver_id', 'Խնդրում եմ հաստատել։', '1', '1')";
 					if ($conn->query($sql_new_process) === TRUE) {
 						// $last_request_id = $conn->insert_id;
-						
+
 						if ($_POST['translation_type_select'] != 2) {
 							$text_color = '#FFFF00';
 							$border_color = '#FF0000';
-							$date_from=$_POST['service_date'].' '.$adviceTimeFrom.':00';
-							$date_to= $_POST['service_date'].' '.$adviceTimeTo.':00';
+							$date_from = $_POST['service_date'] . ' ' . $adviceTimeFrom . ':00';
+							$date_to = $_POST['service_date'] . ' ' . $adviceTimeTo . ':00';
 							$query_translation_calendar = "INSERT INTO `tb_calendar`(`case_id`, `user_id`,  `inter_comment`, `inter_date_from`, `inter_date_to`, `text_color`, `border_color`) VALUES ($case_id,$user_from,'$language', '$date_from', '$date_to', '$text_color', '$border_color')";
 							$conn->query($query_translation_calendar);
-					
+
 						}
 
 						notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, '', 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
@@ -7575,6 +7575,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 							array_unshift($attachedFilePaths, $location);
 						}
 						sendMail($gmail_login, $gmail_pass, $gmail_host, $gmail_port, $mail_receiver, $mail_subject, $mail_body, $attachedFilePaths);
+						$query_update_tbtranslate = "UPDATE `tb_translate` SET sign_status = '3', mailed_to_translators = NOW()  WHERE translate_id = $translation_id";
+						$conn->query($query_update_tbtranslate);
 						notify($conn, 'Թարգմանության', 'Թարգմանության հարցումը հաստատված է։', 0, $user_from, $officer, $case_id, '', 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
 					} else {
 						echo "Error: " . $sql_new_process . "<br>" . $conn->error;
@@ -7588,6 +7590,104 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 		}
 
 
+	}
+
+	## Single translation info
+	######################################
+	if (isset($_GET['cmd']) && $_GET['cmd'] === 'translation_info') {
+		$translation_case_id = $_GET['case_id'];
+		$myObj = new stdClass();
+		$data = [];
+
+
+		$query_translations = " SELECT * FROM `tb_translate` AS T
+							    LEFT JOIN 
+								(
+									SELECT  file_name AS unsigned_file, translation_id 
+									FROM `tb_cover_files`
+									WHERE cover_status = '2' AND type='1'
+								) AS CU	ON T.translate_id = CU.translation_id 
+     							LEFT JOIN 
+     							(
+     							    SELECT  file_name AS signed_file, translation_id 
+									FROM `tb_cover_files`
+									WHERE cover_status = '3' AND type='1'
+     							) AS SC ON T.translate_id = SC.translation_id 
+								LEFT JOIN `tb_translation_type` AS TT ON T.translate_type = TT.ttype_id 
+								LEFT JOIN `tb_translators` AS TR ON T.translator_company = TR.translator_id
+								LEFT JOIN `cover_sign_status` AS CS ON T.sign_status = CS.sign_status_id
+								WHERE T.case_id=$translation_case_id ORDER BY T.translate_id DESC ";
+
+		$result_translations = $conn->query($query_translations);
+		if ($result_translations->num_rows > 0) {
+			while ($row_translations = $result_translations->fetch_assoc()) {
+				$translation_info = new stdClass();
+				$documents = [];
+				$href_unsigned = 'uploads/' . $translation_case_id . '/cover/' . $row_translations['unsigned_file'];
+				$href_signed = '';
+
+				//echo $row_translations['file_name']
+				$translate_time_from = '-';
+				$translate_time_to = '-';
+				$approve_date = '-';
+				$a_create_value = "Չստորագրված խնդրագիր";
+				$a_approve_value = '';
+				if ($row_translations['sign_status'] == '3') {
+					$a_approve_value = 'Ստորագրված խնդրագիր';
+					$href_signed = 'uploads/' . $translation_case_id . '/cover/' . $row_translations['signed_file'];
+				}
+				if (!empty($row_translations['translate_time_from'])) {
+					$translate_time_from = $row_translations['translate_time_from'];
+				}
+				if (!empty($row_translations['translate_time_to'])) {
+					$translate_time_to = $row_translations['translate_time_to'];
+				}
+				if (!is_null($row_translations['mailed_to_translators'])) {
+					list($year, $month, $day) = explode('-', explode(' ', $row_translations['mailed_to_translators'])[0]);
+					$approve_date = $day . '.' . $month . '.' . $year;
+				}
+				list($year, $month, $day) = explode('-', explode(' ', $row_translations['translate_date'])[0]);
+				$translate_date = $day . '.' . $month . '.' . $year;
+				list($year, $month, $day) = explode('-', explode(' ', $row_translations['filled_in_date'])[0]);
+				$filled_in_date = $day . '.' . $month . '.' . $year;
+
+
+				$translation_info->id = $row_translations['translate_id'];
+				$translation_info->type = $row_translations['trans_type'];
+				$translation_info->create_date = $filled_in_date;
+				$translation_info->approve_date = $approve_date;
+				$translation_info->company = $row_translations['translator_name_arm'];
+				$translation_info->time_from = $translate_time_from;
+				$translation_info->time_to = $translate_time_to;
+				$translation_info->sign_status = $row_translations['sign_status_name'];
+				$translation_info->date = $translate_date;
+				$translation_info->a_create_value = $a_create_value;
+				$translation_info->a_create_href = $href_unsigned;
+				$translation_info->a_approve_value = $a_approve_value;
+				$translation_info->a_approve_href = $href_signed;
+
+				if ($row_translations['translator_name_arm'] != '') {
+					$files_array = explode(',', $row_translations['translator_name_arm']);
+					$query_attached_files = "SELECT * FROM files LEFT JOIN  WHERE id IN($files_array)";
+					$result_attached_files = $conn->query($query_attached_files);
+					if ($result_attached_files->num_rows > 0) {
+						while ($row_attached_files = $result_attached_files->fetch_assoc()) {
+							$single_doc = new stdClass();
+							$single_doc->doc_name = "Անձնագիր";
+							$single_doc->doc_href = "uploads/125/05102021222548dimum.pdf";
+							$documents[] = $single_doc;
+						}
+					}
+				}
+
+				$translation_info->documents = $documents;
+				$data[] = $translation_info;
+			}
+
+		}
+		$myObj->data = $data;
+		echo json_encode($myObj);
+		exit;
 	}
 
 
