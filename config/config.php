@@ -7666,15 +7666,19 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 				$translation_info->a_approve_value = $a_approve_value;
 				$translation_info->a_approve_href = $href_signed;
 
-				if ($row_translations['translator_name_arm'] != '') {
-					$files_array = explode(',', $row_translations['translator_name_arm']);
-					$query_attached_files = "SELECT * FROM files LEFT JOIN  WHERE id IN($files_array)";
+				if ($row_translations['file_ids'] != '') {
+					$files_array = $row_translations['file_ids'];
+					$query_attached_files = "SELECT a.file_name,a.file_path,b.file_type FROM files a 
+											 INNER JOIN tb_file_type b ON a.file_type = b.file_type_id WHERE a.id IN ($files_array)";
 					$result_attached_files = $conn->query($query_attached_files);
 					if ($result_attached_files->num_rows > 0) {
 						while ($row_attached_files = $result_attached_files->fetch_assoc()) {
 							$single_doc = new stdClass();
-							$single_doc->doc_name = "Անձնագիր";
-							$single_doc->doc_href = "uploads/125/05102021222548dimum.pdf";
+							$file_type = $row_attached_files['file_type'];
+							$file_path = $row_attached_files['file_path'];
+
+							$single_doc->doc_name = $file_type;
+							$single_doc->doc_href = $file_path;
 							$documents[] = $single_doc;
 						}
 					}
