@@ -466,11 +466,20 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 		          $query_translations = "SELECT * FROM `tb_cover_files`
 										INNER JOIN `tb_translate` ON tb_cover_files.translation_id = tb_translate.translate_id    
 										INNER JOIN `tb_translation_type` ON tb_translate.translate_type = tb_translation_type.ttype_id 
-										INNER JOIN `tb_translators` ON tb_translate.translator_company = tb_translators.translator_id  
+										INNER JOIN `tb_translators` ON tb_translate.translator_company = tb_translators.translator_id
+										INNER JOIN `cover_sign_status` ON tb_cover_files.cover_status = cover_sign_status.sign_status_id
 										WHERE tb_cover_files.case_id=$case ORDER BY tb_cover_files.cover_file_id DESC ";
 				  $result_translations= $conn -> query($query_translations);
 				  if($result_translations->num_rows > 0){
 					  while($row_translations = $result_translations->fetch_assoc()){
+						  $translate_time_from = '-';
+						  $translate_time_to = '-';
+						  if(!empty($row_translations['translate_time_from'])){
+							  $translate_time_from=$row_translations['translate_time_from'];
+						  }
+						  if(!empty($row_translations['translate_time_to'])){
+							  $translate_time_to = $row_translations['translate_time_to'];
+						  }
 						  list($year, $month,$day) = explode('-',explode(' ', $row_translations['translate_date'])[0]);
 						  $translate_date = $day.'.'.$month.'.'.$year;
 						  list($year, $month,$day) = explode('-',explode(' ', $row_translations['filled_in_date'])[0]);
@@ -483,9 +492,9 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 								  <td><a href="<?php echo  $href ?>" download><?php echo $row_translations['file_name']; ?></a></td>
 								  <td><?php echo $row_translations['translator_name_arm']; ?></td>
 								  <td><?php echo $translate_date; ?></td>
-								  <td><?php echo $row_translations['translate_time_from']; ?></td>
-								  <td><?php echo $row_translations['translate_time_to']; ?></td>
-								  <td></td>
+								  <td><?php echo $translate_time_from; ?></td>
+								  <td><?php echo $translate_time_to; ?></td>
+								  <td><?php echo $row_translations['sign_status_name']; ?></td>
 							  </tr>
 			  <?php
 					  }
@@ -771,7 +780,7 @@ else {
                                   <label class="label_pers_page">Ուղեկցող նամակ</label>
                                   <a href="uploads/'.$case.'/cover/'.$cover_file.'" class="form-control form-control-sm" download> <i class="fas fa-download"></i>Ներբեռնել ուղեկցող նամակը </a>          
                                 </div>
-                                <form method="POST"  action="config/config.php" enctype="multipart/form-data">          
+                                <form method="POST"  action="config/config.php?cmd=send_mail" id="send_mail_form" enctype="multipart/form-data">          
                                   <input type="hidden" name="case_id_for_email" value="'.$case.'">   
                                   <input type="hidden" name="hidden_officer" value="'.$officer_id.'" />
                                   <input type="hidden" name="hidden_translate" value="'.$translation_id.'" />
@@ -783,7 +792,7 @@ else {
                                         <label class="custom-file-label" for="customFile">Ընտրե՛ք ֆայլը</label>
                                       </div>   
                                       <div class="form-group col-md-6">
-                                        <input type="submit" name="send_email" class="btn btn-success" value="ՀԱՍՏԱՏԵԼ"/>
+                                        <button type="submit" name="send_email" id="send_email_button" class="btn btn-success" >ՀԱՍՏԱՏԵԼ</button>
                                       </div> 
                                     </div>    
                                   </div>              
@@ -1544,6 +1553,19 @@ WHERE a.case_id = $case";
 
   <script>
 $(document).ready(function(){
+
+	//Send translate to approve button on click
+	$(document).on('submit','#translation_modal',function (){
+		$('#send_approve_translate').attr("disabled", true);
+		$('#send_approve_translate').html('<i class="fa fa-spinner fa-spin"></i>Loading');
+	})
+
+	//Approving translate by devhead button on click
+	$(document).on('submit','#send_mail_form',function (){
+		$('#send_email_button').attr("disabled", true);
+		$('#send_email_button').html('<i class="fa fa-spinner fa-spin"></i>Loading');
+	})
+
 
 
     $('#mail_translate').on('click', function (e) {

@@ -7253,7 +7253,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 	}
 
 
-	############## written translation button onclick ###############
+	############## translation button onclick ###############
 	if (isset($_POST['translate_case'])) {
 		$case_id = $_POST['translate_case'];
 		$language = $_POST['language'];
@@ -7295,7 +7295,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
           <button type="button" class="close" data-dismiss="modal">×</button>          
         </div>
         <div class="modal-body">
-        <form method="POST" action="config/config.php" id="translation_modal">
+        <form method="POST" action="config/config.php?cmd=send_approve_translate" id="translation_modal">
         <div class="col-md-6">'
 			. $opt_translation_type .
 			'</div>
@@ -7385,7 +7385,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">ՓԱԿԵԼ</button>          
-          <input type="submit" name="send_approve_translate" translate_type="written" id="send_approve_translate" class="btn btn-primary" form="translation_modal" value="ՈւՂԱՐԿԵԼ">;
+          <button type="submit" name="send_approve_translate" translate_type="written" id="send_approve_translate" class="btn btn-primary" form="translation_modal" >ՈւՂԱՐԿԵԼ</button>
         </div>
       </div>
       </form>
@@ -7418,8 +7418,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 	}
 
 	########### Request  for  translation   ##############
-	if (isset($_POST['send_approve_translate'])) {
-
+	if (isset($_GET['cmd']) && $_GET['cmd']=='send_approve_translate') {
 		//Variables
 		$separate_file_id = null;
 		$translator = $_POST['select_translator'];
@@ -7504,7 +7503,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 							$conn->query($query_translation_calendar);
 					
 						}
-						
+
 						notify($conn, 'Թարգմանություն', 'Խնդրում եմ հաստատել։', 0, $user_from, $receiver_id, $case_id, '', 1, 0, 'changeLocation', array('cases', 'case_page', 'case', $case_id));
 
 					} else {
@@ -7526,7 +7525,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 	################## Approving written translation by Devhead #######################
 
-	if (isset($_POST['send_email'])) {
+	if (isset($_GET['cmd']) && $_GET['cmd'] == 'send_mail') {
 
 		$case_id = $_POST['case_id_for_email'];
 		$officer = $_POST['hidden_officer'];
