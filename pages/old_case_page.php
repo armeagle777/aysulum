@@ -335,22 +335,32 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
 <div id="decisions" class="tabcontent">
             <h5 class="sub_title" style="margin-top: 5px; margin-bottom: 5px;"> Ընդունված որոշումներ </h5>
             <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="label_pers_page">ՄԾ որոշում</label>
                         <?php echo $optmsdec ?>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label class="label_pers_page">ՄԾ որոշման #</label>
+                        <input type="text" class="form-control form-control-sm" name="ms_decision_num">
+                    </div>
+
+                    <div class="col-md-4">
                         <label class="label_pers_page">ՄԾ որոշման ամսաթիվ</label>
                         <input type="date" class="form-control form-control-sm" name="ms_decision_date" value="<?php echo $ms_decision_date ?>">
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="label_pers_page">Վերջնական որոշում</label>
                         <?php echo $optfinaldec ?>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label class="label_pers_page">Վերջնական որոշման #</label>
+                        <input type="text" class="form-control form-control-sm" name="ms_decision_num">
+                    </div>
+
+                    <div class="col-md-4">
                         <label class="label_pers_page">վերջնական որոշման ամսաթիվ</label>
                         <input type="date" class="form-control form-control-sm" name="ms_decision_date" value="<?php echo $final_decision_date ?>">
                     </div>
