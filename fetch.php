@@ -4,95 +4,90 @@
  $u_id = $_POST['user'];
 
 
- if (isset($_POST["view"])) 
- {
- 	$sql = "SELECT * FROM tb_notifications a INNER JOIN users b ON a.comment_from = b.id WHERE comment_to = $u_id AND comment_status = 0 ORDER BY comment_id DESC LIMIT 10";
- 	$result = $conn->query($sql);
+	if (isset($_POST["view"])) {
+		$sql = "SELECT * FROM tb_notifications a INNER JOIN users b ON a.comment_from = b.id WHERE comment_to = $u_id AND comment_status = 0 ORDER BY comment_id DESC LIMIT 10";
+		$result = $conn->query($sql);
 
- 	$output = '<ul class="dropdowns">';
+		$output = '<ul class="dropdowns">';
 
- 	if ($result->num_rows > 0) 
- 	{
-        $case = 0;
- 		while($row = mysqli_fetch_array($result))
- 		{
- 		    if ($row['note_type'] == 1 ) {
-                             $output .= '
+		if ($result->num_rows > 0) {
+			$case = 0;
+			while ($row = mysqli_fetch_array($result)) {
+				if ($row['note_type'] == 1) {
+					$output .= '
                             <li class="none_padding_li">
-                                   <a href="user.php?page=cases&homepage=case_page&case='.$row["case_id"].'&notification_id='.$row['comment_id'].'" style="display: inline-block; padding: 20px 16px;width:100%;">
-                                          <strong> '.$row["comment_subject"].' </strong> <br />
-                                          <strong> </span>  '.$row["f_name"]. ' ' .$row["l_name"] .'ից </strong> <br />
-                                          <em>'.$row["comment_text"].'</em>
+                                   <a href="user.php?page=cases&homepage=case_page&case=' . $row["case_id"] . '&notification_id=' . $row['comment_id'] . '" style="display: inline-block; padding: 20px 16px;width:100%;">
+                                          <strong> ' . $row["comment_subject"] . ' </strong> <br />
+                                          <strong> </span>  ' . $row["f_name"] . ' ' . $row["l_name"] . 'ից </strong> <br />
+                                          <em>' . $row["comment_text"] . '</em>
                                    </a>
                             </li>
                      ';
-                     }
-                     if ($row['note_type'] == 2 ) {
-                             $output .= '
+				}
+				if ($row['note_type'] == 2) {
+					$output .= '
                             <li class="none_padding_li">
-                                   <a href="user.php?page=cases&homepage=coi_page&coi='.$row["coi_id"].'&notification_id='.$row['comment_id'].'&case='.$row["case_id"].'" style="display: inline-block; padding: 20px 16px;width:100%;">
-                                          <strong> '.$row["comment_subject"].' </strong> <br />
-                                          <strong> </span>  '.$row["f_name"]. ' ' .$row["l_name"] .'ից </strong> <br />
-                                          <em>'.$row["comment_text"].'</em>
+                                   <a href="user.php?page=cases&homepage=coi_page&coi=' . $row["coi_id"] . '&notification_id=' . $row['comment_id'] . '&case=' . $row["case_id"] . '" style="display: inline-block; padding: 20px 16px;width:100%;">
+                                          <strong> ' . $row["comment_subject"] . ' </strong> <br />
+                                          <strong> </span>  ' . $row["f_name"] . ' ' . $row["l_name"] . 'ից </strong> <br />
+                                          <em>' . $row["comment_text"] . '</em>
                                    </a>
                             </li>
                      ';
-                     }	
-                     if ($row['note_type'] == 3 ) {
-                             $output .= '
+				}
+				if ($row['note_type'] == 3) {
+					$output .= '
                             <li class="none_padding_li">
-                                   <a href="user.php?page=cases&homepage=body_page&request='.$row["request_id"].'&notification_id='.$row['comment_id'].'&case='.$row["case_id"].'" style="display: inline-block; padding: 20px 16px;width:100%;">
-                                          <strong> '.$row["comment_subject"].' </strong> <br />
-                                          <strong> </span>  '.$row["f_name"]. ' ' .$row["l_name"] .'ից </strong> <br />
-                                          <em>'.$row["comment_text"].'</em>
+                                   <a href="user.php?page=cases&homepage=body_page&request=' . $row["request_id"] . '&notification_id=' . $row['comment_id'] . '&case=' . $row["case_id"] . '" style="display: inline-block; padding: 20px 16px;width:100%;">
+                                          <strong> ' . $row["comment_subject"] . ' </strong> <br />
+                                          <strong> </span>  ' . $row["f_name"] . ' ' . $row["l_name"] . 'ից </strong> <br />
+                                          <em>' . $row["comment_text"] . '</em>
                                    </a>
                             </li>
                      ';
-                     }      
+				}
 
-                     if ($row['note_type'] == 4 ) {
-                             $output .= '
+				if ($row['note_type'] == 4) {
+					$output .= '
                             <li class="none_padding_li">
-                                   <a href="user.php?page=cases&homepage=draft_page&draft='.$row["draft_id"].'&notification_id='.$row['comment_id'].'&case='.$row["case_id"].'" style="display: inline-block; padding: 20px 16px;width:100%;">
-                                          <strong> '.$row["comment_subject"].' </strong> <br />
-                                          <strong> </span>  '.$row["f_name"]. ' ' .$row["l_name"] .'ից </strong> <br />
-                                          <em>'.$row["comment_text"].'</em>
+                                   <a href="user.php?page=cases&homepage=draft_page&draft=' . $row["draft_id"] . '&notification_id=' . $row['comment_id'] . '&case=' . $row["case_id"] . '" style="display: inline-block; padding: 20px 16px;width:100%;">
+                                          <strong> ' . $row["comment_subject"] . ' </strong> <br />
+                                          <strong> </span>  ' . $row["f_name"] . ' ' . $row["l_name"] . 'ից </strong> <br />
+                                          <em>' . $row["comment_text"] . '</em>
                                    </a>
                             </li>
                      ';
-                     } 
+				}
 
-                     if ($row['note_type'] == 5 ) {
-                             $output .= '
+				if ($row['note_type'] == 5) {
+					$output .= '
                             <li class="none_padding_li">
-                                   <a href="user.php?page=cases&homepage=order_page&order='.$row["order_id"].'&notification_id='.$row['comment_id'].'&case='.$row["case_id"].'" style="display: inline-block; padding: 20px 16px;width:100%;">
-                                          <strong> '.$row["comment_subject"].' </strong> <br />
-                                          <strong> </span>  '.$row["f_name"]. ' ' .$row["l_name"] .'ից </strong> <br />
-                                          <em>'.$row["comment_text"].'</em>
+                                   <a href="user.php?page=cases&homepage=order_page&order=' . $row["order_id"] . '&notification_id=' . $row['comment_id'] . '&case=' . $row["case_id"] . '" style="display: inline-block; padding: 20px 16px;width:100%;">
+                                          <strong> ' . $row["comment_subject"] . ' </strong> <br />
+                                          <strong> </span>  ' . $row["f_name"] . ' ' . $row["l_name"] . 'ից </strong> <br />
+                                          <em>' . $row["comment_text"] . '</em>
                                    </a>
                             </li>
                      ';
-                     }      
+				}
 
-            $case = $row['case_id'];
- 		}
-               $output.='</ul>';
- 	}
- 	else
- 	{
- 	       $output= '<p href="#" class="font-weight-bold text-left mt-2 ml-2 font-italic">Նոր ծանուցումներ չկան</p>';	
- 	}	
-        
- 	 $sql2 = "SELECT * FROM tb_notifications WHERE comment_status = 0 AND comment_to = $u_id ";
- 	 $result_1 = mysqli_query($conn, $sql2);
- 	 $count = mysqli_num_rows($result_1);
- 	 $data = array(
- 	 	'notification'		    => $output,
- 	 	'unseen_notification' 	    => $count
- 	 );
+				$case = $row['case_id'];
+			}
+			$output .= '</ul>';
+		} else {
+			$output = '<p href="#" class="font-weight-bold text-left mt-2 ml-2 font-italic">Նոր ծանուցումներ չկան</p>';
+		}
 
- 	echo json_encode($data);
- } 
+		$sql2 = "SELECT * FROM tb_notifications WHERE comment_status = 0 AND comment_to = $u_id ";
+		$result_1 = mysqli_query($conn, $sql2);
+		$count = mysqli_num_rows($result_1);
+		$data = array(
+			'notification' => $output,
+			'unseen_notification' => $count
+		);
+
+		echo json_encode($data);
+	}
 
  if(isset($_POST['requests'])){
 

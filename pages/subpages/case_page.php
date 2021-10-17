@@ -546,7 +546,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 								<td><?php echo $file_type ?>
 								<td>
 									<a href="uploads/<?= $row['case_id'] . '/' . 'requests/' . $row_request['file_name'] ?>"
-									   download> <i class="fa fa-download" aria-hidden="true"></i>Ներբեռնել
+									   download> <i class="fa fa-download" aria-hidden="true"></i>
 									</a></td>
 							</tr>
 
@@ -616,7 +616,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 								<td>
 									<a href="uploads/<?= $row_coi['case_id'] . '/' . 'coi' . '/' . $row_coi['file_name'] ?>"
 									   download> <i class="fa fa-download"
-									                aria-hidden="true"></i>Ներբեռնել
+									                aria-hidden="true"></i>
 									</a>
 								</td>
 							</tr>
@@ -845,7 +845,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 											<td>
 												<a href="uploads/<?= $row_files['case_id'] . '/' . $row_files['file_name'] ?>"
 												   download> <i class="fa fa-download"
-												                aria-hidden="true"></i>Ներբեռնել
+												                aria-hidden="true"></i>
 												</a>
 											</td>
 											<td> <?php echo $decision_status ?> </td>
@@ -1344,7 +1344,7 @@ WHERE a.case_id = $case";
 									<td><?php echo $uploaded ?></td>
 									<td><a href="uploads/<?= $row_files['case_id'] . '/' . $row_files['file_name'] ?>"
 									       download> <i class="fa fa-download"
-									                    aria-hidden="true"></i>Ներբեռնել</a></td>
+									                    aria-hidden="true"></i></a></td>
 									<td><a href="#" class="delete_file" modal_id="<?php echo $case_id ?>"
 									       delete_id="<?php echo $file_id ?>"> <i class="fas fa-trash-alt"></i></a></td>
 								</tr>
@@ -1378,7 +1378,7 @@ WHERE a.case_id = $case";
 									<td><?php echo $full_name ?>  </td>
 									<td><?php echo $file_type ?>  </td>
 									<td><a href="uploads/<?= $case_id . '/' . $pers_id . '/' . $file_name ?>" download>
-											<i class="fa fa-download" aria-hidden="true"></i>Ներբեռնել
+											<i class="fa fa-download" aria-hidden="true"></i>
 										</a></td>
 									<td><a href="#" class="delete_file" modal_id="<?php echo $case_id ?>"
 									       delete_id="<?php echo $file_id ?>"> <i class="fas fa-trash-alt"></i></a></td>

@@ -135,7 +135,11 @@ if(isset($_GET['page']) && file_exists('pages/'.$_GET['page'].'.php')){
                     }
                 });
             }
+
+			setInterval(function(){
             load_unseen_notification();
+
+	        },5000);
 
 
 
