@@ -21,13 +21,13 @@
 
     function setBungieWidth() {
         // calculate the visible width of the bungie 
-        visiblewidth = Math.ceil(window.innerWidth - ((leftdiv.offsetWidth + rightdiv.offsetWidth)));
+        visiblewidth = Math.ceil(window.innerWidth - ((leftdiv.offsetWidth + rightdiv.offsetWidth)) + 45);
 
         // determine how much to scroll on each step
         step = Math.ceil(listwidth / (list.getElementsByTagName("LI").length / 2));
 
         // show scrolling buttons only if the list is too wide for the bungie
-        if (listwidth > visiblewidth) {
+        if (listwidth > visiblewidth - 250) {
             addScrollButtons();
         } else {
             removeScrollButtons();
@@ -56,13 +56,12 @@
 
     function addScrollButtons() {
         removeScrollButtons();
-
         // add the right button and subtract it's width from the list's visible width
         rightbutton = document.createElement("button");
         rightbutton.setAttribute("id", "right-btn");
         bungie.parentNode.appendChild(rightbutton);
         rightbutton.addEventListener("click", scrollRight);
-        visiblewidth -= rightbutton.offsetWidth;
+        visiblewidth -= rightbutton.offsetWidth+150;
 
         // add the left button and subtract it's width from the list's visible width
         leftbutton = document.createElement("button");
@@ -72,7 +71,7 @@
         visiblewidth -= leftbutton.offsetWidth;
 
         // set maxScroll, which is the limit of how far right the bungie bar can be scrolled
-        maxScroll = (0 - (listwidth - visiblewidth));
+        maxScroll = (0 - (listwidth - visiblewidth) -250);
     }
 
     function removeScrollButtons() {

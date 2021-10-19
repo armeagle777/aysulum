@@ -354,7 +354,7 @@ $opt_residency = $opt_residency."<option value=$row_residency[country_id]> $row_
     $("#mname_eng_error").css("visibility", "hidden");
     for(let i = 0; i< f_name_arm.length; i++)
     {
-      if(f_name_arm.charCodeAt(i)<1329 || f_name_arm.charCodeAt(i)> 1414 || (f_name_arm.charCodeAt(i)>1366 && f_name_arm.charCodeAt(i)<1377))
+      if((f_name_arm.charCodeAt(i)<1329 && f_name_arm.charCodeAt(i) != 32) || f_name_arm.charCodeAt(i)> 1414 || (f_name_arm.charCodeAt(i)>1366 && f_name_arm.charCodeAt(i)<1377))
       {
         $("#fname_am_error").css("visibility", "visible");
         e.preventDefault();
@@ -362,7 +362,7 @@ $opt_residency = $opt_residency."<option value=$row_residency[country_id]> $row_
     }
     for(let i = 0; i< l_name_arm.length; i++)
     {
-      if(l_name_arm.charCodeAt(i)<1329 || l_name_arm.charCodeAt(i)> 1414 || (l_name_arm.charCodeAt(i)>1366 && l_name_arm.charCodeAt(i)<1377))
+      if((l_name_arm.charCodeAt(i)<1329 && l_name_arm.charCodeAt(i) != 32) || l_name_arm.charCodeAt(i)> 1414 || (l_name_arm.charCodeAt(i)>1366 && l_name_arm.charCodeAt(i)<1377))
       {
         $("#lname_am_error").css("visibility", "visible");
         e.preventDefault();
@@ -370,7 +370,7 @@ $opt_residency = $opt_residency."<option value=$row_residency[country_id]> $row_
     }
     for(let i = 0; i< m_name_arm.length; i++)
     {
-      if(m_name_arm.charCodeAt(i)<1329 || m_name_arm.charCodeAt(i)> 1414 || (m_name_arm.charCodeAt(i)>1366 && m_name_arm.charCodeAt(i)<1377))
+      if((m_name_arm.charCodeAt(i)<1329 && m_name_arm.charCodeAt(i) != 32) || m_name_arm.charCodeAt(i)> 1414 || (m_name_arm.charCodeAt(i)>1366 && m_name_arm.charCodeAt(i)<1377))
       {
         $("#mname_am_error").css("visibility", "visible");
         e.preventDefault();
@@ -378,7 +378,7 @@ $opt_residency = $opt_residency."<option value=$row_residency[country_id]> $row_
     }
     for(let i = 0; i< f_name_eng.length; i++)
     {
-      if(f_name_eng.charCodeAt(i)<65 || f_name_eng.charCodeAt(i)> 122 || (f_name_eng.charCodeAt(i)>90 && f_name_eng.charCodeAt(i)<97))
+      if((f_name_eng.charCodeAt(i)<65 && f_name_eng.charCodeAt(i) != 32) || f_name_eng.charCodeAt(i)> 122 || (f_name_eng.charCodeAt(i)>90 && f_name_eng.charCodeAt(i)<97))
       {
         $("#fname_eng_error").css("visibility", "visible");
         e.preventDefault();
@@ -386,7 +386,7 @@ $opt_residency = $opt_residency."<option value=$row_residency[country_id]> $row_
     }
     for(let i = 0; i< l_name_eng.length; i++)
     {
-      if(l_name_eng.charCodeAt(i)<65 || l_name_eng.charCodeAt(i)> 122 || (l_name_eng.charCodeAt(i)>90 && l_name_eng.charCodeAt(i)<97))
+      if((l_name_eng.charCodeAt(i)<65 && l_name_eng.charCodeAt(i) != 32) || l_name_eng.charCodeAt(i)> 122 || (l_name_eng.charCodeAt(i)>90 && l_name_eng.charCodeAt(i)<97))
       {
         $("#lname_eng_error").css("visibility", "visible");
         e.preventDefault();
@@ -394,7 +394,7 @@ $opt_residency = $opt_residency."<option value=$row_residency[country_id]> $row_
     }
     for(let i = 0; i< m_name_eng.length; i++)
     {
-      if(m_name_eng.charCodeAt(i)<65 || m_name_eng.charCodeAt(i)> 122 || (m_name_eng.charCodeAt(i)>90 && m_name_eng.charCodeAt(i)<97))
+      if((m_name_eng.charCodeAt(i)<65 && m_name_eng.charCodeAt(i) != 32) || m_name_eng.charCodeAt(i)> 122 || (m_name_eng.charCodeAt(i)>90 && m_name_eng.charCodeAt(i)<97))
       {
         $("#mname_eng_error").css("visibility", "visible");
         e.preventDefault();
