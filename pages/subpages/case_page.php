@@ -1,8 +1,7 @@
 <?php
 
 	require_once 'config/connect.php';
-	require_once 'config/query_case.php';
-
+	
 
 	$case = $_GET['case'];
 	$u_id = $_SESSION['user_id'];
@@ -12,7 +11,7 @@
 		$note_id = $_GET['notification_id'];
 		$query = "UPDATE tb_notifications SET comment_status = 1 WHERE comment_id = $note_id";
 		$result_notify = $conn->query($query);
-	}
+	} 
 
 	if (isset($_GET['case'])) {
 		$change_process_read = "UPDATE `tb_process` SET `comment_status`='1' WHERE `case_id` = $case";

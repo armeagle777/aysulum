@@ -638,4 +638,442 @@ if(isset($_POST['save_doc'])){
     }
 }
 
+
+
+if(isset($_POST['edit_dec'])){
+
+  $modal_sign = '';
+  $decision_id = $_POST['edit_dec'];
+
+  $sql_decision = "SELECT a.old_decision_id, a.old_case_id, a.decision_file, a.decission_lvl, a.decision_date, a.decision_type, a.decision_num, b.decision_type AS DECISION_TEXT FROM tb_old_decisions a 
+                                          INNER JOIN tb_decision_types b ON a.decision_type = b.decision_type_id
+                                          WHERE a.old_decision_id = $decision_id";
+  $result = $conn->query($sql_decision);
+  
+  if($result ->num_rows > 0){
+    $row = $result->fetch_assoc();
+    $old_case = $row['old_case_id'];
+    $decision_file = $row['decision_file'];
+    $decision_lvl  = $row['decission_lvl'];
+    $decison_type_id    = $row['decision_type'];
+    $dec_date      = $row['decision_date'];
+    $dec_num       = '-';
+    if(!empty($row['decision_num'])){
+       $dec_num       = $row['decision_num'];
+    }
+
+
+      $opt_dec_lvl =   '<select name="select_dec_lvl" id="select_dec_lvl" class="form-control form-control-sm">';
+      $opt_dec_lvl .=  '<option selected disabled hidden>Ընրել որոշումը</option>';
+
+      if($decision_lvl == '1'){
+        $opt_dec_lvl .= "<option selected=\"selected\" value='1'>".'ՄԾ որոշում'."</option>
+         <option value='2'>Վերջնական որոշում</option>";
+      }
+      if($decision_lvl == '2'){
+        $opt_dec_lvl .= "<option selected=\"selected\" value='2'>".'Վերջնական որոշում'."</option>
+        <option value='1'>ՄԾ որոշում</option>";
+      }
+      if(empty($decision_lvl)) {
+       $opt_dec_lvl .= '<option value="1">ՄԾ որոշում</option>
+        <option value="2">Վերջնական որոշում</option>
+        ';
+      }
+      $opt_dec_lvl .= "</select>";
+
+
+
+
+      $sql_decision_types = "SELECT * FROM tb_decision_types";
+      $decision_type_res = mysqli_query($conn, $sql_decision_types);
+      $opt_decision_type = '<select name="select_dec_type" id="select_dec_type" class="form-control form-control-sm">';
+      $opt_decision_type.= '<option selected disabled hidden>Ընրել որոշումը</option>';
+      while($row1 = mysqli_fetch_array($decision_type_res))
+      {
+        if($row1['decision_type_id'] == $decison_type_id)
+        {
+        $opt_decision_type.= "<option selected=\"selected\" value=".$row1['decision_type_id'].">".$row1['decision_type']."</option>";
+        }
+        else
+        {
+        $opt_decision_type.= "<option value=".$row1['decision_type_id'].">".$row1['decision_type']."</option>";
+        }
+      }
+      $opt_decision_type.="</select>";
+  }                                        
+
+ $modal_sign .= '<div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Խմբագրել որոշումը</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="config/config_old.php" id="dec_edit" enctype="multipart/form-data">
+          
+          <input type="hidden" value="'.$decision_id.'" name="old_dec_id" />
+          <input type="hidden" value="'.$old_case.'" name="old_case" />
+          <div class="row">
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշման տեսակ</label>
+                  '.$opt_dec_lvl.'
+                </div>
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշում</label>
+                  '.$opt_decision_type.'
+                </div>
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշման #</label>
+                  <input type="text" class="form-control form-control-sm" name="dec_num" value="'.$dec_num.'" />
+                </div>
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշման ամսաթիվ</label>
+                  <input type="date" class="form-control form-control-sm" name="dec_date" value="'.$dec_date.'" />
+                </div>
+
+                
+        </div>  
+
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">ՓԱԿԵԼ</button>
+          <input type="submit" name="save_dec_edit" class="btn btn-primary" form="dec_edit" value="ՊԱՀՊԱՆԵԼ">
+        </div>
+      </div>
+      </form>
+    </div>
+    ';
+
+    echo $modal_sign; 
+}
+
+
+if(isset($_POST['save_dec_edit'])){
+
+  $dec_id     = $_POST['old_dec_id'];
+  $dec_lvl    = $_POST['select_dec_lvl'];
+  $dec_type   = $_POST['select_dec_type'];
+  $dec_num    = $_POST['dec_num'];
+  $dec_date   = $_POST['dec_date']; 
+  $case_id    = $_POST['old_case'];
+
+  $update_decision = "UPDATE `tb_old_decisions` SET 
+  `decission_lvl`='$dec_lvl',
+  `decision_date`='$dec_date',
+  `decision_type`='$dec_type',
+  `decision_num`='$dec_num'
+   WHERE old_decision_id = $dec_id";
+
+   if($conn->query($update_decision) === TRUE){
+     header('location: ../user.php?page=old_case_page&old_case=' . $case_id);
+   }
+
+}
+
+
+
+if(isset($_POST['view_dec'])){
+
+  $modal_view_dec = '';
+  $decision_id = $_POST['view_dec'];
+
+  $sql_decision = "SELECT a.old_decision_id, a.old_case_id, a.decision_file, a.decission_lvl, a.decision_date, a.decision_type, a.decision_num, b.decision_type AS DECISION_TEXT FROM tb_old_decisions a 
+                                          INNER JOIN tb_decision_types b ON a.decision_type = b.decision_type_id
+                                          WHERE a.old_decision_id = $decision_id";
+  $result = $conn->query($sql_decision);
+  
+  if($result ->num_rows > 0){
+    $row = $result->fetch_assoc();
+    $old_case = $row['old_case_id'];
+    $decision_file = $row['decision_file'];
+    $decision_lvl  = '';
+    $dec_date      = $row['decision_date'];
+    $dec_num       = '-';
+    if(!empty($row['decision_num'])){
+       $dec_num       = $row['decision_num'];
+    }
+    
+    if($row['decission_lvl'] == '1'){
+      $decision_lvl = 'ՄԾ որոշում';
+    }
+
+     if($row['decission_lvl'] == '2'){
+      $decision_lvl = 'Վերջնական որոշում';
+    }
+    $decision_txt = $row['DECISION_TEXT'];
+    
+
+
+     
+  }                                        
+
+ $modal_view_dec .= '<div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Որոշման դիտում</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="config/config_old.php" id="dec_edit" enctype="multipart/form-data">
+          
+          <input type="hidden" value="'.$decision_id.'" name="old_dec_id" />
+          <input type="hidden" value="'.$old_case.'" name="old_case" />
+          <div class="row">
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշման տեսակ</label>
+                  <input type="text" class="form-control form-control-sm" value="'.$decision_lvl.'" readonly />
+                </div>
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշում</label>
+                  <input type="text" class="form-control form-control-sm" value="'.$decision_txt.'" readonly />
+                </div>
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշման #</label>
+                  <input type="text" class="form-control form-control-sm" name="dec_num" value="'.$dec_num.'" readonly />
+                </div>
+                <div class="col-md-6">
+                  <label class="label_pers_page">Որոշման ամսաթիվ</label>
+                  <input type="date" class="form-control form-control-sm" name="dec_date" value="'.$dec_date.'" readonly />
+                </div>
+
+                <div class="col-md-12">
+                  <label class="label_pers_page">Որոշման փաստաթուղթը</label>
+                 <a href="old_cases/'.$old_case.'/decisions/'.$decision_id. '/'.$decision_file.'"  download class="form-control form-control-sm"> '.$decision_file.'
+                  </a>
+
+                </div> 
+                
+        </div>  
+
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">ՓԱԿԵԼ</button>
+        
+        </div>
+      </div>
+      </form>
+    </div>
+    ';
+
+    echo $modal_view_dec; 
+}
+
+
+if(isset($_POST['add_dec'])){
+
+  $decison_id = $_POST['add_dec'];
+
+  $modal_add_dec = '';
+
+  $sql_decision = "SELECT a.old_decision_id, a.old_case_id, a.decision_file, a.decission_lvl, a.decision_date, a.decision_type, a.decision_num, b.decision_type AS DECISION_TEXT FROM tb_old_decisions a 
+                                          INNER JOIN tb_decision_types b ON a.decision_type = b.decision_type_id
+                                          WHERE a.old_decision_id = $decison_id";
+  $result = $conn->query($sql_decision);
+  
+  if($result ->num_rows > 0){
+    $row = $result->fetch_assoc();
+    $old_case = $row['old_case_id'];
+    $decision_file = $row['decision_file'];
+    $decision_lvl  = '';
+    $dec_date      = $row['decision_date'];
+    $dec_num       = '-';
+    if(!empty($row['decision_num'])){
+       $dec_num       = $row['decision_num'];
+    }
+    
+    if($row['decission_lvl'] == '1'){
+      $decision_lvl = 'ՄԾ որոշում';
+    }
+
+     if($row['decission_lvl'] == '2'){
+      $decision_lvl = 'Վերջնական որոշում';
+    }
+    $decision_txt = $row['DECISION_TEXT'];
+    
+
+
+     
+  }                      
+
+
+
+
+  $modal_add_dec.= '<div class="modal-dialog modal-xl">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Որոշման վերբեռնում</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="config/config_old.php" id="add_dec" enctype="multipart/form-data">
+          
+          <input type="text" value="'.$decison_id.'" name="old_dec_id" />
+          <input type="text" value="'.$old_case.'" name="old_case" />
+          <div class="row">
+                 <div class="col-md-3">
+                  <label class="label_pers_page">Որոշման տեսակ</label>
+                  <input type="text" class="form-control form-control-sm" value="'.$decision_lvl.'" readonly />
+                </div>
+                <div class="col-md-3">
+                  <label class="label_pers_page">Որոշում</label>
+                  <input type="text" class="form-control form-control-sm" value="'.$decision_txt.'" readonly />
+                </div>
+                <div class="col-md-3">
+                  <label class="label_pers_page">Որոշման #</label>
+                  <input type="text" class="form-control form-control-sm" name="dec_num" value="'.$dec_num.'" readonly />
+                </div>
+                <div class="col-md-3">
+                  <label class="label_pers_page">Որոշման ամսաթիվ</label>
+                  <input type="date" class="form-control form-control-sm" name="dec_date" value="'.$dec_date.'" readonly />
+                </div>
+
+
+
+
+                <div class="col-md-12">
+                  <label class="label_pers_page">Կցել որոշման ֆայլը</label>
+                    <div class="form-group custom-file">
+                      <input type="file" name="file" class="custom-file-input" id="customFile" required="required" />
+                      <label class="custom-file-label" for="customFile">Ընտրե՛ք ֆայլը</label>
+                    </div>
+                </div> 
+
+          </div> 
+                
+
+
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">ՓԱԿԵԼ</button>
+          <input type="submit" name="save_dec_file" class="btn btn-primary" form="add_dec" value="ՊԱՀՊԱՆԵԼ">
+        </div>
+      </div>
+      </form>
+    </div>
+    ';
+
+    echo $modal_add_dec; 
+
+
+}
+
+
+if(isset($_POST['save_dec_file'])){
+
+  $dec_id = $_POST['old_dec_id'];
+  $old_case = $_POST['old_case'];
+
+    if (isset($_FILES['file']['name'])) {
+
+      $filename = $_FILES['file']['name'];
+
+
+      # Location
+      $location = "../old_cases/" . $old_case . "/decisions/" .$dec_id.'/';
+
+      # create directoy if not exists in upload/ directory
+      if (!is_dir($location)) {
+        
+        mkdir($location, 0755);
+      }
+
+      $location .= "/" . $filename;
+      # Upload file
+      if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
+        $update_tb_dec = "UPDATE `tb_old_decisions` SET `decision_file`= '$filename' WHERE old_decision_id = $dec_id";
+        if($conn->query($update_tb_dec) === TRUE){
+           header('location: ../user.php?page=old_case_page&old_case=' . $old_case);
+        }
+        else
+        {
+         echo "Error: " . $update_tb_dec . "<br>" . $conn->error; 
+        }
+      }
+      else {
+        echo "failed to uplpad";
+      }
+
+    }
+
+}
+
+
+if(isset($_POST['save_changes'])){
+
+  $case_id            = $_POST['case_id'];
+  $marz_id            = $_POST['select_marz'];
+  $community_id       = $_POST['select_community'];
+  $setl_id            = $_POST['select_setl'];
+
+  $chk_unaccompanied_child = '';
+  if(isset($_POST['unaccompanied_child'])){
+    $chk_unaccompanied_child = '1';
+  }
+
+  $chk_separated_child = '';
+  if(isset($_POST['separated_child'])){
+    $chk_separated_child = '1';
+  }
+
+  $chk_single_parent = '';
+  if(isset($_POST['single_parent'])){
+    $chk_single_parent = '1';
+  }
+
+  $chk_single_parent = '';
+  if(isset($_POST['single_parent'])){
+    $chk_single_parent = '1';
+  }
+
+  $street_name    = $_POST['street_name'];
+  $building       = $_POST['building'];
+  $apertment      = $_POST['apertment'];
+  $contact        = $_POST['contact'];
+  $pref_language  = $_POST['pref_language'];
+  $comment_box    = $_POST['comment_box'];
+
+
+
+  $update_old_case = "UPDATE `old_cases` SET 
+  `RA_address`='$street_name',
+  `building`='$building',
+  `apartment`='$apertment',
+  `marz_id`= '$marz_id',
+  `community_id`='$community_id',
+  `bnak_id`='$setl_id',
+  `unaccompanied_child`='$chk_unaccompanied_child',
+  `separated_child`='$chk_separated_child',
+  `single_parent`='$chk_single_parent',
+  `prefered_language`='$pref_language',
+  `contact_tel`='$contact',
+  `comment`='$comment_box' 
+  WHERE old_case_id = $case_id";
+
+ if($conn->query($update_old_case) === TRUE){
+        header('location: ../user.php?page=old_case_page&old_case=' . $case_id);
+ }
+ else
+ {
+  echo "Error: " . $update_old_case . "<br>" . $conn->error;  
+ }
+
+
+
+
+}
 ?>

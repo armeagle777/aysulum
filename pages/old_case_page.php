@@ -7,10 +7,10 @@ $case_id = $_GET['old_case'];
     $satl		='';
     $ms_decision_id  = '';
     $final_decision_id = '';		
-$sql_all_old_case = "SELECT a.old_case_id, a.application_date, a.citizenship,  c.country_arm, d.ms_decision, d.ms_decision_date, d.final_decision, d.final_decision_date, e.decision_type AS MS_DECISION_TEXT, f.decision_type AS FINAL_DECISION_TEXT, a.RA_address, a.unaccompanied_child, a.separated_child, a.single_parent, a.prefered_language, a.contact_tel, a.comment, a.marz_id, a.community_id, a.bnak_id, a.building, a.apartment, d.ms_decision, d.final_decision
+$sql_all_old_case = "SELECT a.old_case_id, a.application_date, a.citizenship,  c.country_arm, a.RA_address, a.unaccompanied_child, a.separated_child, a.single_parent, a.prefered_language, a.contact_tel, a.comment, a.marz_id, a.community_id, a.bnak_id, a.building, a.apartment
             FROM old_cases a 
             INNER JOIN tb_country c ON a.citizenship = c.country_id
-            INNER JOIN old_case_decisions d ON a.old_case_id = d.old_case_id
+            INNER JOIN  old_case_decisions d ON a.old_case_id = d.old_case_id
             INNER JOIN tb_decision_types e ON d.ms_decision = e.decision_type_id
             LEFT JOIN tb_decision_types f ON d.final_decision = f.decision_type_id
             WHERE a.old_case_id = $case_id";
@@ -20,22 +20,16 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
       $rowold_case          = $result_sql_all_old_case->fetch_assoc();
       $application_date     = date('d.m.Y', strtotime($rowold_case['application_date']));
       $citizenship          = $rowold_case['country_arm'];
-      $ms_decision          = $rowold_case['MS_DECISION_TEXT'];
-      $final_decision       = $rowold_case['FINAL_DECISION_TEXT'];
-      $ms_decision_date     = $rowold_case['ms_decision_date'];
       $contact 				= $rowold_case['contact_tel'];
       $comment_case 		= $rowold_case['comment'];
       $language_prefered    = $rowold_case['prefered_language'];
-      $ms_decision_id 		= $rowold_case['ms_decision'];
-      $final_decision_id    = $rowold_case['final_decision'];
-      $final_decision_date  = $rowold_case['final_decision_date'];
       $address_armenia      = $rowold_case['RA_address'];
       $building 			= $rowold_case['building'];
       $apartment 			= $rowold_case['apartment'];
       $unaccompanied_child  = $rowold_case['unaccompanied_child'];
 
           $chk_unaccompanied_child = '';
-          if ($unaccompanied_child == '1') {
+          if ($unaccompanied_child == 1) {
             $chk_unaccompanied_child = 'checked';
           }
 
@@ -171,6 +165,7 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
 
 <div class="case_area mt-5">
  
+
  <div class="tab">
   <button class="tablinks" onclick="openCity(event, 'functions')" id="defaultOpen"> Գործի մասին </button>
   <button class="tablinks" onclick="openCity(event, 'decisions')"> Ընդունված որոշումներ </button>
@@ -251,10 +246,12 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
 
 <div id="functions" class="tabcontent">
   <h5 class="sub_title" style="margin-top: 5px; margin-bottom: 5px;"> Գործի մասին </h5>
+  <form method="POST" action="config/config_old.php">
   <div class="row">
+    
           <div class="col-md-2">
               <label class="label_pers_page">Գործ #</label>
-              <input type="text" class="form-control form-control-sm" value="<?php echo $case_id?>" readonly />
+              <input type="text" class="form-control form-control-sm" name="case_id" value="<?php echo $case_id?>" readonly />
           </div>
 
           <div class="col-md-2">
@@ -284,17 +281,17 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
         
           <div class="col-md-2">
               <label class="label_pers_page">Առանց ուղեկցողի երեխա</label>
-              <input type="checkbox" class="form-control form-control-sm" name="unaccompanied_child" <?php $chk_unaccompanied_child ?> />
+              <input type="checkbox" class="form-control form-control-sm" name="unaccompanied_child" <?php echo $chk_unaccompanied_child ?> />
           </div>
 
           <div class="col-md-2">
               <label class="label_pers_page">Ընտանիքից անջատված երեխա</label>
-              <input type="checkbox" class="form-control form-control-sm" name="separated_child" <?php $chk_separated_child ?> />
+              <input type="checkbox" class="form-control form-control-sm" name="separated_child" <?php echo $chk_separated_child ?> />
           </div>
 
           <div class="col-md-2">
               <label class="label_pers_page">Միայնակ ծնող</label>
-              <input type="checkbox" class="form-control form-control-sm" name="single_parent" <?php $chk_single_parent ?> />
+              <input type="checkbox" class="form-control form-control-sm" name="single_parent" <?php echo $chk_single_parent ?> />
           </div>
 
           <div class="col-md-2">
@@ -304,7 +301,7 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
 
           <div class="col-md-2">
               <label class="label_pers_page"> Տուն  </label>
-              <input type="text" class="form-control form-control-sm" value="<?php echo $apartment ?>" name = "building"  />
+              <input type="text" class="form-control form-control-sm" value="<?php echo $building ?>" name = "building"  />
           </div>
 
           <div class="col-md-2">
@@ -330,48 +327,72 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
           <div class="row" style=" justify-content: right;  align-items: right; margin-right:10px;">
               <input type="submit" class="btn btn-success" name="save_changes"  value="ՊԱՀՊԱՆԵԼ ՓՈՓՈԽՈՒԹՅՈՒՆՆԵՐԸ" />            
           </div>
+    </form>      
 </div>	<!-- closing 1st tab -->
 
 <div id="decisions" class="tabcontent">
             <h5 class="sub_title" style="margin-top: 5px; margin-bottom: 5px;"> Ընդունված որոշումներ </h5>
-            <div class="row">
-                    <div class="col-md-4">
-                        <label class="label_pers_page">ՄԾ որոշում</label>
-                        <?php echo $optmsdec ?>
-                    </div>
+            <div class="col-md-12">
+                <table class="table">
+                  <tr style=" font-size: 0.8em; color: #324157; text-align: center; vertical-align: middle;">
+                    <th>Որոշման տեսակ</th>
+                    <th>Որաշման ամսաթիվ</th>
+                    <th>Որոշում</th>
+                    <th>Փաստաթուղթ</th>
+                    <th>...</th>
+                  </tr>
+                  <?php
+                  $query_old_decisions  = "SELECT a.old_decision_id, a.old_case_id, a.decision_file, a.decission_lvl, a.decision_date, a.decision_type, a.decision_num, b.decision_type AS DECISION_TEXT FROM tb_old_decisions a 
+                                          INNER JOIN tb_decision_types b ON a.decision_type = b.decision_type_id
+                                          WHERE a.old_case_id = $case_id";
+                  $result_old_decisions = $conn->query($query_old_decisions);
 
-                    <div class="col-md-4">
-                        <label class="label_pers_page">ՄԾ որոշման #</label>
-                        <input type="text" class="form-control form-control-sm" name="ms_decision_num">
-                    </div>
+                  while ($row = $result_old_decisions->fetch_assoc()){                                          
+                    $decision_id = $row['old_decision_id'];
+                    $type = '';
+                    if ($row['decission_lvl'] == '1') {
+                      $type = 'ՄԾ որոշում';
+                    }
+                    if ($row['decission_lvl'] == '2') {
+                      $type = 'Վերջնական որոշում';
+                    }
+                    $decision_date = date('d.m.Y', strtotime($row['decision_date']));
+                    $decision      = $row['DECISION_TEXT'];
+                    $file          = $row['decision_file'];
+                    
+                  ?>
 
-                    <div class="col-md-4">
-                        <label class="label_pers_page">ՄԾ որոշման ամսաթիվ</label>
-                        <input type="date" class="form-control form-control-sm" name="ms_decision_date" value="<?php echo $ms_decision_date ?>">
-                    </div>
+                  <tr style="font-size: 1em; color:#324157; text-align: center; vertical-align: middle;">
+                    <td><?php echo $type ?></td>
+                    <td><?php echo $decision_date ?></td>
+                    <td><?php echo $decision ?></td>
+                    <td>
+                      <a href="old_cases/<?php echo $case_id . '/decisions/' . $decision_id . '/' . $file ?>"
+                     download> <i class="fa fa-download" aria-hidden="true"></i> <?php echo $file?>
+                  </a>
+                    </td>
+                    <td>
+                      <a href="#" class="edit_dec btn" edit_btn = "<?php echo $decision_id?>" ><i class="fas fa-edit" style="color: blue; font-size:1.1em;"></i></a>
+                      <a href="#" class="view_dec btn" view_btn = "<?php echo $decision_id?>" ><i class="fas fa-eye" style="color:green; font-size:1.1em;"></i></a>
+                      <?php 
+                        if(empty($file)){
+                      ?>
+                      <a href="#" class="add_dec btn"  add_btn = "<?php echo $decision_id?>" ><i class="fas fa-plus" style="color:green; font-size:1.1em;"></i></a>
 
-                    <div class="col-md-4">
-                        <label class="label_pers_page">Վերջնական որոշում</label>
-                        <?php echo $optfinaldec ?>
-                    </div>
+                    <?php } ?>
+                    </td>
+                  </tr>
 
-                    <div class="col-md-4">
-                        <label class="label_pers_page">Վերջնական որոշման #</label>
-                        <input type="text" class="form-control form-control-sm" name="ms_decision_num">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="label_pers_page">վերջնական որոշման ամսաթիվ</label>
-                        <input type="date" class="form-control form-control-sm" name="ms_decision_date" value="<?php echo $final_decision_date ?>">
-                    </div>
+                  <?php 
+                  }
+                  ?>
+                </table>                   
 
 
                     
             </div>  
 
-                <div class="row" style=" justify-content: right;  align-items: right; margin-right:10px;">
-                    <input type="submit" class="btn btn-success" name="save_changes"  value="ՊԱՀՊԱՆԵԼ ՓՈՓՈԽՈՒԹՅՈՒՆՆԵՐԸ" />            
-                </div>
+              
 </div>
 
 <div id="person" class="tabcontent">
@@ -459,8 +480,70 @@ $result_sql_all_old_case = $conn->query($sql_all_old_case);
 </div>
 
 
-
 <script>
+
+    $(".add_dec").click(function(){
+   
+    var add_dec_id = $(this).attr('add_btn');
+  
+    $.ajax({
+                url:"config/config_old.php",
+                method:"POST",
+                data:{add_dec:add_dec_id},
+                success:function(data)
+                {  
+                  console.log(add_dec_id);
+
+                   $('#old_case_person').html(data);
+                   $("#old_case_person").modal({backdrop: "static"});
+                    
+                } 
+            });
+  });
+
+
+   $(".view_dec").click(function(){
+   
+    var dec_id = $(this).attr('view_btn');
+  
+    $.ajax({
+                url:"config/config_old.php",
+                method:"POST",
+                data:{view_dec:dec_id},
+                success:function(data)
+                {  
+                  console.log(dec_id);
+
+                   $('#old_case_person').html(data);
+                   $("#old_case_person").modal({backdrop: "static"});
+                    
+                } 
+            });
+  });
+
+
+   $(".edit_dec").click(function(){
+   
+    var dec_case = $(this).attr('edit_btn');
+  
+    $.ajax({
+                url:"config/config_old.php",
+                method:"POST",
+                data:{edit_dec:dec_case},
+                success:function(data)
+                {  
+                  console.log(dec_case);
+
+                   $('#old_case_person').html(data);
+                   $("#old_case_person").modal({backdrop: "static"});
+                    
+                } 
+            });
+  });
+
+
+
+
 
   $(".edit_old_person").click(function(){
    

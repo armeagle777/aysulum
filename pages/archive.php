@@ -99,7 +99,6 @@ if(!isset($_SESSION['username'])  || ($_SESSION['role']!=="admin" && $_SESSION['
                 <td><?php echo $final_decision ?></td>
                 <td><a href="#" class="view_old" old_id="<?php echo $case_id?>" ><i class="far fa-eye ml-3" style="color: blue; font-size: 1.22em;"></i></a>
                     <a href="user.php?page=old_case_page&old_case=<?php echo $case_id?>"> gg</a>
-
                 </td>
 
             </tr>
