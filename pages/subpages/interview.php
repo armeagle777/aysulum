@@ -5,10 +5,17 @@ $u_id = $_SESSION['user_id'];
 $query_request_inbox = "SELECT  * FROM tb_translate 
 LEFT JOIN (SELECT * FROM tb_person WHERE role = 1) AS P  ON tb_translate.case_id = P.case_id
 LEFT JOIN users ON tb_translate.user_from = users.id
-WHERE translate_type = 3";
-
+LEFT JOIN tb_case ON tb_translate.case_id = tb_case.case_id
+WHERE translate_type = 3 AND sign_status = 3";
 $request_inbox_result = $conn->query($query_request_inbox);
 
+$query_request_outbox = "SELECT  * FROM tb_translate 
+LEFT JOIN (SELECT * FROM tb_person WHERE role = 1) AS P  ON tb_translate.case_id = P.case_id
+LEFT JOIN tb_country ON P.citizenship = tb_country.country_id 
+LEFT JOIN users ON tb_translate.user_from = users.id
+LEFT JOIN tb_case ON tb_translate.case_id = tb_case.case_id
+WHERE translate_type = 3 AND sign_status = 4";
+$request_outbox_result = $conn->query($query_request_outbox);
 
 
 
@@ -55,13 +62,11 @@ $request_inbox_result = $conn->query($query_request_inbox);
 			<tr style="font-size: 1em; color:#324157; text-align: center;" class="curs_pointer <?php echo $row_class?>">
 				<td class="special-td" read_status="<?= $row['request_read']?>"><input type="checkbox" class="checkbox" name="request_check[]" value="<?= $row['request_id']?>" /></td>
 				<td><?= $row["case_id"] ?></td>
-				<td><?= $row['request_id']?></td>
 				<td><?php echo $asylum_seeker ?></td>
-				<td><?= $row['country_arm'] ?></td>
-				<td><?php echo $case_manager ?></td>
-				<td><?= $row['AUTORITY'] ?></td>
-				<td><?php echo $process_date ?></td>
-				<td><?= $row['request_process_status'] ?></td>
+				<td><?= $process_date ; ?></td>				
+				<td><?= $case_manager; ?></td>
+				<td><?= $row['prefered_language'] ?></td>
+				<td></td>
 				
 
 			</tr>
@@ -84,7 +89,6 @@ $request_inbox_result = $conn->query($query_request_inbox);
 				<th width="15%">քաղաքացիությունը</th>
 				<th width="15%">գործ վարող</th>
 				<th width="15%">ուղարկման ամսաթիվ</th>
-				<th width="15%">կարգավիճակ</th>
 				<?php 
 					if($_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead'){
 						?>
@@ -95,22 +99,20 @@ $request_inbox_result = $conn->query($query_request_inbox);
 			</thead>
 			<tbody>
 			<?php 
-			while ($row_out = $request_outbox->fetch_assoc()) {
+			while ($row_out = $request_outbox_result->fetch_assoc()) {
 				$asylum_seeker  = $row_out['f_name_arm'] .' '. $row_out['l_name_arm'];
-				$case_manager   = $row_out['AUTOR_NAME'] .' '. $row_out['AUTOR_LNAME'];
-				$process_date 	= date('d.m.Y', strtotime($row_out['process_date']));
-				$authority 			= $row_out['AUTORITY'];
+				$case_manager   = $row_out['f_name'] .' '. $row_out['l_name'];
+				$process_date 	= date('d.m.Y', strtotime($row_out['filled_in_date']));
 			?>
 
 			<tr style="font-size: 1em; color:#324157; text-align: center;" class="curs_pointer">
 				
 				<td><?= $row_out["case_id"] ?></td>
-				<td><?= $row_out['request_id'] ?></td>
+				<td><?= $row_out['translate_id'] ?></td>
 				<td><?php echo $asylum_seeker ?></td>
 				<td><?= $row_out['country_arm'] ?></td>
-				<td><?php echo $case_manager ?></td>
+				<td><?php echo $case_manager; ?></td>
 				<td><?php echo $process_date ?></td>
-				<td><?= $row_out['request_process_status'] ?></td>
 				<?php 
 					if($_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead'){
 						?>
