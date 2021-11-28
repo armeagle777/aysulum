@@ -2,7 +2,10 @@
 require_once 'config/connect.php';
 $u_id = $_SESSION['user_id'];
 
-$query_request_inbox = "";
+$query_request_inbox = "SELECT  * FROM tb_translate 
+LEFT JOIN (SELECT * FROM tb_person WHERE role = 1) AS P  ON tb_translate.case_id = P.case_id
+LEFT JOIN users ON tb_translate.user_from = users.id
+WHERE translate_type = 3";
 
 $request_inbox_result = $conn->query($query_request_inbox);
 
@@ -44,14 +47,9 @@ $request_inbox_result = $conn->query($query_request_inbox);
 			<?php 
 			while ($row = $request_inbox_result->fetch_assoc()) {
 				$asylum_seeker  = $row['f_name_arm'] .' '. $row['l_name_arm'];
-				$case_manager   = $row['AUTOR_NAME'] .' '. $row['AUTOR_LNAME'];
-				$process_date 	= date('d.m.Y', strtotime($row['process_date']));
-				$read           = $row['request_read'];
-				$row_class 			= ' ';
-				if ($read == 0) 
-				  {
-				 	$row_class.= 'bold_tr';	
-				 	} 				
+				$case_manager   = $row['f_name'] .' '. $row['l_name'];
+				$process_date 	= date('d.m.Y', strtotime($row['filled_in_date']));
+				$row_class 			= ' ';			
 			?>
 
 			<tr style="font-size: 1em; color:#324157; text-align: center;" class="curs_pointer <?php echo $row_class?>">

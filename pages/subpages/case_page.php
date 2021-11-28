@@ -1,7 +1,7 @@
 <?php
 
 	require_once 'config/connect.php';
-	
+	require_once 'config/query_case.php';
 
 	$case = $_GET['case'];
 	$u_id = $_SESSION['user_id'];
@@ -1030,7 +1030,7 @@ WHERE a.case_id = $case";
 
 					<?php
 						while ($row_all = mysqli_fetch_array($result_all_person)) {
-
+							$person_id = $row_all['personal_id'];
 							$sex = '';
 							if ($row_all['sex'] == '1') {
 								$sex = 'արական';
@@ -1096,8 +1096,8 @@ WHERE a.case_id = $case";
 								<td style="text-align: center;">
 
 									<a href="#" class="pers_modal" modalid="<?php echo $row_all['personal_id'] ?>"> <i
-												class="far fa-edit" style="color: green; font-size: 1.5em;"></i> </a>
-
+												class="far fa-edit" style="color: green; font-size: 1.5em;"></i></a>
+												
 								</td>
 							</tr>
 						<?php } ?>
@@ -2374,10 +2374,12 @@ WHERE a.case_id = $case";
 			$(".pers_modal").click(function () {
 				// $("#myModal").modal({backdrop: "static"});
 				var pers_id = $(this).attr('modalid');
+
+				console.log(pers_id);
 				$.ajax({
 					url: "config/config.php",
 					method: "POST",
-					data: {person_modal: pers_id, pers_id: pers_id},
+					data: {person_modal:pers_id, pers_id: pers_id},
 					success: function (data) {
 
 						$('#myModal').html(data);
