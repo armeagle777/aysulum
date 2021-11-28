@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "admin" && $_SESSION['role'] !== "operator" && $_SESSION['role'] !== "statist" && $_SESSION['role'] !== "viewer" && $_SESSION['role'] !== "lawyer" && $_SESSION['role'] !== "officer" && $_SESSION['role'] !== "devhead" && $_SESSION['role'] !== "coispec" && $_SESSION['role'] !== "head" && $_SESSION['role'] !== "police" && $_SESSION['role'] !== "nss" && $_SESSION['role'] !== "dorm")) {
+	if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "admin" && $_SESSION['role'] !== "operator" && $_SESSION['role'] !== "statist" && $_SESSION['role'] !== "viewer" && $_SESSION['role'] !== "lawyer" && $_SESSION['role'] !== "officer" && $_SESSION['role'] !== "devhead" && $_SESSION['role'] !== "coispec" && $_SESSION['role'] !== "head" && $_SESSION['role'] !== "police" && $_SESSION['role'] !== "un" && $_SESSION['role'] !== "nss" && $_SESSION['role'] !== "dorm")) {
 		exit;
 	}
 	require('connect.php');
@@ -109,6 +109,7 @@
 
 	//Person Modal Echo
 	if (isset($_POST['person_modal']) || isset($_POST['person_modal_1'])) {
+		
 		$personal_id = $_POST['pers_id'];
 
 		$go_to_identificator = '';
@@ -551,7 +552,7 @@ WHERE a.personal_id = $personal_id";
             <!-- Modal footer -->
             <div class="modal-footer">';
 
-			if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'lawyer' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'operator') {
+			if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'lawyer' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'un') {
 
 				$modal_response .= '<input type="submit" name="update_person" class="btn btn-primary" form="person" value="ՊԱՀՊԱՆԵԼ">';
 			}

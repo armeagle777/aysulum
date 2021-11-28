@@ -275,7 +275,7 @@ WHERE a.case_id = $case";
         <td class="family_members_td"><input type="checkbox"  class="form-check-input" name="violence_victim" <?php echo $violence_victim ?> onclick="return false;"></td>
         <td style="text-align: center;">
         
-          <a href="#" class="pers_modal"  modal_id="<?php echo $row_all['personal_id'] ?>"> <i class="far fa-edit" style="color: green; font-size: 1.5em;"></i> </a>
+          <a href="#" class="pers_modal"  modalid="<?php echo $row_all['personal_id'] ?>"> <i class="far fa-edit" style="color: green; font-size: 1.5em;"></i> </a>
 
         </td>
       </tr>
@@ -330,14 +330,14 @@ $(document).ready(function(){
 
 $(".pers_modal").click(function(){
     
-    var pers_id = $(this).attr('modal_id');
+    var pers_id = $(this).attr('modalid');
     $.ajax({
                 url:"config/config.php",
                 method:"POST",
-                data:{person_modal:pers_id},
+                data:{person_modal:pers_id, pers_id: pers_id},
                 success:function(data)
                 {  
-
+                  console.log(pers_id);
                    $('#myModal').html(data);
                    $("#myModal").modal({backdrop: "static"});
                     
