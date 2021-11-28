@@ -381,27 +381,27 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 		</div>
 		<div style="width: 50%;" class="ml-auto mr-3">
-			<?php if ($special_case == 1) { ?>
+			<?php if (isset($special_case) && $special_case == 1) { ?>
 				<span style="float: right; color:red; font-size: 1em;"><i class="fas fa-exclamation-triangle ml-2"></i> Հատուկ գործ</span>
 			<?php }
 			?>
 
-			<?php if ($reopened_case == 1) { ?>
+			<?php if (isset($reopened_case) && $reopened_case== 1) { ?>
 				<span style="float: right; color:red; font-size: 1em;"><i class="fas fa-exclamation-triangle ml-2"></i> Կրկնակի գործ</span>
 			<?php }
 			?>
 
-			<?php if ($single_parent_case == 1) { ?>
+			<?php if (isset($single_parent_case) && $single_parent_case == 1) { ?>
 				<span style="float: right; color:red; font-size: 1em;"><i class="fas fa-exclamation-triangle ml-2"></i> Միայնակ ծնող</span>
 			<?php }
 			?>
 
-			<?php if ($separated_child_case == 1) { ?>
+			<?php if (isset($separated_child_case) && $separated_child_case == 1) { ?>
 				<span style="float: right; color:red; font-size: 1em;"><i class="fas fa-exclamation-triangle ml-2"></i> Անջատ երեխա</span>
 			<?php }
 			?>
 
-			<?php if ($unaccompanied_child_case == 1) { ?>
+			<?php if (isset($unaccompanied_child_case) && $unaccompanied_child_case == 1) { ?>
 				<span style="float: right; color:red; font-size: 1em;"><i class="fas fa-exclamation-triangle ml-2"></i> Առանց ուղեկցողի երեխա</span>
 			<?php }
 			?>
@@ -409,7 +409,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 
 
-			<?php if ($reopened_case == 0 && $special_case == 0) { ?>
+			<?php if (isset($reopened_case) && isset($special_case) && $reopened_case == 0 && $special_case == 0) { ?>
 				<span style="float: right; color:green; font-size: 1em;"><i
 							class="fas fa-exclamation-triangle ml-1"></i> Սովորական ընթացակարգ</span>
 			<?php }
@@ -785,26 +785,26 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 						</tr>
 						<tr>
 							<th class="table_a">Գործի կարգավիճակ</th>
-							<td><?php echo $case_status_text ?></td>
+							<td><?php if(isset($case_status_text)){echo $case_status_text;} ?></td>
 						</tr>
 						<tr>
 							<th class="table_a">Գործառույթի կարգավիճակ</th>
-							<td><?php echo $sign_status ?></td>
+							<td><?php if(isset($sign_status)){echo $sign_status;} ?></td>
 						</tr>
 						<tr>
 							<th class="table_a">Վերջնաժամկետ</th>
-							<td><?php echo $deadline_1 ?></td>
+							<td><?php if(isset($deadline_1)){echo $deadline_1;} ?></td>
 						</tr>
 
 						<tr>
 							<th class="table_a">Գործ վարող</th>
 							<?php
-								if ($case_status == 2) {
+								if (isset($case_status) && $case_status == 2) {
 									?>
 									<td><?php echo $lawyer ?></td>
 								<?php } else {
 									?>
-									<td><?php echo $officer ?></td>
+									<td><?php if(isset($officer)){echo $officer;} ?></td>
 									<?php
 								}
 							?>
