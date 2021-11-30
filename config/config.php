@@ -7,6 +7,28 @@
 	include('functions.php');
 	date_default_timezone_set('Asia/Yerevan');
 
+
+	//*! modify translations(delete, save, approve, pay)
+	if(isset($_GET['cmd']) && ($_GET['cmd'] === 'save_translation' || $_GET['cmd'] === 'delete_translation' || $_GET['cmd'] === 'pay_translation' || $_GET['cmd'] === 'approve_translation')){
+		$translate_id = $_POST['translate_id'];
+		if($_GET['cmd'] === 'save_translation'):
+			$translation_query = "UPDATE `tb_translate` SET  `sign_status`='4' WHERE translate_id = $translate_id";
+		elseif($_GET['cmd'] === 'delete_translation'):
+			$translation_query = "UPDATE `tb_translate` SET  `sign_status`='0' WHERE translate_id = $translate_id";
+		elseif($_GET['cmd'] === 'pay_translation'):
+			$translation_query = "";
+		elseif($_GET['cmd'] === 'approve_translation'):
+			$translation_query = "UPDATE `tb_translate` SET  `sign_status`='5' WHERE translate_id = $translate_id";
+		endif;
+
+		if ($conn->query($translation_query) === TRUE):
+			echo 'Translation modified';
+		else:
+			echo "Error: " . $translation_query . "<br>" . $conn->error;
+		endif;
+		
+	}
+
 	//Add new calendar event
 	if (isset($_POST["addNewEvent"])) {
 		$event_user_id = $_SESSION["user_id"];

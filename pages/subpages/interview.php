@@ -137,19 +137,66 @@ $request_outbox_result = $conn->query($query_request_outbox);
 		//*! translation delete, save, pay and approve buttons functions
 		$(document).on('click','.save_translation', function(){
 			var translate_id = $(this).attr('translation_id');
-			console.log(translate_id);
+			$.ajax(
+				{
+					url: "config/config.php?cmd=save_translation",
+					method: "POST",
+					data: {translate_id},
+					success: function (data) {
+						if(data === 'Translation modified'){
+							location.reload();
+						}
+						// $('#approve_special_type').html(data);
+						// $("#approve_special_type").modal({backdrop: "static"});
+					}
+				});
 		})
 		$(document).on('click','.delete_translation', function(){
 			var translate_id = $(this).attr('translation_id');
-			console.log(translate_id);
+			$.ajax(
+				{
+					url: "config/config.php?cmd=delete_translation",
+					method: "POST",
+					data: {translate_id},
+					success: function (data) {
+						if(data === 'Translation modified'){
+							location.reload();
+						}
+						// console.log(data);
+						// $('#approve_special_type').html(data);
+						// $("#approve_special_type").modal({backdrop: "static"});
+					}
+				});
 		})
 		$(document).on('click','.pay_translation', function(){
 			var translate_id = $(this).attr('translation_id');
-			console.log(translate_id);
+			$.ajax(
+				{
+					url: "config/config.php?cmd=pay_translation",
+					method: "POST",
+					data: {translate_id},
+					success: function (data) {
+						console.log(data);
+						// $('#approve_special_type').html(data);
+						// $("#approve_special_type").modal({backdrop: "static"});
+					}
+				});
 		})
 		$(document).on('click','.approve_translation', function(){
 			var translate_id = $(this).attr('translation_id');
-			console.log(translate_id);
+			$.ajax(
+				{
+					url: "config/config.php?cmd=approve_translation",
+					method: "POST",
+					data: {translate_id},
+					success: function (data) {
+						if(data === 'Translation modified'){
+							location.reload();
+						}
+						// $('#approve_special_type').html(data);
+						// $("#approve_special_type").modal({backdrop: "static"});
+					}
+				});
 		})
       });
 
