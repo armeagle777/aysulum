@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "admin" && $_SESSION['role'] !== "operator" && $_SESSION['role'] !== "statist" && $_SESSION['role'] !== "viewer" && $_SESSION['role'] !== "lawyer" && $_SESSION['role'] !== "officer" && $_SESSION['role'] !== "devhead" && $_SESSION['role'] !== "coispec" && $_SESSION['role'] !== "head" && $_SESSION['role'] !== "police" && $_SESSION['role'] !== "un" && $_SESSION['role'] !== "nss" && $_SESSION['role'] !== "dorm" && $_SESSION['role']!=="general")) {
+	if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "admin" && $_SESSION['role'] !== "operator" && $_SESSION['role'] !== "statist" && $_SESSION['role'] !== "viewer" && $_SESSION['role'] !== "lawyer" && $_SESSION['role'] !== "officer" && $_SESSION['role'] !== "devhead" && $_SESSION['role'] !== "coispec" && $_SESSION['role'] !== "head" && $_SESSION['role'] !== "police" && $_SESSION['role'] !== "un" && $_SESSION['role'] !== "nss" && $_SESSION['role'] !== "dorm" && $_SESSION['role'] !== "general")) {
 		exit;
 	}
 	require('connect.php');
@@ -9,15 +9,15 @@
 
 
 	//*! modify translations(delete, save, approve, pay)
-	if(isset($_GET['cmd']) && ($_GET['cmd'] === 'save_translation' || $_GET['cmd'] === 'delete_translation' || $_GET['cmd'] === 'pay_translation' || $_GET['cmd'] === 'approve_translation')){
+	if (isset($_GET['cmd']) && ($_GET['cmd'] === 'save_translation' || $_GET['cmd'] === 'delete_translation' || $_GET['cmd'] === 'pay_translation' || $_GET['cmd'] === 'approve_translation')) {
 		$translate_id = $_POST['translate_id'];
-		if($_GET['cmd'] === 'save_translation'):
+		if ($_GET['cmd'] === 'save_translation'):
 			$translation_query = "UPDATE `tb_translate` SET  `sign_status`='4' WHERE translate_id = $translate_id";
-		elseif($_GET['cmd'] === 'delete_translation'):
+		elseif ($_GET['cmd'] === 'delete_translation'):
 			$translation_query = "UPDATE `tb_translate` SET  `sign_status`='0' WHERE translate_id = $translate_id";
-		elseif($_GET['cmd'] === 'pay_translation'):
+		elseif ($_GET['cmd'] === 'pay_translation'):
 			$translation_query = "";
-		elseif($_GET['cmd'] === 'approve_translation'):
+		elseif ($_GET['cmd'] === 'approve_translation'):
 			$translation_query = "UPDATE `tb_translate` SET  `sign_status`='5' WHERE translate_id = $translate_id";
 		endif;
 
@@ -26,7 +26,7 @@
 		else:
 			echo "Error: " . $translation_query . "<br>" . $conn->error;
 		endif;
-		
+
 	}
 
 	//Add new calendar event
@@ -131,7 +131,7 @@
 
 	//Person Modal Echo
 	if (isset($_POST['person_modal']) || isset($_POST['person_modal_1'])) {
-		
+
 		$personal_id = $_POST['pers_id'];
 
 		$go_to_identificator = '';
@@ -812,8 +812,6 @@ WHERE a.personal_id = $personal_id";
 
 		echo $modal_sign;
 	}
-
-
 
 
 	//Modal send to a sign
@@ -7634,30 +7632,28 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 	}
 
 
+	###########
+	//Modal for intermediat note
+
+	if (isset($_POST['inter_note'])) {
+		$case_id = $_POST['inter_note'];
+
+		$rec_sql = "SELECT * FROM users WHERE user_type = 'devhead' AND user_status = '1'";
+		$res_rec_sql = $conn->query($rec_sql);
 
 
-###########
-//Modal for intermediat note
-
-if (isset($_POST['inter_note'])) {
-$case_id = $_POST['inter_note'];
-
-$rec_sql = "SELECT * FROM users WHERE user_type = 'devhead' AND user_status = '1'";
-$res_rec_sql = $conn->query($rec_sql);
-
-		
 		$opt_reciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm">';
 		while ($row5 = mysqli_fetch_array($res_rec_sql)) {
-		$opt_reciver .= "<option value=" . $row5['id'] . ">" . $row5['f_name'] . ' ' . $row5['l_name'] . "</option>";
+			$opt_reciver .= "<option value=" . $row5['id'] . ">" . $row5['f_name'] . ' ' . $row5['l_name'] . "</option>";
 		}
 		$opt_reciver .= "</select>";
 
-$msg = "Խնդրում եմ հաստատել ծանուցման գրությունը";
+		$msg = "Խնդրում եմ հաստատել ծանուցման գրությունը";
 
 
-$inter_modal = '';
+		$inter_modal = '';
 
-	$inter_modal .= '<div class="modal-dialog modal-lg">
+		$inter_modal .= '<div class="modal-dialog modal-lg">
     
       <!-- Modal content-->
       <div class="modal-content">
@@ -7711,7 +7707,7 @@ $inter_modal = '';
             </div>
 
             <label class="label_pers_page">Հաղորդագրություն</label>
-            <textarea class="form-control" rows="3" name="msg_comment"> '.$msg.' </textarea>
+            <textarea class="form-control" rows="3" name="msg_comment"> ' . $msg . ' </textarea>
 
 
 
@@ -7735,8 +7731,7 @@ $inter_modal = '';
 
 		echo $inter_modal;
 
-}
-
+	}
 
 
 	if (isset($_POST['save_semi'])) {
@@ -7753,13 +7748,13 @@ $inter_modal = '';
 
 		$rec_sql = "SELECT * FROM users WHERE user_type = 'devhead' AND user_status = '1'";
 		$res_rec_sql = $conn->query($rec_sql);
-		if($res_rec_sql->num_rows > 0){
+		if ($res_rec_sql->num_rows > 0) {
 			$rec_id = $res_rec_sql->fetch_assoc();
-			$reciver_id = $rec_id['id']; 			
+			$reciver_id = $rec_id['id'];
 		}
 
 		$inter_status = '1';
-		
+
 		$user_from = $_SESSION['user_id'];
 		$filename = $_FILES['file']['name'];
 
@@ -7775,7 +7770,7 @@ $inter_modal = '';
 		$location .= "/" . $filename;
 
 
-	$sql_request = "INSERT INTO `tb_inter`(`case_id`, `author_id`, `inter_status`, `inter_reciever`, `inter_type`, `send_type`) VALUES ('$case_id', '$author_id', '$inter_status', '$reciver', '$inter_type', '$send_type' )";
+		$sql_request = "INSERT INTO `tb_inter`(`case_id`, `author_id`, `inter_status`, `inter_reciever`, `inter_type`, `send_type`) VALUES ('$case_id', '$author_id', '$inter_status', '$reciver', '$inter_type', '$send_type' )";
 
 		if ($conn->query($sql_request) === TRUE) {
 			$last_request_id = $conn->insert_id;
@@ -7801,9 +7796,7 @@ $inter_modal = '';
 				} else {
 					echo "Error: " . $sql_insert_request_file . "<br>" . $conn->error;
 				}
-			} 
-			else 
-			{
+			} else {
 				echo "Error: " . $sql_insert_request_process . "<br>" . $conn->error;
 			}
 
@@ -7815,9 +7808,9 @@ $inter_modal = '';
 	}
 	##########################
 
-//cancel inter and return to author.
+	//cancel inter and return to author.
 
-	if(isset($_POST['cancel_inter']) && $_GET['cmd'] === 'approve_inter' ) {
+	if (isset($_POST['cancel_inter']) && $_GET['cmd'] === 'approve_inter') {
 
 		$case_id = $_POST['case_id_inter'];
 		$inter_id = $_POST['hidden_inter_id'];
@@ -7829,60 +7822,53 @@ $inter_modal = '';
 		$reciver_id_sql = "SELECT * FROM tb_inter_process WHERE inter_id = $inter_id AND actual = 1";
 		$result_recicer_id_sql = $conn->query($reciver_id_sql);
 
-			if($result_recicer_id_sql->num_rows > 0){
-				$row_rec_id_sql = $result_recicer_id_sql->fetch_assoc();
-				$reciver_id = $row_rec_id_sql['sender'];
-				
-			}
-			else{
-				echo "ERROR: reciever not found "; 
-			}
+		if ($result_recicer_id_sql->num_rows > 0) {
+			$row_rec_id_sql = $result_recicer_id_sql->fetch_assoc();
+			$reciver_id = $row_rec_id_sql['sender'];
 
-			$update_inter_process_actual = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
-			if($conn->query($update_inter_process_actual) === TRUE){
-				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender_id','$reciver_id','1','$action_type', 
+		} else {
+			echo "ERROR: reciever not found ";
+		}
+
+		$update_inter_process_actual = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
+		if ($conn->query($update_inter_process_actual) === TRUE) {
+			$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender_id','$reciver_id','1','$action_type', 
 				NULLIF('$inter_msg', ''))";
-				if($conn->query($insert_new_inter_process) === TRUE){
-					$sql_notify = "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Ծանուցումը վերադարձվել է', NULLIF('$inter_msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
-					if ($conn->query($sql_notify) === TRUE) {
-							header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
-						} else {
-							echo "Error: " . $sql_notify . "<br>" . $conn->error;
-						}
-
+			if ($conn->query($insert_new_inter_process) === TRUE) {
+				$sql_notify = "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Ծանուցումը վերադարձվել է', NULLIF('$inter_msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
+				if ($conn->query($sql_notify) === TRUE) {
+					header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
+				} else {
+					echo "Error: " . $sql_notify . "<br>" . $conn->error;
 				}
-				else 
-			{
-			echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;
-		  }
+
+			} else {
+				echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;
 			}
-			else 
-			{
+		} else {
 			echo "Error: " . $update_inter_process_actual . "<br>" . $conn->error;
-		  }
+		}
 
 	}
 
 
+	###########
+	// edit returned inter
 
-
-###########
-// edit returned inter
-
-	if(isset($_POST['edit_inter'])){
+	if (isset($_POST['edit_inter'])) {
 		$case_id = $_POST['edit_inter'];
-		$inter_id = $_POST['inter_id']; 
+		$inter_id = $_POST['inter_id'];
 
 		$inter_type_id = '';
 		$inter_receiver_id = '';
 		$inter_send_type_id = '';
 		$inter_edit_msg = 'Ներկայացնում եմ ծանուցագրի խմբագրված տարբերակը';
 
-		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_send_type, c.inter_reciever_text, d.inter_process_id, d.sender, d.rec_id, d.actual, d.actioned, d.action_type, d.inter_msg, e.action_type, e.inter_action_type_id, f.inter_type_id, f.inter_type, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded FROM tb_inter a INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id INNER JOIN tb_inter_process d ON a.inter_id = d.inter_id INNER JOIN tb_inter_action_types e ON d.action_type = e.inter_action_type_id INNER JOIN tb_inter_type f ON a.inter_type = f.inter_type_id LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS g ON g.inter_id = a.inter_id WHERE a.inter_id = $inter_id AND d.actual = 1";	
+		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_send_type, c.inter_reciever_text, d.inter_process_id, d.sender, d.rec_id, d.actual, d.actioned, d.action_type, d.inter_msg, e.action_type, e.inter_action_type_id, f.inter_type_id, f.inter_type, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded FROM tb_inter a INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id INNER JOIN tb_inter_process d ON a.inter_id = d.inter_id INNER JOIN tb_inter_action_types e ON d.action_type = e.inter_action_type_id INNER JOIN tb_inter_type f ON a.inter_type = f.inter_type_id LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS g ON g.inter_id = a.inter_id WHERE a.inter_id = $inter_id AND d.actual = 1";
 
 		$result_inter = $conn->query($sql_inter);
 
-		if($result_inter->num_rows > 0){
+		if ($result_inter->num_rows > 0) {
 			$row_inter = $result_inter->fetch_assoc();
 			$inter_type_id = $row_inter['inter_type_id'];
 			$inter_receiver_id = $row_inter['inter_reciever'];
@@ -7890,44 +7876,44 @@ $inter_modal = '';
 		}
 
 
-		  $sql_reciver = "SELECT * FROM tb_inter_recivers";
-			$result_reciever = $conn->query($sql_reciver);
-			$optreciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm">';
-			while ($row = $result_reciever->fetch_assoc()) {
+		$sql_reciver = "SELECT * FROM tb_inter_recivers";
+		$result_reciever = $conn->query($sql_reciver);
+		$optreciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm">';
+		while ($row = $result_reciever->fetch_assoc()) {
 
-				if ($row['inter_reciever_id'] == $inter_receiver_id) {
-					$optreciver .= "<option selected=\"selected\" value=" . $row['inter_reciever_id'] . ">" . $row['inter_reciever_text'] . "</option>";
-				} else {
-					$optreciver .= "<option value=" . $row['inter_reciever_id'] . ">" . $row['inter_reciever_text'] . "</option>";
-				}
+			if ($row['inter_reciever_id'] == $inter_receiver_id) {
+				$optreciver .= "<option selected=\"selected\" value=" . $row['inter_reciever_id'] . ">" . $row['inter_reciever_text'] . "</option>";
+			} else {
+				$optreciver .= "<option value=" . $row['inter_reciever_id'] . ">" . $row['inter_reciever_text'] . "</option>";
 			}
-			$optreciver .= "</select>";
+		}
+		$optreciver .= "</select>";
 
-			$sql_inter_type = "SELECT * FROM tb_inter_type";
-			$result_inter_type = $conn->query($sql_inter_type);
-			$opt_inter_type = '<select name="select_inter_type" id="select_inter_type" class="form-control form-control-sm">';
-			while ($row1 = $result_inter_type->fetch_assoc()) {
+		$sql_inter_type = "SELECT * FROM tb_inter_type";
+		$result_inter_type = $conn->query($sql_inter_type);
+		$opt_inter_type = '<select name="select_inter_type" id="select_inter_type" class="form-control form-control-sm">';
+		while ($row1 = $result_inter_type->fetch_assoc()) {
 
-				if ($row1['inter_type_id'] == $inter_type_id) {
-					$opt_inter_type .= "<option selected=\"selected\" value=" . $row1['inter_type_id'] . ">" . $row1['inter_type'] . "</option>";
-				} else {
-					$opt_inter_type .= "<option value=" . $row1['inter_type_id'] . ">" . $row1['inter_type'] . "</option>";
-				}
+			if ($row1['inter_type_id'] == $inter_type_id) {
+				$opt_inter_type .= "<option selected=\"selected\" value=" . $row1['inter_type_id'] . ">" . $row1['inter_type'] . "</option>";
+			} else {
+				$opt_inter_type .= "<option value=" . $row1['inter_type_id'] . ">" . $row1['inter_type'] . "</option>";
 			}
-			$opt_inter_type .= "</select>";
+		}
+		$opt_inter_type .= "</select>";
 
-			$sql_inter_send_type = "SELECT * FROM tb_inter_send_type";
-			$result_inter_send_type = $conn->query($sql_inter_send_type);
-			$opt_inter_send_type = '<select name="select_inter_send_type" id="select_inter_send_type" class="form-control form-control-sm">';
-			while ($row2 = $result_inter_send_type->fetch_assoc()) {
+		$sql_inter_send_type = "SELECT * FROM tb_inter_send_type";
+		$result_inter_send_type = $conn->query($sql_inter_send_type);
+		$opt_inter_send_type = '<select name="select_inter_send_type" id="select_inter_send_type" class="form-control form-control-sm">';
+		while ($row2 = $result_inter_send_type->fetch_assoc()) {
 
-				if ($row2['inter_send_type_id'] == $inter_send_type_id) {
-					$opt_inter_send_type .= "<option selected=\"selected\" value=" . $row2['inter_send_type_id'] . ">" . $row2['inter_send_type'] . "</option>";
-				} else {
-					$opt_inter_send_type .= "<option value=" . $row2['inter_send_type_id'] . ">" . $row2['inter_send_type'] . "</option>";
-				}
+			if ($row2['inter_send_type_id'] == $inter_send_type_id) {
+				$opt_inter_send_type .= "<option selected=\"selected\" value=" . $row2['inter_send_type_id'] . ">" . $row2['inter_send_type'] . "</option>";
+			} else {
+				$opt_inter_send_type .= "<option value=" . $row2['inter_send_type_id'] . ">" . $row2['inter_send_type'] . "</option>";
 			}
-			$opt_inter_send_type .= "</select>";
+		}
+		$opt_inter_send_type .= "</select>";
 
 
 		$edit_inter_modal = '<div class="modal-dialog modal-lg">
@@ -7944,17 +7930,17 @@ $inter_modal = '';
           <div class="col-md-12">
                       
             <label class="label_pers_page">Ստացող</label> 
-           	'.$optreciver.'
+           	' . $optreciver . '
            
 
            	<div class="row">
            	<div class="col-md-6">            
             <label class="label_pers_page">Տեսակ</label> 
-           	'.$opt_inter_type.'
+           	' . $opt_inter_type . '
           	</div>
           	<div class="col-md-6">            
           	 <label class="label_pers_page">Առաքման եղանակը</label> 
-           	'.$opt_inter_send_type.'
+           	' . $opt_inter_send_type . '
             </div>
             </div>
 
@@ -7965,7 +7951,7 @@ $inter_modal = '';
             </div>
 
             <label class="label_pers_page">Հաղորդագրություն</label>
-            <textarea class="form-control" rows="3" name="msg_comment">'.$inter_edit_msg.' </textarea>
+            <textarea class="form-control" rows="3" name="msg_comment">' . $inter_edit_msg . ' </textarea>
 
 
 
@@ -7986,14 +7972,14 @@ $inter_modal = '';
       </form>
     </div>';
 
-    echo $edit_inter_modal;
+		echo $edit_inter_modal;
 
 
 	}
 
-//save and send inter edit
+	//save and send inter edit
 
-		if (isset($_POST['save_edit_semi'])) {
+	if (isset($_POST['save_edit_semi'])) {
 		$case_id = $_POST['case_id'];
 		$inter_id = $_POST['inter_id'];
 		$adressat = $_POST['select_receiver'];
@@ -8002,14 +7988,13 @@ $inter_modal = '';
 		$author_id = $_SESSION['user_id'];
 		$inter_type = $_POST['select_inter_type'];
 		$send_type = $_POST['select_inter_send_type'];
-	
 
 
 		$rec_sql = "SELECT * FROM users WHERE user_type = 'devhead' AND user_status = '1'";
 		$res_rec_sql = $conn->query($rec_sql);
-		if($res_rec_sql->num_rows > 0){
+		if ($res_rec_sql->num_rows > 0) {
 			$rec_id = $res_rec_sql->fetch_assoc();
-			$reciver_id = $rec_id['id']; 			
+			$reciver_id = $rec_id['id'];
 		}
 
 		$filename = $_FILES['file']['name'];
@@ -8026,57 +8011,46 @@ $inter_modal = '';
 		$location .= "/" . $filename;
 
 
-	$updtate_inter_process = "UPDATE tb_inter_process SET actual = 0 WHERE inter_id = $inter_id";
+		$updtate_inter_process = "UPDATE tb_inter_process SET actual = 0 WHERE inter_id = $inter_id";
 
-		if ($conn->query($updtate_inter_process) === TRUE) 
-    {
-				$update_file_actual = "UPDATE tb_inter_file SET inter_file_actual = 0 WHERE inter_id = $inter_id";	
+		if ($conn->query($updtate_inter_process) === TRUE) {
+			$update_file_actual = "UPDATE tb_inter_file SET inter_file_actual = 0 WHERE inter_id = $inter_id";
 
-				if($conn->query($update_file_actual) === TRUE){
-				  $sql_insert_request_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$author_id','$reciver_id','1','1', 
-				NULLIF('$msg', ''))"; 	
-					
-					if($conn->query($sql_insert_request_process) === TRUE){
-						$last_request_process = $conn->insert_id;
-						if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
-								$sql_insert_request_file = "INSERT INTO `tb_inter_file`( `inter_file`, `inter_process_id`, `inter_file_actual`, `inter_id`) VALUES ('$filename','$last_request_process', '1', '$inter_id')";
+			if ($conn->query($update_file_actual) === TRUE) {
+				$sql_insert_request_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$author_id','$reciver_id','1','1', 
+				NULLIF('$msg', ''))";
 
-								if($conn->query($sql_insert_request_file) === TRUE){
-									$sql_notify = "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Խմբագրված ծանուցում', NULLIF('$msg', ''), '0', '$author_id', '$reciver_id', '$case_id', '1')";
-										
-										if($conn->query($sql_notify) === TRUE){
-											$update_inter_info = "UPDATE tb_inter SET `inter_reciever` = '$adressat', `inter_type` = '$inter_type', `send_type` = '$send_type' WHERE inter_id = $inter_id";
-											if ($conn->query($update_inter_info) === TRUE) {
-													header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
-												}
-												else
-												{
-													echo "Error: " . $sql_notify . "<br>" . $conn->error;
-												}
-										}	
-										else
-										{
-											echo "Error: " . $sql_notify . "<br>" . $conn->error;
-										}	
+				if ($conn->query($sql_insert_request_process) === TRUE) {
+					$last_request_process = $conn->insert_id;
+					if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
+						$sql_insert_request_file = "INSERT INTO `tb_inter_file`( `inter_file`, `inter_process_id`, `inter_file_actual`, `inter_id`) VALUES ('$filename','$last_request_process', '1', '$inter_id')";
 
-												
+						if ($conn->query($sql_insert_request_file) === TRUE) {
+							$sql_notify = "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Խմբագրված ծանուցում', NULLIF('$msg', ''), '0', '$author_id', '$reciver_id', '$case_id', '1')";
+
+							if ($conn->query($sql_notify) === TRUE) {
+								$update_inter_info = "UPDATE tb_inter SET `inter_reciever` = '$adressat', `inter_type` = '$inter_type', `send_type` = '$send_type' WHERE inter_id = $inter_id";
+								if ($conn->query($update_inter_info) === TRUE) {
+									header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
+								} else {
+									echo "Error: " . $sql_notify . "<br>" . $conn->error;
 								}
-												
-							}					
+							} else {
+								echo "Error: " . $sql_notify . "<br>" . $conn->error;
+							}
+
+
+						}
 
 					}
-					else
-					{
-						echo "Error: " . $sql_insert_request_file . "<br>" . $conn->error;	
-					}	
+
+				} else {
+					echo "Error: " . $sql_insert_request_file . "<br>" . $conn->error;
 				}
-				else
-				{
-					echo "Error: " . $update_file_actual . "<br>" . $conn->error;
-				}	
-		} 
-		else 
-		{
+			} else {
+				echo "Error: " . $update_file_actual . "<br>" . $conn->error;
+			}
+		} else {
 			echo "Error: " . $updtate_inter_process . "<br>" . $conn->error;
 		}
 
@@ -8084,15 +8058,15 @@ $inter_modal = '';
 	}
 	##########################
 
-//cancel inter 
+	//cancel inter
 
 
-if(isset($_POST['close_inter'])){
+	if (isset($_POST['close_inter'])) {
 		$case_id = $_POST['close_inter'];
-		$inter_id = $_POST['inter_id']; 
+		$inter_id = $_POST['inter_id'];
 
 
-$inter_cancel_modal = '
+		$inter_cancel_modal = '
 <div class="modal-dialog modal-confirm">
     <div class="modal-content">
       <div class="modal-header flex-column">
@@ -8123,55 +8097,51 @@ $inter_cancel_modal = '
 ';
 
 
-echo $inter_cancel_modal;
+		echo $inter_cancel_modal;
 
-}
-
-if (isset($_POST['over_inter'])) {
-	$inter_id = $_POST['over_inter_inter_id'];
-	$case_id = $_POST['over_inter_case_id'];
-
-	$update_tb_inter = "UPDATE tb_inter SET inter_status = 0 WHERE inter_id = $inter_id";
-	if ($conn->query($update_tb_inter) === TRUE) {
-		$update_inter_process = "UPDATE tb_inter_process SET actual = 0 WHERE inter_id = $inter_id";
-		if($conn->query($update_inter_process) === TRUE){
-
-			$update_inter_file = "UPDATE tb_inter_file SET inter_file_actual = 0 WHERE inter_id = $inter_id";
-
-			if($conn->query($update_inter_file) === TRUE){
-				header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
-			}
-			else{
-				echo "Error: " . $update_inter_file . "<br>" . $conn->error;
-			}
-
-		}
-		else
-		{
-			echo "Error: " . $update_inter_process . "<br>" . $conn->error;
-		}
-	}
-	else{
-		echo "Error: " . $update_tb_inter . "<br>" . $conn->error;
 	}
 
-}
+	if (isset($_POST['over_inter'])) {
+		$inter_id = $_POST['over_inter_inter_id'];
+		$case_id = $_POST['over_inter_case_id'];
+
+		$update_tb_inter = "UPDATE tb_inter SET inter_status = 0 WHERE inter_id = $inter_id";
+		if ($conn->query($update_tb_inter) === TRUE) {
+			$update_inter_process = "UPDATE tb_inter_process SET actual = 0 WHERE inter_id = $inter_id";
+			if ($conn->query($update_inter_process) === TRUE) {
+
+				$update_inter_file = "UPDATE tb_inter_file SET inter_file_actual = 0 WHERE inter_id = $inter_id";
+
+				if ($conn->query($update_inter_file) === TRUE) {
+					header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
+				} else {
+					echo "Error: " . $update_inter_file . "<br>" . $conn->error;
+				}
+
+			} else {
+				echo "Error: " . $update_inter_process . "<br>" . $conn->error;
+			}
+		} else {
+			echo "Error: " . $update_tb_inter . "<br>" . $conn->error;
+		}
+
+	}
 
 
-########################
-// approve inter by devhead
+	########################
+	// approve inter by devhead
 
-if(isset($_POST['approve_send_inter']) && $_GET['cmd'] = 'approve_inter'){
-	$case_id = $_POST['case_id_inter'];
-	$inter_id = $_POST['hidden_inter_id'];
-	$msg = $_POST['inter_msg'];
-	$sender_id = $_SESSION['user_id'];
+	if (isset($_POST['approve_send_inter']) && $_GET['cmd'] = 'approve_inter') {
+		$case_id = $_POST['case_id_inter'];
+		$inter_id = $_POST['hidden_inter_id'];
+		$msg = $_POST['inter_msg'];
+		$sender_id = $_SESSION['user_id'];
 
 		$rec_sql = "SELECT * FROM users WHERE user_type = 'general' AND user_status = '1'";
 		$res_rec_sql = $conn->query($rec_sql);
-		if($res_rec_sql->num_rows > 0){
+		if ($res_rec_sql->num_rows > 0) {
 			$rec_id = $res_rec_sql->fetch_assoc();
-			$reciver_id = $rec_id['id']; 			
+			$reciver_id = $rec_id['id'];
 		}
 
 		$filename = $_FILES['file']['name'];
@@ -8188,7 +8158,7 @@ if(isset($_POST['approve_send_inter']) && $_GET['cmd'] = 'approve_inter'){
 		$location .= "/" . $filename;
 
 		$update_inter_process = "UPDATE tb_inter_process SET actual = 0 WHERE inter_id = $inter_id";
-		if($conn->query($update_inter_process) === TRUE){
+		if ($conn->query($update_inter_process) === TRUE) {
 
 			$update_inter_file = "UPDATE tb_inter_file SET inter_file_actual = 0 WHERE inter_id = $inter_id";
 
@@ -8198,63 +8168,52 @@ if(isset($_POST['approve_send_inter']) && $_GET['cmd'] = 'approve_inter'){
 
 				if ($conn->query($insert_new_inter_process) === TRUE) {
 					$last_request_process = $conn->insert_id;
-						if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
-								$sql_insert_request_file = "INSERT INTO `tb_inter_file`( `inter_file`, `inter_process_id`, `inter_file_actual`, `inter_id`) VALUES ('$filename','$last_request_process', '1', '$inter_id')";
+					if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
+						$sql_insert_request_file = "INSERT INTO `tb_inter_file`( `inter_file`, `inter_process_id`, `inter_file_actual`, `inter_id`) VALUES ('$filename','$last_request_process', '1', '$inter_id')";
 
-								if ($conn->query($sql_insert_request_file) === TRUE) {
-									
-									$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Նոր ծանուցագիր', NULLIF('$msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
+						if ($conn->query($sql_insert_request_file) === TRUE) {
 
-									if ($conn->query($sql_notify) === TRUE) {
-										header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
-									}
-									else
-									{
-									echo "Error: " . $sql_notify . "<br>" . $conn->error;	
-									}	
+							$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Նոր ծանուցագիր', NULLIF('$msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
+
+							if ($conn->query($sql_notify) === TRUE) {
+								header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
+							} else {
+								echo "Error: " . $sql_notify . "<br>" . $conn->error;
+							}
 
 
-								}
-								else
-								{
-								echo "Error: " . $sql_insert_request_file . "<br>" . $conn->error;		
-								}	
+						} else {
+							echo "Error: " . $sql_insert_request_file . "<br>" . $conn->error;
+						}
 
-						}		
-				}
-				else
-				{
-				echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;	
+					}
+				} else {
+					echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;
 				}
 
+			} else {
+				echo "Error: " . $update_inter_file . "<br>" . $conn->error;
 			}
-			else 
-			{
-			echo "Error: " . $update_inter_file . "<br>" . $conn->error;	
-			}	
 
-		}
-		else
-		{
+		} else {
 			echo "Error: " . $update_inter_process . "<br>" . $conn->error;
 		}
 
 
-
-}
-
-
-#######################
-//send inter by general
-
-if(isset($_POST['general_case'])){
-	
-
-	$case_id = $_POST['general_case'];
-	$inter_id = $_POST['general_inter'];
+	}
 
 
-	$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email 
+	#######################
+	//send inter by general
+
+	if (isset($_POST['general_case'])) {
+
+
+		$case_id = $_POST['general_case'];
+		$inter_id = $_POST['general_inter'];
+
+
+		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email 
 FROM tb_inter a 
 INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
 INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
@@ -8270,97 +8229,92 @@ LEFT JOIN tb_lawyer l ON l.case_id = a.case_id
 WHERE
 c.actual = 1 AND a.inter_id = $inter_id";
 
-$result_inter = $conn->query($sql_inter);
+		$result_inter = $conn->query($sql_inter);
 
-if ($result_inter->num_rows > 0) {
-	$row_inter = $result_inter->fetch_assoc();
+		if ($result_inter->num_rows > 0) {
+			$row_inter = $result_inter->fetch_assoc();
 
-					  $inter_sender_id = $row_inter['sender'];
-            $inter_receiver_id = $row_inter['rec_id'];
-            $filename    = $row_inter['inter_file'];
-            $action_type_id = $row_inter['ACTION_TYPE_ID'];
-            $action_type_text = $row_inter['ACTION_TYPE_TEXT'];
-            $inter_id = $row_inter['inter_id'];
-            $inter_msg = $row_inter['inter_msg'];
-            $inter_status_id = $row_inter['inter_status'];
-            if ($inter_status_id == 1) {
-              $inter_status_text = 'ընթացիկ';
-             }
-            if ($inter_status_id == 2) {
-              $inter_status_text = 'ավարտված';
-             } 
+			$inter_sender_id = $row_inter['sender'];
+			$inter_receiver_id = $row_inter['rec_id'];
+			$filename = $row_inter['inter_file'];
+			$action_type_id = $row_inter['ACTION_TYPE_ID'];
+			$action_type_text = $row_inter['ACTION_TYPE_TEXT'];
+			$inter_id = $row_inter['inter_id'];
+			$inter_msg = $row_inter['inter_msg'];
+			$inter_status_id = $row_inter['inter_status'];
+			if ($inter_status_id == 1) {
+				$inter_status_text = 'ընթացիկ';
+			}
+			if ($inter_status_id == 2) {
+				$inter_status_text = 'ավարտված';
+			}
 
-            $author = $row_inter['author_id']; 
-             
-            $inter_addresat_id = $row_inter['inter_reciever'];
-         		$inter_addresat_text = $row_inter['inter_reciever_text'];
-         
-         		$marz = $row_inter['ADM1_ARM'];
-         		$community = $row_inter['ADM3_ARM'];
-         		$bnakavayr = $row_inter['ADM4_ARM'];
-         		$street = $row_inter['RA_street'];
-         		$building = $row_inter['RA_building'];
-         		$aprt = $row_inter['RA_apartment'];
+			$author = $row_inter['author_id'];
 
-         		if ($row_inter['RA_marz'] == 1) {
-         			$community = ' ';
-         			$bnakavayr = ' ';
-        		}
+			$inter_addresat_id = $row_inter['inter_reciever'];
+			$inter_addresat_text = $row_inter['inter_reciever_text'];
 
+			$marz = $row_inter['ADM1_ARM'];
+			$community = $row_inter['ADM3_ARM'];
+			$bnakavayr = $row_inter['ADM4_ARM'];
+			$street = $row_inter['RA_street'];
+			$building = $row_inter['RA_building'];
+			$aprt = $row_inter['RA_apartment'];
 
-
-         		$case_address = $marz .' '. $community .' '. $bnakavayr .' '. $street .' '. $building .' '. $aprt ;
-         		if(!empty($row_inter['contact_tel'])){
-         		$contact_tel  = $row_inter['contact_tel'];
-         	  }
-         	  else
-         	  {
-         	  	$contact_tel = "նշված չէ";
-         	  }
+			if ($row_inter['RA_marz'] == 1) {
+				$community = ' ';
+				$bnakavayr = ' ';
+			}
 
 
-         	  if(!empty($row_inter['contact_email'])){
-         		$contact_email  = $row_inter['contact_email'];
-         	  }
-         	   else
-         	  {
-         	  	$contact_email = "նշված չէ";
-         	  }
-         		
-
-         		$lawyer_address = ' ';
-         		$lawyer_name = ' ';
-         		$lawyer_surname =' ';
-         		$lawyer_tel = ' ';
-         		$lawyer_email = ' ';
-
-         		if(!empty($row_inter['lawyer_id'])){
-							$lawyer_address = $row_inter['lawyer_address'];
-							$lawyer_name = $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
-         			$lawyer_tel = $row_inter['lawyer_tel'];
-         			$lawyer_email = $row_inter['lawyer_email'];         			
-         		}
+			$case_address = $marz . ' ' . $community . ' ' . $bnakavayr . ' ' . $street . ' ' . $building . ' ' . $aprt;
+			if (!empty($row_inter['contact_tel'])) {
+				$contact_tel = $row_inter['contact_tel'];
+			} else {
+				$contact_tel = "նշված չէ";
+			}
 
 
-         		
-
-            $inter_type_id = $row_inter['inter_type'];        
-            $inter_type_text = $row_inter['INTER_TYPE_TEXT'];
-            
-
-            $send_type_id = $row_inter['send_type'];
-            $send_type_text = $row_inter['SEND_TYPE_TEXT'];
-
-    
-
-           
-
-            $inter_msg_out = $row_inter['inter_msg'];
-}
+			if (!empty($row_inter['contact_email'])) {
+				$contact_email = $row_inter['contact_email'];
+			} else {
+				$contact_email = "նշված չէ";
+			}
 
 
+			$lawyer_address = ' ';
+			$lawyer_name = ' ';
+			$lawyer_surname = ' ';
+			$lawyer_tel = ' ';
+			$lawyer_email = ' ';
 
-$inter_sent_modal = '
+			if (!empty($row_inter['lawyer_id'])) {
+				$lawyer_address = $row_inter['lawyer_address'];
+				$lawyer_name = $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
+				$lawyer_tel = $row_inter['lawyer_tel'];
+				$lawyer_email = $row_inter['lawyer_email'];
+			}
+
+
+			$inter_type_id = $row_inter['inter_type'];
+			$inter_type_text = $row_inter['INTER_TYPE_TEXT'];
+
+
+			$send_type_id = $row_inter['send_type'];
+
+			if ($send_type_id == 2) {
+				$send_button = '<input type="submit" name="send_semi_email" class="btn btn-success" form="semi_edit_note" value="Առաքել էլեկտրոնային">';
+			} else {
+				$send_button = '<input type="submit" name="send_semi_usual" class="btn btn-success" form="semi_edit_note" value="Առաքել">';
+			}
+			$send_type_text = $row_inter['SEND_TYPE_TEXT'];
+
+
+			$inter_msg_out = $row_inter['inter_msg'];
+		}
+
+
+		$inter_sent_modal = '
 <div class="modal-dialog modal-xl">
     
       <!-- Modal content-->
@@ -8374,45 +8328,46 @@ $inter_sent_modal = '
         <form method="POST" action="config/config.php" id="semi_edit_note" enctype="multipart/form-data">
           <div class="col-md-12">
                       
-            <input type="hidden" value="'.$author.'" name="author" />
+            <input type="hidden" value="' . $author . '" name="author" />
             <div class ="row">
 
             	<div class="col-md-2">
             		<label class="label_pers_page">Գործ # </label>
-            		<input  class="form-control form-control-sm" name="case_id" value="'.$case_id.'">
+            		<input  class="form-control form-control-sm" name="case_id" value="' . $case_id . '">
             	</div>
 
             	<div class="col-md-2">
             		<label class="label_pers_page">Ելից # </label>
-            		<input  class="form-control form-control-sm" name="inter_id" value="'.$inter_id.'">
+            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_id . '">
             	</div>
 
             	<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցման տեսակը </label>
-            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="'.$inter_type_text.'">
-            		<input type="hidden" name="inter_type_id" value="'.$inter_type_id.'">
+            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="' . $inter_type_text . '">
+            		<input type="hidden" name="inter_type_id" value="' . $inter_type_id . '">
             	</div>
 
             	<div class="col-md-4">
             		<label class="label_pers_page">Կարգավիճակ </label>
-            		<input type="text" class="form-control form-control-sm" name="inter_id" value="'.$action_type_text.'">
-            		<input type="hidden" name="action_type_id" value="'.$action_type_id.'">
+            		<input type="text" class="form-control form-control-sm" name="inter_id" value="' . $action_type_text . '">
+            		<input type="hidden" name="action_type_id" value="' . $action_type_id . '">
             	</div>
 
             	<div class="col-md-8">
             		<label class="label_pers_page">Ստացող </label>
-            		<input  class="form-control form-control-sm" name="inter_id" value="'.$inter_addresat_text.'">
+            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_addresat_text . '">
             	</div>
 
             	<div class="col-md-4">
             		<label class="label_pers_page">Առաքման եղանակը </label>
-            		<input  class="form-control form-control-sm" name="inter_id" value="'.$send_type_text.'">
+            		<input  class="form-control form-control-sm" name="inter_id" value="' . $send_type_text . '">
             	</div>
 
 
-							<div class="col-md-8">
+				<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցագիր </label>
             		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download> <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
+            	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' . $filename . '"/>
             	</div>
              </div>	
             	<h5 class="sub_title">Ապաստան հայցեղի կոնտակտային տվյալներ</h5>
@@ -8420,17 +8375,17 @@ $inter_sent_modal = '
             <div class="row">
             		<div class="col-md-3">
             		  <label class="label_pers_page">Հեռախոսահամար </label>
-            		  <input  class="form-control form-control-sm" name="contact_tel" value="'.$contact_tel.'">
+            		  <input  class="form-control form-control-sm" name="contact_tel" value="' . $contact_tel . '">
             	  </div>
 
             	  <div class="col-md-3">
             		  <label class="label_pers_page">էլ.փոստ </label>
-            		  <input  class="form-control form-control-sm" name="contact_email" value="'.$contact_email.'">
+            		  <input  class="form-control form-control-sm" name="contact_email" value="' . $contact_email . '">
             	  </div>
 
             	  <div class="col-md-6">
             		  <label class="label_pers_page">Հեռախոսահամար </label>
-            		  <input  class="form-control form-control-sm" name="case_address" value="'.$case_address.'">
+            		  <input  class="form-control form-control-sm" name="case_address" value="' . $case_address . '">
             	  </div>
 
             </div>	
@@ -8440,22 +8395,22 @@ $inter_sent_modal = '
             <div class="row">
             		<div class="col-md-12">
             		  <label class="label_pers_page">Փաստաբանի ա.ա.հ. </label>
-            		  <input  class="form-control form-control-sm" name="lawyer_name" value="'.$lawyer_name.'">
+            		  <input  class="form-control form-control-sm" name="lawyer_name" value="' . $lawyer_name . '">
             	  </div>
 
             	  <div class="col-md-3">
             		  <label class="label_pers_page"> Հեռախոսահամար</label>
-            		  <input  class="form-control form-control-sm" name="lawyer_tel" value="'.$lawyer_tel.'">
+            		  <input  class="form-control form-control-sm" name="lawyer_tel" value="' . $lawyer_tel . '">
             	  </div>
 
             	  <div class="col-md-3">
             		  <label class="label_pers_page"> էլ.փոստ </label>
-            		  <input  class="form-control form-control-sm" name="lawyer_email" value="'.$lawyer_email.'">
+            		  <input  class="form-control form-control-sm" name="lawyer_email" value="' . $lawyer_email . '">
             	  </div>
 
             	  <div class="col-md-6">
             		  <label class="label_pers_page"> հասցե</label>
-            		  <input  class="form-control form-control-sm" name="lawyer_address" value="'.$lawyer_address.'">
+            		  <input  class="form-control form-control-sm" name="lawyer_address" value="' . $lawyer_address . '">
             	  </div>
 
             </div>	
@@ -8469,10 +8424,9 @@ $inter_sent_modal = '
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">ՉԵՂԱՐԿԵԼ</button>
-          <input type="submit" name="sent_semi_1" class="btn btn-success" form="semi_edit_note" value="Առաքել">
-          <input type="submit" name="send_semi_2" class="btn btn-success" form="semi_edit_note" value="Առաքել էլեկտրոնային">
-        </div>
+          <button type="button" class="btn btn-default" data-dismiss="modal">ՉԵՂԱՐԿԵԼ</button>' . $send_button;
+
+		$inter_sent_modal .= '</div>
       </div>
       </form>
     </div>
@@ -8480,70 +8434,73 @@ $inter_sent_modal = '
 ';
 
 
-echo $inter_sent_modal;
+		echo $inter_sent_modal;
 
 
-}
+	}
 
 
-if (isset($_POST['sent_semi_1'])) {
-	
-	$inter_id = $_POST['inter_id'];
-	$case_id = $_POST['case_id'];
-	$rec_id  = '0';
-	$sender  = $_SESSION['user_id'];
-	$msg 		 = 'առաքվել է';
-	$reciver_id = $_POST['author'];
+	if (isset($_POST['send_semi_usual']) || isset($_POST['send_semi_email'])) {
+		$inter_id = $_POST['inter_id'];
+		$case_id = $_POST['case_id'];
+		$rec_id = '0';
+		$sender = $_SESSION['user_id'];
+		$msg = 'առաքվել է';
+		$reciver_id = $_POST['author'];
 
-	$update_inter_status = "UPDATE tb_inter SET inter_status = '0' WHERE inter_id = $inter_id";
 
-	if($conn->query($update_inter_status) === TRUE){
-		$update_inter_process = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
 
-		if($conn->query($update_inter_process) === TRUE){
+		if (isset($_POST['send_semi_email'])) {
+			$mail_subject='Ծանուցում ՀՀ Միգրացիոն խառայության կողմից';
+			$mail_body = 'Խնդրում ենք ընթերցել կցված փաստաթղթերը';
+			$attachment_file[] = $_POST['mail_notification_file'];
+			if(!empty($_POST['contact_email'])){
+				$contact_email[] = $_POST['contact_email'];
+				if(!empty($_POST['lawyer_email'])){
+					$contact_email[]=$_POST['lawyer_email'];
+				}
 
-			$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender','$rec_id','1','3','$msg')";
-
-			if($conn->query($insert_new_inter_process) === TRUE){
-					$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Ծանուցագիրը առաքվել է', NULLIF('$msg', ''), '0', '$sender', '$reciver_id', '$case_id', '1')";
-
-					if($conn->query($sql_notify) === TRUE){
-
-							if ($conn->query($sql_notify) === TRUE) {
-										header('location: ../user.php?page=cases&homepage=general_list');
-									}
-									else
-									{
-									echo "Error: " . $sql_notify . "<br>" . $conn->error;	
-									}	
-					}
-					else
-					{
-					echo "Error: " . $sql_notify . "<br>" . $conn->error;	
-					}	
-
-			}
-			else
-			{
-				echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;
+				sendMail($gmail_login, $gmail_pass, $gmail_host, $gmail_port, $contact_email, $mail_subject, $mail_body, $attachment_file);
 			}
 
 		}
-		else
-		{
-			echo "Error: " . $update_inter_process . "<br>" . $conn->error;
-		}	
+
+		$update_inter_status = "UPDATE tb_inter SET inter_status = '0' WHERE inter_id = $inter_id";
+		if ($conn->query($update_inter_status) === TRUE) {
+			$update_inter_process = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
+
+			if ($conn->query($update_inter_process) === TRUE) {
+
+				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender','$rec_id','1','3','$msg')";
+
+				if ($conn->query($insert_new_inter_process) === TRUE) {
+					$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Ծանուցագիրը առաքվել է', NULLIF('$msg', ''), '0', '$sender', '$reciver_id', '$case_id', '1')";
+
+					if ($conn->query($sql_notify) === TRUE) {
+
+						if ($conn->query($sql_notify) === TRUE) {
+							header('location: ../user.php?page=cases&homepage=general_list');
+						} else {
+							echo "Error: " . $sql_notify . "<br>" . $conn->error;
+						}
+					} else {
+						echo "Error: " . $sql_notify . "<br>" . $conn->error;
+					}
+
+				} else {
+					echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;
+				}
+
+			} else {
+				echo "Error: " . $update_inter_process . "<br>" . $conn->error;
+			}
+
+		} else {
+			echo "Error: " . $update_inter_status . "<br>" . $conn->error;
+		}
+
 
 	}
-	else
-	{
-		echo "Error: " . $update_inter_status . "<br>" . $conn->error;
-	}
-
- 
-
-}
-
 
 
 	$conn->close();

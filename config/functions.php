@@ -47,7 +47,10 @@ function sendMail($login,$pass,$host,$port,$to,$subject,$body,$attachments)
     $mail->Password=$pass;
     $mail->CharSet = 'UTF-8';
     $mail->setFrom($login);
-    $mail->addAddress($to);
+    $mail->addAddress($to[0]);
+	if(count($to) > 1){
+		$mail->AddCC($to[1], 'Person Two');
+	}
     $mail->addReplyTo($login);
     
     $mail->isHTML(true);

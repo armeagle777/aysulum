@@ -116,7 +116,7 @@ if(isset($_GET['page']) && file_exists('pages/'.$_GET['page'].'.php')){
     </html>
     <script>     
         $(document).ready(function(){
-
+	        load_unseen_notification();
             function load_unseen_notification(view = '')
             {
                 var user = '<?php echo $u_id;?>'
