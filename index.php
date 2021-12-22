@@ -2,7 +2,7 @@
 session_start();
 $activepage='';
 if(isset($_SESSION['username'])  && $_SESSION['user_status']==1  ){    
-	if($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'nss'|| $_SESSION['role'] === 'fin' || $_SESSION['role'] === 'secretary' || $_SESSION['role'] === 'dorm' || $_SESSION['role'] === 'police' || $_SESSION['role'] === 'head')
+	if($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'nss'|| $_SESSION['role'] === 'fin' || $_SESSION['role'] === 'secretary' || $_SESSION['role'] === 'dorm' || $_SESSION['role'] === 'police' || $_SESSION['role'] === 'head' && $_SESSION['role'] ==="general")
 	{
 		$activepage = 'cases';
 	}elseif($_SESSION['role'] === 'archiver'){
@@ -33,9 +33,9 @@ if(isset($_POST['login'])){
         $_SESSION['user_lName']=$row['l_name'];
     }    
     session_write_close();
-	if($result->num_rows === 1 && $_SESSION['user_status'] ===1 )
+	if($result->num_rows === 1 && $_SESSION['user_status'] === 1 )
 	{
-		if($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'head' || $_SESSION['role'] === 'nss'|| $_SESSION['role'] === 'fin' || $_SESSION['role'] === 'secretary' || $_SESSION['role'] === 'dorm' || $_SESSION['role'] === 'police'){
+		if($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'head' || $_SESSION['role'] === 'nss'|| $_SESSION['role'] === 'fin' || $_SESSION['role'] === 'secretary' || $_SESSION['role'] === 'dorm' || $_SESSION['role'] === 'police' || $_SESSION['role'] === "general"){
 			header("location:user.php?page=cases&homepage=notifications");
 		}elseif($_SESSION['role'] === 'archiver')
 		{

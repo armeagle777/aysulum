@@ -204,8 +204,38 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 						?>
 
 						<a href="#" id="draft" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i
-									class="fas fa-highlighter first_menu"></i> <?php echo $sign_status_id ?> Որոշման
-							նախագիծ </a>
+									class="fas fa-highlighter first_menu"></i> Որոշման նախագիծ </a>
+						<?php
+					}
+				?>
+
+				<?php
+
+					$sql_inters = "SELECT * FROM tb_inter a INNER JOIN tb_inter_process b ON a.inter_id = b.inter_id WHERE a.case_id = $case AND b.actual = 1";
+					$result_inters = $conn->query($sql_inters);
+
+						$inter_allow = '0';
+						if($result_inters->num_rows > 0) {
+						   $row_inter = $result_inters->fetch_assoc();
+						   $inter_receiver_id = $row_inter['rec_id'];
+						   $inter_action_id = $row_inter['action_type'];
+						   	if($inter_receiver_id == $_SESSION['user_id'] && $inter_action_id == 2)
+						   	{
+						   		$inter_allow = '1';
+						   	}
+						}
+						if($result_inters->num_rows < 1) {
+							$inter_allow = '1'; 
+						}
+
+
+					if(($inter_allow == 1) && ($sign_status_id != '15' && $sign_status_id != '14' && $sign_status_id != '24' && $sign_status_id != '13' && $sign_status_id != '16' && $sign_status_id != '8') && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer'))
+
+					{
+						?>
+
+						<a href="#" id="intermediate" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i
+									class="fas fa-file-export first_menu"></i> Ծանուցում </a>
 						<?php
 					}
 				?>
@@ -677,7 +707,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 					<?php
 
-						if ($_SESSION['role'] === 'devhead' && $holder_id == $_SESSION['user_id'] && $cover_status_id == '2') {
+							if ($_SESSION['role'] === 'devhead' && $holder_id == $_SESSION['user_id'] && $cover_status_id == '2' && $cover_actual == '1') {
 							$approveTranslateContent = '<h5 class="sub_title" style="margin-top: 5px;">Թարգմանության հարցում </h5> ';
 							$sql_translation_request = "SELECT * FROM tb_translate a INNER JOIN tb_cover_files b ON a.translate_id = b.translation_id WHERE b.cover_status = '2' AND a.case_id =  $case ORDER BY a.translate_id DESC LIMIT 1";
 							$result_sql_translation_request = $conn->query($sql_translation_request);
@@ -774,7 +804,136 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 						}
 					?>
 
+					<?php 
 
+						
+
+						if ($_SESSION['role'] === 'devhead' && $inter_receiver_id == $_SESSION['user_id'] && $inter_status_id == 1) {
+							
+							$approve_inter_div = '';
+							$approve_inter_div.= '
+							<h5 class="sub_title" style="margin-top: 5px;">Ծանուցագիր</h5>
+							<div class="row">
+                                <div class="col-md-6 mt-1">
+                                  <label class="label_pers_page">Տեսակը</label>              
+                                  <input type="text" class="form-control form-control-sm" value=" ' . $inter_type_text . '" readonly/>
+                                </div> 
+                                <div class="col-md-6 mt-1">
+                                  <label class="label_pers_page">Կցված ֆայլ</label>
+                                  <a href="uploads/' . $case . '/inters/' . $filename . '" class="form-control form-control-sm" download> <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>          
+                                </div>
+
+                                <div class="col-md-6 mt-1">
+                                  <label class="label_pers_page">Ստացող</label>              
+                                  <input type="text" class="form-control form-control-sm" value=" ' . $addresat . '" readonly/>	
+                                </div>
+
+                                <div class="col-md-6 mt-1">
+                                  <label class="label_pers_page">Առաքման եղանակը</label>              
+                                  <input type="text" class="form-control form-control-sm" value=" ' . $send_type_text . '" readonly/>	
+                                </div>
+
+                                <div class="col-md-12">
+                                	 <label class="label_pers_page">Ստացված հաղորդագրություն</label>
+                                	 <textarea class="form-control" rows="2" readonly> '.$inter_msg.' </textarea> 
+                                </div>
+
+                                </div>
+                               
+
+                                
+
+                                <hr>
+
+                                 <div class="row">
+                                <form method="POST"  action="config/config.php?cmd=approve_inter" id="approve_inter" enctype="multipart/form-data">          
+                                  <input type="hidden" name="case_id_inter" value="' . $case . '">   
+                                  <input type="hidden" name="hidden_inter_id" value="' . $inter_id . '">   
+                                  
+
+
+                                  <div class="col-md-12">
+                                  <div class="row">
+                                    	<div class="col-md-12"> 
+	                                    	 <label class="label_pers_page">Վերբեռնել ստորագրված տարբերակը</label>
+	                                         <div class="form-group custom-file">
+		                                        <input type="file" id="signed_cover" name="file" class="custom-file-input signed_cover" />
+		                                        <label class="custom-file-label" for="customFile">Ընտրե՛ք ֆայլը</label>
+		                                      </div>   
+		                                </div>
+
+		                                <div class="col-md-12">
+                                	 		<label class="label_pers_page">Հաղորդագրություն</label>
+                                			 <textarea class="form-control" rows="2" name="inter_msg" > '.$inter_msg_out.' </textarea> 
+                             		   </div>
+
+		                                    <div class="col-md-12 mt-1">
+		                                       <button type="submit" name="approve_send_inter"  class="btn btn-success btn-sm" >ՀԱՍՏԱՏԵԼ</button>
+		                                       <button type="submit" name="cancel_inter"  class="btn btn-warning btn-sm" >Վերադարձնել</button>
+		                                    </div> 
+                                    	</div>    
+                                  </div>              
+                                </form>
+                                </div>
+                                
+                                ';
+
+                                echo $approve_inter_div;
+
+						}
+
+
+						if(($_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer' ) && $inter_receiver_id == $_SESSION['user_id']){
+							$resend_inter_div = '';
+							$resend_inter_div.= '
+							<hr>
+							<h5 class="sub_title" style="margin-top: 5px;">Ծանուցագիր</h5>
+							<div class="row">
+                                
+								<table class="table">
+										<tr>
+											<th class="table_a">Տեսակը</th>
+											<td style="height: 10px;">'.$inter_type_text.'</td>
+										</tr>
+										<tr>
+											<th class="table_a">Ստացող</th>
+											<td style="height: 10px;">' . $addresat . '</td>
+										</tr>
+										<tr>
+											<th class="table_a">Առաքման եղանակը</th>
+											<td style="height: 10px;">' . $send_type_text . '</td>
+										</tr>
+										
+										<tr>
+											<th class="table_a">Գործառույթի կարգավիճակը</th>
+											<td style="height: 10px;">' . $action_type_text . '</td>
+										</tr>
+										<tr>
+											<th class="table_a">Կցված ֆայլ</th>
+											<td ><a href="uploads/' . $case . '/inters/' . $filename . '" download> <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a></td>
+										</tr>						
+								</table>  
+	                                <div class="col-md-12">
+	                                	 <label class="label_pers_page">Հաղորդագրություն</label>
+	                                	 <textarea class="form-control" rows="2" readonly> '.$inter_msg.' </textarea> 
+	                                </div>
+
+                                	
+                                	<div class="col-md-12 mt-1">
+		                                       <a name="edit_inter" id="edit_inter" case_id="'.$case.'" inter_id="'.$inter_id.'" class="btn btn-success btn-sm" >ԽՄԲԱԳՐԵԼ</a>
+		                                       <button type="submit" name="close_inter" id="close_inter" case_id="'.$case.'" inter_id="'.$inter_id.'" class="btn btn-warning btn-sm" >Ավարտել</button>
+		                            </div> 
+                                	
+                                	
+
+                                </div>';
+                             echo $resend_inter_div;    
+						}
+
+						
+					
+
+					?>
 				</div> <!--close 1st col-md-6-->
 				<div class="col-md-6">
 					<h5 class="sub_title" style="margin-top: 5px;">Գործի համառոտագիր</h5>
@@ -1265,6 +1424,18 @@ WHERE a.case_id = $case";
 								       value="<?php echo $RA_apartment ?>" readonly>
 							</div>
 
+							<div class="col-md-4">
+								<label class="label_pers_page">Հեռախոսահամար</label>
+								<input type="text" name="l_email" class="form-control form-control-sm"
+								       value="<?php echo $contact_tel ?>" readonly>
+							</div>
+
+							<div class="col-md-4">
+								<label class="label_pers_page">Էլ.Փոստ</label>
+								<input type="text" name="l_address" class="form-control form-control-sm"
+								       value="<?php echo $contact_email ?>" readonly>
+							</div>
+
 						</div>
 					</div>
 					<h5 class="sub_title" style="margin-top: 5px;">Փաստաբանի տվյալներ </h5>
@@ -1545,6 +1716,8 @@ WHERE a.case_id = $case";
 	<div class="modal fade" id="approve_special_type">
 	</div>
 
+	
+
 
 	<script>
 		$(document).ready(function () {
@@ -1703,6 +1876,40 @@ WHERE a.case_id = $case";
 						});
 			});
 
+			$("#edit_inter").click(function () {
+				var case_id = $(this).attr('case_id');
+				var inter_id = $(this).attr('inter_id');
+
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {edit_inter: case_id, inter_id:inter_id},
+							success: function (data) {
+								
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+			$("#close_inter").click(function () {
+				var case_id = $(this).attr('case_id');
+				var inter_id = $(this).attr('inter_id');
+
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {close_inter: case_id, inter_id:inter_id},
+							success: function (data) {
+								
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
 
 			$("#court_decission").click(function () {
 				var case_id = $(this).attr('modal_id');
@@ -1715,6 +1922,22 @@ WHERE a.case_id = $case";
 							data: {decision_3: case_id, claim_id: claim_id, appeal_id: appeal_id},
 							success: function (data) {
 								//console.log(appeal_id);
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+			$("#intermediate").click(function () {
+				var case_id = $(this).attr('modal_id');
+				
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {inter_note: case_id},
+							success: function (data) {
+								console.log(case_id);
 								$('#approve_special_type').html(data);
 								$("#approve_special_type").modal({backdrop: "static"});
 							}

@@ -2,7 +2,7 @@
 $case = $_GET['case'];
   $u_id = $_SESSION['user_id'];
 
-$sql_case = "SELECT a.case_id,  a.comment, a.case_status AS CASE_STATUS_ID, b.f_name_arm, b.l_name_arm, c.sign_status, d.status, a.application_date, a.unaccompanied_child, a.separated_child, a.single_parent, a.prefered_language, a.preferred_lawyer, a.contact_tel, a.RA_marz, a.RA_community, a.RA_settlement, a.mul_num, a.mul_date, a.RA_street, a.RA_building, a.RA_apartment, a.officer, j.ADM1_ARM AS MARZ, k.ADM3_ARM AS COMMUNITY, l.ADM4_ARM AS SETTLEMENT, m.deadline, d.status_id AS SIGN_STATUS_ID, a.special, a.reopened, c.sign_date, e.case_status, a.input_date,  a.reopened, a.attached_case, q.cover_status,
+$sql_case = "SELECT a.case_id,  a.comment, a.case_status AS CASE_STATUS_ID, b.f_name_arm, b.l_name_arm, c.sign_status, d.status, a.application_date, a.unaccompanied_child, a.separated_child, a.single_parent, a.prefered_language, a.preferred_lawyer, a.contact_tel, a.contact_email, a.RA_marz, a.RA_community, a.RA_settlement, a.mul_num, a.mul_date, a.RA_street, a.RA_building, a.RA_apartment, a.officer, j.ADM1_ARM AS MARZ, k.ADM3_ARM AS COMMUNITY, l.ADM4_ARM AS SETTLEMENT, m.deadline, d.status_id AS SIGN_STATUS_ID, a.special, a.reopened, c.sign_date, e.case_status, a.input_date,  a.reopened, a.attached_case, q.cover_status, q.cover_actual,
 c.sign_by, CONCAT(f.f_name, ' ', f.l_name) AS SIGNER_NAME, 
 a.officer, CONCAT(g.f_name, ' ', g.l_name) AS OFFICER_NAME,
 a.MS_lawyer, CONCAT(o.f_name, ' ', o.l_name) AS LAWYER_NAME,
@@ -14,7 +14,7 @@ INNER JOIN tb_process c ON a.case_id = c.case_id
 INNER JOIN tb_sign_status d ON d.status_id = c.sign_status 
 INNER JOIN tb_case_status e ON a.case_status = e.case_status_id 
 INNER JOIN users f ON c.sign_by = f.id 
-LEFT JOIN users g ON a.officer = g.id 
+LEFT JOIN users g ON a.officer = g.id    
 INNER JOIN users h ON c.processor = h.id
 INNER JOIN users i ON a.reg_by = i.id 
 INNER JOIN tb_marz j ON a.RA_marz = j.marz_id
@@ -22,8 +22,8 @@ INNER JOIN tb_arm_com k ON a.RA_community = k.community_id
 INNER JOIN tb_settlement l ON a.RA_settlement = l.settlement_id
 LEFT JOIN tb_deadline m ON a.case_id = m.case_id
 LEFT JOIN users o ON a.MS_lawyer = o.id
-LEFT JOIN tb_cover_files q ON a.case_id = q.case_id
-WHERE a.case_id = $case AND c.actual = '1' AND m.actual_dead = '1' ";
+LEFT JOIN (SELECT * FROM tb_cover_files WHERE cover_actual = '1') AS q ON a.case_id = q.case_id
+WHERE a.case_id = $case AND c.actual = '1' AND m.actual_dead = '1'";
 
 $result_case = $conn->query($sql_case);
   
@@ -45,6 +45,7 @@ $result_case = $conn->query($sql_case);
       $processor = $row['PROCESSOR_NAME'];
       $prefered_language = $row['prefered_language'];
       $contact_tel = $row['contact_tel'];
+      $contact_email = $row['contact_email'];
       $marz = $row['RA_marz'];
       $community = $row['RA_community'];
       $satl = $row['RA_settlement'];
@@ -88,6 +89,8 @@ $result_case = $conn->query($sql_case);
       $separated_child_case = $row['separated_child'];
       $unaccompanied_child_case = $row['unaccompanied_child'];
       $cover_status_id = $row['cover_status'];
+      $cover_actual = $row['cover_actual'];
+
       if($deadline_1 == strtotime('0000-00-00')){
         $deadline_1 = 'N/A';
     }
@@ -185,6 +188,92 @@ $result_lawyer = $conn->query($sql_lawyer);
     
 
 }      
+
+$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_process_id, b.sender, b.rec_id, b.actual, b.actioned, b.action_type, b.inter_msg, c.inter_file_id, c.inter_file, c.inter_process_id, c.inter_file_actual, c.uploaded, d.inter_action_type_id, d.action_type AS ACTION_TYPE_TEXT 
+FROM tb_inter a 
+INNER JOIN tb_inter_process b ON a.inter_id = b.inter_id 
+INNER JOIN tb_inter_action_types d ON b.action_type = d.inter_action_type_id 
+LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS c ON c.inter_id = a.inter_id WHERE a.case_id = $case AND b.actual = 1 AND a.inter_status = 1";
+
+          $result_inter = $conn->query($sql_inter);
+          
+          if($result_inter->num_rows > 0){
+            $row_inter = $result_inter->fetch_assoc();
+            
+            $inter_sender_id = $row_inter['sender'];
+            $inter_receiver_id = $row_inter['rec_id'];
+            $filename    = $row_inter['inter_file'];
+            $action_type_text = $row_inter['ACTION_TYPE_TEXT'];
+            $inter_id = $row_inter['inter_id'];
+            $inter_msg = $row_inter['inter_msg'];
+            $inter_status_id = $row_inter['inter_status'];
+            if ($inter_status_id == 1) {
+              $inter_status_text = 'ընթացիկ';
+             }
+            if ($inter_status_id == 2) {
+              $inter_status_text = 'ավարտված';
+             } 
+
+            $inter_addresat_id = $row_inter['inter_reciever'];
+            
+            if ($inter_addresat_id == 1) {
+                $addresat = 'ապաստան հայցող';
+              }  
+            if ($inter_addresat_id == 2) {
+                $addresat = 'փաստաբան';
+              }  
+            if ($inter_addresat_id == 3) {
+                $addresat = 'ապաստան հայցող և փաստաբան';
+              }
+
+            $inter_type_id = $row_inter['inter_type'];        
+
+            if ($inter_type_id == 1) {
+              $inter_type_text = 'հարցազրույցի հրավեր';
+            }
+            if ($inter_type_id == 2) {
+              $inter_type_text = 'երկարաձգման ծանուցագիր';
+            }
+            if ($inter_type_id == 3) {
+              $inter_type_text = 'բավարարման / մերժման ծանուցագիր';
+            }
+            if ($inter_type_id == 4) {
+              $inter_type_text = 'կասեցման ծանուցագիր';
+            }
+            if ($inter_type_id == 5) {
+              $inter_type_text = 'կարճման ծանուցագիր';
+            }
+            if ($inter_type_id == 6) {
+              $inter_type_text = 'այլ ծանուցագիր';
+            }
+
+            $send_type_id = $row_inter['send_type'];
+
+            if ($send_type_id == 1) {
+              $send_type_text = 'փոստ';
+            }
+
+            if ($send_type_id == 2) {
+              $send_type_text = 'էլ. փոստ';
+            }
+
+            if ($send_type_id == 3) {
+              $send_type_text = 'առձեռն';
+            }
+
+            if ($send_type_id == 4) {
+              $send_type_text = 'սուրհանդակ';
+            }
+
+            $inter_msg_out = 'Խնդրում եմ առաքել հասցեատիրոջը։';
+
+}
+else{
+  $inter_receiver_id = '';
+}
+
+
+
 
 
 ?>

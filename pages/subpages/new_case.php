@@ -86,15 +86,19 @@ $opt_marz = $opt_marz."<option value=$row_marz[marz_id]> $row_marz[ADM1_ARM]</op
                   </tr>
               </table>
               <div class="row">
-               <div class="col-md-4">
+               <div class="col-md-3">
                 <label class="label_pers_page">Նախընտրելի լեզուն</label>
                 <input type="text" name="pref_language" class="form-control form-control-sm">
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <label class="label_pers_page">Հեռախոսահամար</label>
                 <input type="text" name="tel" class="form-control form-control-sm">
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
+                <label class="label_pers_page">Էլ.փոստ</label>
+                <input type="text" name="case_email" class="form-control form-control-sm">
+              </div>
+              <div class="col-md-3">
                 <label class="label_pers_page" id="former_case_label" style="display:none;">Նախկին գործի #</label>
                 <input type="text" name="attached_case" id="attached_case" style="display:none;" class="form-control form-control-sm">
               </div>

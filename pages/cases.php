@@ -1,5 +1,5 @@
 <?php
-	if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "admin" && $_SESSION['role'] !== "operator" && $_SESSION['role'] !== "statist" && $_SESSION['role'] !== "viewer" && $_SESSION['role'] !== "lawyer" && $_SESSION['role'] !== 'nss' && $_SESSION['role'] !== 'fin' && $_SESSION['role'] !== 'secretary' && $_SESSION['role'] !== 'dorm' && $_SESSION['role'] !== 'police' && $_SESSION['role'] !== "officer" && $_SESSION['role'] !== "devhead" && $_SESSION['role'] !== "coispec" && $_SESSION['role'] !== "head")) {
+	if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "admin" && $_SESSION['role'] !== "operator" && $_SESSION['role'] !== "statist" && $_SESSION['role'] !== "viewer" && $_SESSION['role'] !== "lawyer" && $_SESSION['role'] !== 'nss' && $_SESSION['role'] !== 'fin' && $_SESSION['role'] !== 'secretary' && $_SESSION['role'] !== 'dorm' && $_SESSION['role'] !== 'police' && $_SESSION['role'] !== "officer" && $_SESSION['role'] !== "devhead" && $_SESSION['role'] !== "coispec" && $_SESSION['role'] !== "head" && $_SESSION['role']!=="general") ) {
 		header("location: ../index.php");
 	}
 
@@ -69,7 +69,7 @@
 						<?php
 					}
 				?>
-
+ 
 
 				<?php
 					if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'head' || $_SESSION['role'] === 'viewer' || $_SESSION['role'] === 'coispec') {
@@ -179,9 +179,20 @@
 				<?php
 					if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator') {
 						?>
-						<li><a href="?page=cases&homepage=interview"><i class="fas fa-microphone"></i> Հարցազրույց</a>
+						<li><a href="?page=cases&homepage=interview" <?php if ($homepage == "interview") { ?> class="active_subpage" <?php } ?>><i class="fas fa-microphone"></i> Հարցազրույց</a>
 						</li>
-						<li><a href="?page=cases&homepage=advice"><i class="fa fa-phone"></i> Խորհրդատվություն</a></li>
+						<li><a href="?page=cases&homepage=advice" <?php if ($homepage == "advice") { ?> class="active_subpage" <?php } ?>><i class="fa fa-phone"></i> Խորհրդատվություն</a></li>
+						<?php
+					}
+				?>
+
+				<?php
+					if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'general') {
+						?>
+						<li>
+							<a href="?page=cases&homepage=general_list" <?php if ($homepage == "general_list") { ?> class="active_subpage" <?php } ?>><i class="fas fa-list-ul"></i> Ծանուցագրեր</a>
+						</li>
+						
 						<?php
 					}
 				?>
