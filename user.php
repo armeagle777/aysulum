@@ -77,13 +77,24 @@ if(isset($_GET['page']) && file_exists('pages/'.$_GET['page'].'.php')){
                     <a href="?page=statics"  <?php if($page=="statics"){ ?> class="active" <?php } ?>><i class="fa fa-table" aria-hidden="true"></i> Վիճակագրություն</a>
                 <?php
                     }
-                ?>          
-                <a href="?page=archive"  <?php if($page=="archive"){ ?> class="active" <?php } ?>><i class="fa fa-archive" aria-hidden="true"></i> Արխիվ</a> 
+                ?>  
+
                 <?php 
-                    if($_SESSION['role'] !== 'archiver')
+                    if($_SESSION['role'] !== 'viewer')
                     {
                 ?>
-                    <a href="?page=search" <?php if($page=="search"){ ?> class="active" <?php } ?>><i class="fa fa-search" aria-hidden="true"></i> Որոնում</a> 
+
+
+                <a href="?page=archive"  <?php if($page=="archive"){ ?> class="active" <?php } ?>><i class="fa fa-archive" aria-hidden="true"></i> Արխիվ</a> 
+                  <a href="?page=search" <?php if($page=="search"){ ?> class="active" <?php } ?>><i class="fa fa-search" aria-hidden="true"></i> Որոնում</a> 
+
+            <?php } ?>
+
+                <?php 
+                    if($_SESSION['role'] !== 'archiver' || $_SESSION['role'] !== 'viewer')
+                    {
+                ?>
+                  
                 <?php
                     }
                 ?>               

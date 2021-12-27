@@ -61,12 +61,12 @@ $result_inter_over = $conn->query($sql_inters_over);
 <body>
 	<ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link active" data-toggle="tab" href="#home"><i class="fas fa-arrow-down"></i> Մտից</a>
+    <a class="nav-link active" data-toggle="tab" href="#home"><i class="fas fa-arrow-down"></i> Իմ վարույթում</a>
     
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#menu1"><i class="fas fa-arrow-up"></i> Ելից</a>
+    <a class="nav-link" data-toggle="tab" href="#menu1"><i class="fas fa-arrow-up"></i> Առաքվածներ</a>
   </li>
 
   <li class="nav-item">
