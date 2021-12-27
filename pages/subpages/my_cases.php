@@ -101,6 +101,10 @@ $query_ceased_result = $conn->query($query_ceased);
 		          if ($formated_deadline < 0) {
 		            $color = 'red';
 		          }
+		          else 
+		          {
+		          	$color = 'black';
+		          }
 
 
 				$AVV_sent = '';

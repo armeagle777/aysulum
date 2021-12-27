@@ -8148,7 +8148,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 
 		# Location
-		$location = "../uploads/" . $case_id . "/inters";
+		$location = "../uploads/" . $case_id . "/inters/" . $inter_id;
 
 		# create directoy if not exists in upload/ directory
 		if (!is_dir($location)) {
@@ -8157,10 +8157,10 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 		$location .= "/" . $filename;
 
-		$update_inter_process = "UPDATE tb_inter_process SET actual = 0 WHERE inter_id = $inter_id";
+		$update_inter_process = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
 		if ($conn->query($update_inter_process) === TRUE) {
 
-			$update_inter_file = "UPDATE tb_inter_file SET inter_file_actual = 0 WHERE inter_id = $inter_id";
+			$update_inter_file = "UPDATE tb_inter_file SET inter_file_actual = '0' WHERE inter_id = $inter_id";
 
 			if ($conn->query($update_inter_file) === TRUE) {
 				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender_id','$reciver_id','1','2', 
@@ -8302,13 +8302,13 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 			$send_type_id = $row_inter['send_type'];
 
-			if ($send_type_id == 2) {
+		  $send_type_text = $row_inter['SEND_TYPE_TEXT'];
+
+		  if ($send_type_id == 2) {
 				$send_button = '<input type="submit" name="send_semi_email" class="btn btn-success" form="semi_edit_note" value="Առաքել էլեկտրոնային">';
 			} else {
 				$send_button = '<input type="submit" name="send_semi_usual" class="btn btn-success" form="semi_edit_note" value="Առաքել">';
 			}
-			$send_type_text = $row_inter['SEND_TYPE_TEXT'];
-
 
 			$inter_msg_out = $row_inter['inter_msg'];
 		}
@@ -8333,41 +8333,41 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
             	<div class="col-md-2">
             		<label class="label_pers_page">Գործ # </label>
-            		<input  class="form-control form-control-sm" name="case_id" value="' . $case_id . '">
+            		<input  class="form-control form-control-sm" name="case_id" value="' . $case_id . '" readonly />
             	</div>
 
             	<div class="col-md-2">
             		<label class="label_pers_page">Ելից # </label>
-            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_id . '">
+            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_id . '" readonly />
             	</div>
 
             	<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցման տեսակը </label>
-            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="' . $inter_type_text . '">
-            		<input type="hidden" name="inter_type_id" value="' . $inter_type_id . '">
+            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="' . $inter_type_text . '" readonly />
+            		<input type="hidden" name="inter_type_id" value="' . $inter_type_id . '" />
             	</div>
 
             	<div class="col-md-4">
             		<label class="label_pers_page">Կարգավիճակ </label>
-            		<input type="text" class="form-control form-control-sm" name="inter_id" value="' . $action_type_text . '">
+            		<input type="text" class="form-control form-control-sm" name="action_type_text" value="' . $action_type_text . '" readonly />
             		<input type="hidden" name="action_type_id" value="' . $action_type_id . '">
             	</div>
 
             	<div class="col-md-8">
             		<label class="label_pers_page">Ստացող </label>
-            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_addresat_text . '">
+            		<input  class="form-control form-control-sm" name="inter_addressat_text" value="' . $inter_addresat_text . '" readonly />
             	</div>
 
             	<div class="col-md-4">
             		<label class="label_pers_page">Առաքման եղանակը </label>
-            		<input  class="form-control form-control-sm" name="inter_id" value="' . $send_type_text . '">
+            		<input  class="form-control form-control-sm" name="send_type_id" value="' . $send_type_text . '" readonly />
             	</div>
 
 
 				<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցագիր </label>
-            		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download> <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
-            	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' . $filename . '"/>
+            		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
+            	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' .$inter_id. '/' . $filename . '" />
             	</div>
              </div>	
             	<h5 class="sub_title">Ապաստան հայցեղի կոնտակտային տվյալներ</h5>
@@ -8375,7 +8375,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
             <div class="row">
             		<div class="col-md-3">
             		  <label class="label_pers_page">Հեռախոսահամար </label>
-            		  <input  class="form-control form-control-sm" name="contact_tel" value="' . $contact_tel . '">
+            		  <input  class="form-control form-control-sm" name="contact_tel" value="' . $contact_tel . '" readonly />
             	  </div>
 
             	  <div class="col-md-3">
@@ -8384,7 +8384,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
             	  </div>
 
             	  <div class="col-md-6">
-            		  <label class="label_pers_page">Հեռախոսահամար </label>
+            		  <label class="label_pers_page">Հացսե </label>
             		  <input  class="form-control form-control-sm" name="case_address" value="' . $case_address . '">
             	  </div>
 
@@ -8447,13 +8447,14 @@ c.actual = 1 AND a.inter_id = $inter_id";
 		$sender = $_SESSION['user_id'];
 		$msg = 'առաքվել է';
 		$reciver_id = $_POST['author'];
-
-
+    $attachment_file =[];
+    $action_type = '3';
 
 		if (isset($_POST['send_semi_email'])) {
-			$mail_subject='Ծանուցում ՀՀ Միգրացիոն խառայության կողմից';
+			$mail_subject='Ծանուցում ՀՀ Միգրացիոն ծառայության կողմից';
 			$mail_body = 'Խնդրում ենք ընթերցել կցված փաստաթղթերը';
-			$attachment_file[] = $_POST['mail_notification_file'];
+			$attachment_file[] = '../'.$_POST['mail_notification_file'];
+			$note_date = date('Y-m-d');
 			if(!empty($_POST['contact_email'])){
 				$contact_email[] = $_POST['contact_email'];
 				if(!empty($_POST['lawyer_email'])){
@@ -8461,17 +8462,30 @@ c.actual = 1 AND a.inter_id = $inter_id";
 				}
 
 				sendMail($gmail_login, $gmail_pass, $gmail_host, $gmail_port, $contact_email, $mail_subject, $mail_body, $attachment_file);
+
+				$sql_inter_notified = "INSERT INTO `tb_inter_notified`(`notified_date`, `inter_id`) VALUES ('$note_date', '$inter_id')";
+  			if($conn->query($sql_inter_notified) === TRUE){
+				$update_inter_status = "UPDATE tb_inter SET inter_status = '2' WHERE inter_id = $inter_id";
+				$action_type = '5';
+				$msg = 'ծանուցվել է';
+				}
+				else
+				{
+					echo "Error: " . $sql_inter_notified . "<br>" . $conn->error;
+				}
 			}
 
+		}else {
+				$update_inter_status = "UPDATE tb_inter SET inter_status = '0' WHERE inter_id = $inter_id";
 		}
 
-		$update_inter_status = "UPDATE tb_inter SET inter_status = '0' WHERE inter_id = $inter_id";
+		
 		if ($conn->query($update_inter_status) === TRUE) {
 			$update_inter_process = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
 
 			if ($conn->query($update_inter_process) === TRUE) {
 
-				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender','$rec_id','1','3','$msg')";
+				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender','$rec_id','1', '$action','$msg')";
 
 				if ($conn->query($insert_new_inter_process) === TRUE) {
 					$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Ծանուցագիրը առաքվել է', NULLIF('$msg', ''), '0', '$sender', '$reciver_id', '$case_id', '1')";
@@ -8479,6 +8493,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 					if ($conn->query($sql_notify) === TRUE) {
 
 						if ($conn->query($sql_notify) === TRUE) {
+							
 							header('location: ../user.php?page=cases&homepage=general_list');
 						} else {
 							echo "Error: " . $sql_notify . "<br>" . $conn->error;
@@ -8501,6 +8516,580 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 
 	}
+
+
+
+
+if(isset($_POST['general_case_approve'])){
+
+	$case_id = $_POST['general_case_approve'];
+	$inter_id = $_POST['general_inter'];
+
+	$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email 
+FROM tb_inter a 
+INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
+INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
+INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
+INNER JOIN tb_inter_send_type e ON a.send_type = e.inter_send_type_id
+LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS g ON g.inter_id = a.inter_id
+INNER JOIN tb_inter_action_types f ON c.action_type = f.inter_action_type_id
+INNER JOIN tb_case h ON a.case_id = h.case_id
+INNER JOIN tb_marz i ON h.RA_marz = i.marz_id
+INNER JOIN tb_arm_com j ON h.RA_community = j.community_id
+INNER JOIN tb_settlement k ON h.RA_settlement = k.settlement_id
+LEFT JOIN tb_lawyer l ON l.case_id = a.case_id
+WHERE
+c.actual = 1 AND a.inter_id = $inter_id";
+
+		$result_inter = $conn->query($sql_inter);
+
+		if ($result_inter->num_rows > 0) {
+			$row_inter = $result_inter->fetch_assoc();
+
+			$inter_sender_id = $row_inter['sender'];
+			$inter_receiver_id = $row_inter['rec_id'];
+			$filename = $row_inter['inter_file'];
+			$action_type_id = $row_inter['ACTION_TYPE_ID'];
+			$action_type_text = $row_inter['ACTION_TYPE_TEXT'];
+			$inter_id = $row_inter['inter_id'];
+			$inter_msg = $row_inter['inter_msg'];
+			$inter_status_id = $row_inter['inter_status'];
+			if ($inter_status_id == 1) {
+				$inter_status_text = 'ընթացիկ';
+			}
+			if ($inter_status_id == 2) {
+				$inter_status_text = 'ավարտված';
+			}
+
+			$author = $row_inter['author_id'];
+
+			$inter_addresat_id = $row_inter['inter_reciever'];
+			$inter_addresat_text = $row_inter['inter_reciever_text'];
+
+			$marz = $row_inter['ADM1_ARM'];
+			$community = $row_inter['ADM3_ARM'];
+			$bnakavayr = $row_inter['ADM4_ARM'];
+			$street = $row_inter['RA_street'];
+			$building = $row_inter['RA_building'];
+			$aprt = $row_inter['RA_apartment'];
+
+			if ($row_inter['RA_marz'] == 1) {
+				$community = ' ';
+				$bnakavayr = ' ';
+			}
+
+
+			$case_address = $marz . ' ' . $community . ' ' . $bnakavayr . ' ' . $street . ' ' . $building . ' ' . $aprt;
+			if (!empty($row_inter['contact_tel'])) {
+				$contact_tel = $row_inter['contact_tel'];
+			} else {
+				$contact_tel = "նշված չէ";
+			}
+
+
+			if (!empty($row_inter['contact_email'])) {
+				$contact_email = $row_inter['contact_email'];
+			} else {
+				$contact_email = "նշված չէ";
+			}
+
+
+			$lawyer_address = ' ';
+			$lawyer_name = ' ';
+			$lawyer_surname = ' ';
+			$lawyer_tel = ' ';
+			$lawyer_email = ' ';
+
+			if (!empty($row_inter['lawyer_id'])) {
+				$lawyer_address = $row_inter['lawyer_address'];
+				$lawyer_name = $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
+				$lawyer_tel = $row_inter['lawyer_tel'];
+				$lawyer_email = $row_inter['lawyer_email'];
+			}
+
+
+			$inter_type_id = $row_inter['inter_type'];
+			$inter_type_text = $row_inter['INTER_TYPE_TEXT'];
+
+
+			$send_type_id = $row_inter['send_type'];
+
+			
+			$send_type_text = $row_inter['SEND_TYPE_TEXT'];
+
+
+			$inter_msg_out = $row_inter['inter_msg'];
+		}
+
+
+		$inter_approve_msg_modal = '
+<div class="modal-dialog modal-xl">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ծանուցագրի հաստատում</h5>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          
+        </div>
+        <div class="modal-body">
+        <form method="POST" action="config/config.php" id="inter_msg_approve" enctype="multipart/form-data">
+          <div class="col-md-12">
+                      
+            <input type="hidden" value="' . $author . '" name="author" />
+            <div class ="row">
+
+            	<div class="col-md-2">
+            		<label class="label_pers_page">Գործ # </label>
+            		<input  class="form-control form-control-sm" name="case_id" value="' . $case_id . '" readonly />
+            	</div>
+
+            	<div class="col-md-2">
+            		<label class="label_pers_page">Ելից # </label>
+            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_id . '" readonly />
+            	</div>
+
+            	<div class="col-md-8">
+            		<label class="label_pers_page">Ծանուցման տեսակը </label>
+            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="' . $inter_type_text . '" readonly />
+            		<input type="hidden" name="inter_type_id" value="' . $inter_type_id . '" />
+            	</div>
+
+            	<div class="col-md-4">
+            		<label class="label_pers_page">Կարգավիճակ </label>
+            		<input type="text" class="form-control form-control-sm" name="action_type_text" value="' . $action_type_text . '" readonly />
+            		<input type="hidden" name="action_type_id" value="' . $action_type_id . '">
+            	</div>
+
+            	<div class="col-md-8">
+            		<label class="label_pers_page">Ստացող </label>
+            		<input  class="form-control form-control-sm" name="inter_addressat_text" value="' . $inter_addresat_text . '" readonly />
+            	</div>
+
+            	<div class="col-md-4">
+            		<label class="label_pers_page">Առաքման եղանակը </label>
+            		<input  class="form-control form-control-sm" name="send_type_id" value="' . $send_type_text . '" readonly />
+            	</div>
+
+
+							<div class="col-md-8">
+            		<label class="label_pers_page">Ծանուցագիր </label>
+            		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
+            	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' . $inter_id . '/' . $filename . '" />
+            	</div>
+             </div>
+
+             <hr>
+
+             <div class="row">
+             	<div class="col-md-4">
+             		<label class="label_pers_page">Ծանուցման ամսաթիվ</label>
+             		<input type="date" class="form-control form-control-sm" name="nitified_date" required />
+             	</div>
+
+             	<div class="col-md-8">
+             		<label class="label_pers_page">Ծանուցման հավաստագիր</label>
+             			<div class="form-group custom-file">
+                		<input type="file" name="file" class="custom-file-input" id="customFile" required="required" />
+                		<label class="custom-file-label" for="customFile">Կցե՛ք ֆայլը</label>
+            			</div>
+             	</div>
+             </div>	       
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">ՉԵՂԱՐԿԵԼ</button>
+          <input type="submit" name="approve_inter_rec" class="btn btn-success" form="inter_msg_approve" value="Ծանուցվել է">
+				</div>
+      </div>
+      </form>
+    </div>
+
+';
+
+
+		echo $inter_approve_msg_modal;
+
+}
+
+if(isset($_POST['approve_inter_rec'])) {
+	$inter_id   = $_POST['inter_id'];
+	$case_id    = $_POST['case_id'];
+	$note_date  = $_POST['nitified_date'];
+	$sender     = $_SESSION['user_id'];
+	$rec_id     = '0';
+	$msg        = 'Ծանուցվել է';
+
+	$filename = $_FILES['file']['name'];
+
+
+		# Location
+		$location = "../uploads/" . $case_id . "/inters/" . $inter_id ;
+
+		# create directoy if not exists in upload/ directory
+		if (!is_dir($location)) {
+			mkdir($location, 0755);
+		}
+
+		$location .= "/" . $filename;
+
+
+
+		$update_inter_process = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
+
+			if ($conn->query($update_inter_process) === TRUE) {
+
+				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender','$rec_id','1','5','$msg')";
+
+				if ($conn->query($insert_new_inter_process)) {
+					if (move_uploaded_file($_FILES['file']['tmp_name'], $location)){
+						$sql_inter_notified = "INSERT INTO `tb_inter_notified`(`notified_date`, `file_name`, `inter_id`) VALUES ('$note_date', '$filename','$inter_id')";
+
+						if ($conn->query($sql_inter_notified) === TRUE) {
+
+							$update_inter_status = "UPDATE tb_inter SET inter_status = '2' WHERE inter_id = $inter_id";
+
+							if($conn->query($update_inter_status))
+							{
+							 header('location: ../user.php?page=cases&homepage=general_list');	
+							}
+							else
+							{
+								echo "Error: " . $update_inter_status . "<br>" . $conn->error;
+							}						
+						} 
+						else 
+						{
+							echo "Error: " . $sql_inter_notified . "<br>" . $conn->error;
+						}
+					}
+				}
+				else
+				{
+				echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;	
+				}	
+			}
+			else
+			{
+				echo "Error: " . $update_inter_process . "<br>" . $conn->error;
+			}	
+}
+
+
+
+if (isset($_POST['dev_approve_inter'])) {
+
+
+		$case_id = $_POST['dev_approve_inter'];
+		$inter_id = $_POST['general_inter'];
+
+
+
+
+		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email, PERSON.f_name_arm, PERSON.l_name_arm 
+FROM tb_inter a 
+INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
+INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
+INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
+INNER JOIN tb_inter_send_type e ON a.send_type = e.inter_send_type_id
+LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS g ON g.inter_id = a.inter_id
+INNER JOIN tb_inter_action_types f ON c.action_type = f.inter_action_type_id
+INNER JOIN tb_case h ON a.case_id = h.case_id
+INNER JOIN tb_marz i ON h.RA_marz = i.marz_id
+INNER JOIN tb_arm_com j ON h.RA_community = j.community_id
+INNER JOIN tb_settlement k ON h.RA_settlement = k.settlement_id
+INNER JOIN (SELECT personal_id, case_id, f_name_arm, l_name_arm FROM tb_person WHERE role = 1) AS PERSON ON PERSON.case_id = a.case_id 
+
+LEFT JOIN tb_lawyer l ON l.case_id = a.case_id
+WHERE
+c.actual = 1 AND a.inter_id = $inter_id";
+
+		$result_inter = $conn->query($sql_inter);
+
+		if ($result_inter->num_rows > 0) {
+			$row_inter = $result_inter->fetch_assoc();
+
+			$inter_sender_id = $row_inter['sender'];
+			$inter_receiver_id = $row_inter['rec_id'];
+			$filename = $row_inter['inter_file'];
+			$action_type_id = $row_inter['ACTION_TYPE_ID'];
+			$action_type_text = $row_inter['ACTION_TYPE_TEXT'];
+			$inter_id = $row_inter['inter_id'];
+			$inter_msg = $row_inter['inter_msg'];
+			$inter_status_id = $row_inter['inter_status'];
+			if ($inter_status_id == 1) {
+				$inter_status_text = 'ընթացիկ';
+			}
+			if ($inter_status_id == 2) {
+				$inter_status_text = 'ավարտված';
+			}
+
+			$author = $row_inter['author_id'];
+
+			$inter_addresat_id = $row_inter['inter_reciever'];
+			$inter_addresat_text = $row_inter['inter_reciever_text'];
+
+			$marz = $row_inter['ADM1_ARM'];
+			$community = $row_inter['ADM3_ARM'];
+			$bnakavayr = $row_inter['ADM4_ARM'];
+			$street = $row_inter['RA_street'];
+			$building = $row_inter['RA_building'];
+			$aprt = $row_inter['RA_apartment'];
+
+			if ($row_inter['RA_marz'] == 1) {
+				$community = ' ';
+				$bnakavayr = ' ';
+			}
+
+			$rec_name = $row_inter['f_name_arm'] . ' ' . $row_inter['l_name_arm'];
+			$case_address = $marz . ' ' . $community . ' ' . $bnakavayr . ' ' . $street . ' ' . $building . ' ' . $aprt;
+			if (!empty($row_inter['contact_tel'])) {
+				$contact_tel = $row_inter['contact_tel'];
+			} else {
+				$contact_tel = "նշված չէ";
+			}
+
+
+			if (!empty($row_inter['contact_email'])) {
+				$contact_email = $row_inter['contact_email'];
+			} else {
+				$contact_email = "նշված չէ";
+			}
+
+
+			$lawyer_address = ' ';
+			$lawyer_name = ' ';
+			$lawyer_surname = ' ';
+			$lawyer_tel = ' ';
+			$lawyer_email = ' ';
+
+			if (!empty($row_inter['lawyer_id'])) {
+				$lawyer_address = $row_inter['lawyer_address'];
+				$lawyer_name = $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
+				$lawyer_tel = $row_inter['lawyer_tel'];
+				$lawyer_email = $row_inter['lawyer_email'];
+			}
+
+
+			  if ($row_inter['inter_reciever'] == 1) {
+              $rec_name = $row_inter['f_name_arm'] . ' ' . $row_inter['l_name_arm'];
+            }
+            if ($row_inter['inter_reciever'] == 2) {
+              $rec_name = $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
+            }
+
+            if ($row_inter['inter_reciever'] == 3) {
+              $rec_name = 'ապաստան հանցող՝' . $row_inter['f_name_arm'] . ' ' . $row_inter['l_name_arm'] .', փաստաբան'. $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
+            }
+
+
+			$inter_type_id = $row_inter['inter_type'];
+			$inter_type_text = $row_inter['INTER_TYPE_TEXT'];
+
+			$send_type_text = $row_inter['SEND_TYPE_TEXT'];
+			$send_type_id = $row_inter['send_type'];
+
+			$inter_msg_out = $row_inter['inter_msg'];
+		}
+
+
+		$inter_approve_modal = '
+<div class="modal-dialog modal-xl">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ծանուցագիր</h5>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          
+        </div>
+        <div class="modal-body">
+        <form method="POST" action="config/config.php" id="semi_edit_note" enctype="multipart/form-data">
+          <div class="col-md-12">
+                      
+            <input type="hidden" value="' . $author . '" name="author" />
+            <div class ="row">
+
+            	<div class="col-md-2">
+            		<label class="label_pers_page">Գործ # </label>
+            		<input  class="form-control form-control-sm" name="case_id" value="' . $case_id . '" readonly />
+            	</div>
+
+            	<div class="col-md-2">
+            		<label class="label_pers_page">Ելից # </label>
+            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_id . '" readonly />
+            	</div>
+
+            	<div class="col-md-4">
+            		<label class="label_pers_page">Ծանուցման տեսակը </label>
+            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="' . $inter_type_text . '" readonly />
+            		<input type="hidden" name="inter_type_id" value="' . $inter_type_id . '" />
+            	</div>
+
+            	<div class="col-md-4">
+            		<label class="label_pers_page">Կարգավիճակ </label>
+            		<input type="text" class="form-control form-control-sm" name="action_type_text" value="' . $action_type_text . '" readonly />
+            		<input type="hidden" name="action_type_id" value="' . $action_type_id . '">
+            	</div>
+
+            	<div class="col-md-4">
+            		<label class="label_pers_page">Ստացող </label>
+            		<input  class="form-control form-control-sm" name="inter_addressat_text" value="' . $inter_addresat_text . '" readonly />
+            	</div>
+
+            	<div class="col-md-4">
+            		<label class="label_pers_page">Առաքման եղանակը </label>
+            		<input  class="form-control form-control-sm" name="send_type_id" value="' . $send_type_text . '" readonly />
+            	</div>
+
+
+				<div class="col-md-4">
+            		<label class="label_pers_page">Ծանուցագիր </label>
+            		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
+            	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' . $filename . '" />
+            	</div>
+             </div>	
+            	
+            <div class="row">
+       
+
+            	  <div class="col-md-12">
+            		  <label class="label_pers_page">Հաղորդագրություն </label>
+            		  <input  class="form-control form-control-sm" name="case_address" value="' . $inter_msg_out . '" readonly />
+            	  </div>
+
+             		<div class="col-md-12">
+            		  <label class="label_pers_page">Ստացողի ա.ա.հ. </label>
+            		  <input  class="form-control form-control-sm" name="lawyer_name" value="' . $rec_name . '" readonly>
+            	  </div>
+
+            	
+            	<hr>
+
+            	<div class="col-md-12">
+            		<label class="label_pers_page">Հաղորդագրություն </label>
+            		<textarea class="form-control" rows="3" name="new_msg">Խնդրում եմ առաքել հասցեատիրոջը։ </textarea>
+
+            	</div>
+
+            	<div class="col-md-12">
+             		<label class="label_pers_page">Վերբեռնե՛ք ստորագրված ֆայլը</label>
+             			<div class="form-group custom-file">
+                		<input type="file" name="file" class="custom-file-input" id="customFile" required="required" />
+                		<label class="custom-file-label" for="customFile">Կցե՛ք ֆայլը</label>
+            			</div>
+             	</div>
+
+
+            </div>	
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">ՉԵՂԱՐԿԵԼ</button>
+          <input type="submit" name="approve_send_general" class="btn btn-success" form="semi_edit_note" value="ՀԱՍՏԱՏԵԼ">
+				</div>
+      </div>
+      </form>
+    </div>
+
+';
+
+
+		echo $inter_approve_modal;
+
+
+}
+
+
+	if(isset($_POST['approve_send_general'])){
+
+
+		$case_id = $_POST['case_id'];
+		$inter_id = $_POST['inter_id'];
+		$msg = $_POST['new_msg'];
+		$sender_id = $_SESSION['user_id'];
+
+		$rec_sql = "SELECT * FROM users WHERE user_type = 'general' AND user_status = '1'";
+		$res_rec_sql = $conn->query($rec_sql);
+		if ($res_rec_sql->num_rows > 0) {
+			$rec_id = $res_rec_sql->fetch_assoc();
+			$reciver_id = $rec_id['id'];
+		}
+
+		$filename = $_FILES['file']['name'];
+
+
+		# Location
+		$location = "../uploads/" . $case_id . "/inters/" .$inter_id;
+
+		# create directoy if not exists in upload/ directory
+		if (!is_dir($location)) {
+			mkdir($location, 0755);
+		}
+
+		$location .= "/" . $filename;
+
+		$update_inter_process = "UPDATE tb_inter_process SET actual = 0 WHERE inter_id = $inter_id";
+		if ($conn->query($update_inter_process) === TRUE) {
+
+			$update_inter_file = "UPDATE tb_inter_file SET inter_file_actual = 0 WHERE inter_id = $inter_id";
+
+			if ($conn->query($update_inter_file) === TRUE) {
+				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender_id','$reciver_id','1','2', 
+				NULLIF('$msg', ''))";
+
+				if ($conn->query($insert_new_inter_process) === TRUE) {
+					$last_request_process = $conn->insert_id;
+					if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
+						$sql_insert_request_file = "INSERT INTO `tb_inter_file`( `inter_file`, `inter_process_id`, `inter_file_actual`, `inter_id`) VALUES ('$filename','$last_request_process', '1', '$inter_id')";
+
+						if ($conn->query($sql_insert_request_file) === TRUE) {
+
+							$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Նոր ծանուցագիր', NULLIF('$msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
+
+							if ($conn->query($sql_notify) === TRUE) {
+								header('location: ../user.php?page=cases&homepage=general_list');
+							} else {
+								echo "Error: " . $sql_notify . "<br>" . $conn->error;
+							}
+
+
+						} else {
+							echo "Error: " . $sql_insert_request_file . "<br>" . $conn->error;
+						}
+
+					}
+				} else {
+					echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;
+				}
+
+			} else {
+				echo "Error: " . $update_inter_file . "<br>" . $conn->error;
+			}
+
+		} else {
+			echo "Error: " . $update_inter_process . "<br>" . $conn->error;
+		}
+
+	}
+
+
+
+if(isset()){
+ $case_id = '';
+
+
+	$queruy = 'SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, c.inter_reciever_text, a.inter_type, d.inter_type AS INTER_TYPE_TEXT, a.send_type, b.inter_send_type, e.notified_date, e.file_name AS NOTE_FILE, f.actioned AS PROCESS_ACTIONED, f.action_type, g.action_type AS ACTION_TYPE_TEXT, FL.inter_file_actual, FL.inter_file
+FROM tb_inter a 
+INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id
+INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id
+INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
+LEFT JOIN tb_inter_notified e ON a.inter_id = e.inter_id
+INNER JOIN tb_inter_process f ON a.inter_id = f.inter_id
+INNER JOIN tb_inter_action_types g ON f.action_type = g.inter_action_type_id
+INNER JOIN (SELECT p.inter_file_id, p.inter_file, p.inter_process_id, p.inter_file_actual, p.uploaded, p.inter_id FROM tb_inter_file p WHERE p.inter_file_actual = 1) AS FL ON FL.inter_id = a.inter_id 
+WHERE a.case_id = $case_id';
+}
 
 
 	$conn->close();

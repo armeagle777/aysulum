@@ -154,6 +154,26 @@ INNER JOIN tb_orders b ON a.order_id = b.order_id
 
 }
 
+
+if(isset($_POST['inters'])){
+
+       $sql_inters = "SELECT * FROM tb_inter_process a WHERE a.actual = '1' AND a.rec_id = $u_id";
+        $result_inters = mysqli_query($conn, $sql_inters);
+        $count_inters = mysqli_num_rows($result_inters);
+        $data = array(
+              
+              'unseen_interns'           => $count_inters
+        );
+
+       echo json_encode($data);
+
+}
+
+
+
+
+
+
 ?>
 
 

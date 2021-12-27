@@ -75,12 +75,28 @@
 					if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'head' || $_SESSION['role'] === 'viewer' || $_SESSION['role'] === 'coispec') {
 						?>
 						<li>
-							<a href="?page=cases&homepage=draft" <?php if ($homepage == "draft") { ?> class="active_subpage" <?php } ?> ><i
-										class="fab fa-firstdraft"></i> Նախագծեր </a>
+							<a href="?page=cases&homepage=draft" <?php if ($homepage == "draft") { ?> class="active_subpage" <?php } ?> ><i	class="fab fa-firstdraft"></i> Նախագծեր </a>
 							<div class="notify_circle">
 								<span class="label label-pill label-danger count_draft"></span>
 							</div>
 						</li>
+						<?php
+					}
+				?>
+
+
+				<?php
+					if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'general' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'lawyer') {
+						?>
+						<li>
+							<a href="?page=cases&homepage=general_list" <?php if ($homepage == "general_list") { ?> class="active_subpage" <?php } ?>><i class="fas fa-list-ul"></i> Ծանուցագրեր</a>
+
+							<div class="notify_circle">
+								<span class="label label-pill label-danger count_interns"></span>
+							</div>
+
+						</li>
+						
 						<?php
 					}
 				?>
@@ -186,16 +202,7 @@
 					}
 				?>
 
-				<?php
-					if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'general') {
-						?>
-						<li>
-							<a href="?page=cases&homepage=general_list" <?php if ($homepage == "general_list") { ?> class="active_subpage" <?php } ?>><i class="fas fa-list-ul"></i> Ծանուցագրեր</a>
-						</li>
-						
-						<?php
-					}
-				?>
+	
 
 				<?php
 					if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator') {
@@ -338,6 +345,25 @@
 		}
 
 		load_unseen_draft();
+
+
+		function load_unseen_inters(inters = '') {
+			var user = '<?php echo $u_id;?>'
+			$.ajax({
+				url: "fetch.php",
+				method: "POST",
+				data: {inters: inters, user: user},
+				dataType: "json",
+				success: function (data) {
+
+					if (data.unseen_interns > 0) {
+						$('.count_interns').html(data.unseen_interns);
+					}
+				}
+			});
+		}
+
+		load_unseen_inters();
 
 		function load_unseen_orders(orders = '') {
 			var user = '<?php echo $u_id;?>'

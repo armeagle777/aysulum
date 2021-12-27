@@ -193,7 +193,8 @@ $sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter
 FROM tb_inter a 
 INNER JOIN tb_inter_process b ON a.inter_id = b.inter_id 
 INNER JOIN tb_inter_action_types d ON b.action_type = d.inter_action_type_id 
-LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS c ON c.inter_id = a.inter_id WHERE a.case_id = $case AND b.actual = 1 AND a.inter_status = 1";
+LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS c ON c.inter_id = a.inter_id 
+WHERE a.case_id = $case AND b.actual = '1' AND a.inter_status = '1'";
 
           $result_inter = $conn->query($sql_inter);
           
@@ -203,6 +204,7 @@ LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS c ON c.in
             $inter_sender_id = $row_inter['sender'];
             $inter_receiver_id = $row_inter['rec_id'];
             $filename    = $row_inter['inter_file'];
+            $inter_action_id = $row_inter['inter_action_type_id'];
             $action_type_text = $row_inter['ACTION_TYPE_TEXT'];
             $inter_id = $row_inter['inter_id'];
             $inter_msg = $row_inter['inter_msg'];
@@ -210,7 +212,7 @@ LEFT JOIN (SELECT * FROM tb_inter_file WHERE inter_file_actual = 1) AS c ON c.in
             if ($inter_status_id == 1) {
               $inter_status_text = 'ընթացիկ';
              }
-            if ($inter_status_id == 2) {
+            if ($inter_status_id == 0) {
               $inter_status_text = 'ավարտված';
              } 
 
@@ -272,6 +274,52 @@ else{
   $inter_receiver_id = '';
 }
 
+
+
+$sql_inters_history = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, 
+b.inter_process_id, b.sender, b.rec_id, b.actual, b.actioned, b.action_type, b.inter_msg, 
+z.inter_file, c.inter_type AS INTER_TYPE_TEXT, d.inter_reciever_text, e.inter_send_type AS SEND_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, h.notified_date, h.actioned, h.file_name AS HAVASTUM
+FROM tb_inter a 
+INNER JOIN tb_inter_process b ON a.inter_id = b.inter_id
+LEFT JOIN (SELECT inter_file_id, inter_file, inter_process_id, inter_file_actual, uploaded, inter_id FROM tb_inter_file WHERE inter_file_actual = 1) AS z ON z.inter_id = a.inter_id 
+INNER JOIN tb_inter_type c ON c.inter_type_id = a.inter_type
+INNER JOIN tb_inter_recivers d ON d.inter_reciever_id = a.inter_reciever
+INNER JOIN tb_inter_send_type e ON e.inter_send_type_id = a.send_type
+INNER JOIN tb_inter_action_types f ON f.inter_action_type_id = b.action_type
+LEFT JOIN (SELECT inter_id, notified_date, actioned, file_name FROM tb_inter_notified  ) AS h ON h.inter_id = a.inter_id
+
+WHERE a.case_id = $case";
+
+$result_inters_history = $conn->query($sql_inters_history);
+
+if($result_inters_history -> num_rows > 0) {
+  $his_row = $result_inters_history->fetch_assoc();
+  $inter_id = $his_row['inter_id'];
+  $reciver  = $his_row['inter_reciever_text'];
+  $send_type = $his_row['SEND_TYPE_TEXT'];
+  $int_status = '';
+
+  if ($his_row['inter_status'] == 1) {
+    $int_status = 'ընթացիկ';
+  }
+
+  if ($his_row['inter_status'] == 0) {
+    $int_status = 'ուղարկված';
+  }
+
+  if ($his_row['inter_status'] == 2) {
+    $int_status = 'ծանուցված';
+  }
+
+  $inter_file = $his_row['inter_file'];
+
+  $approve_file = '';
+  if (!empty($his_row['HAVASTUM'])) {
+    $approve_file = $his_row['HAVASTUM'];
+  }
+
+
+}
 
 
 

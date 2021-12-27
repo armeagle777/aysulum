@@ -211,31 +211,28 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 				<?php
 
-					$sql_inters = "SELECT * FROM tb_inter a INNER JOIN tb_inter_process b ON a.inter_id = b.inter_id WHERE a.case_id = $case AND b.actual = 1";
-					$result_inters = $conn->query($sql_inters);
-
+				
 						$inter_allow = '0';
-						if($result_inters->num_rows > 0) {
-						   $row_inter = $result_inters->fetch_assoc();
-						   $inter_receiver_id = $row_inter['rec_id'];
-						   $inter_action_id = $row_inter['action_type'];
-						   	if($inter_receiver_id == $_SESSION['user_id'] && $inter_action_id == 2)
+						  	if($inter_receiver_id == $_SESSION['user_id'] && $inter_action_id == 2)
 						   	{
 						   		$inter_allow = '1';
 						   	}
-						}
-						if($result_inters->num_rows < 1) {
+							
+							if($result_inter->num_rows > 0 && $inter_status_id != 0){
+								$inter_allow = '15';
+							}
+
+							if($result_inter->num_rows < 1) {
 							$inter_allow = '1'; 
-						}
+							}
 
 
-					if(($inter_allow == 1) && ($sign_status_id != '15' && $sign_status_id != '14' && $sign_status_id != '24' && $sign_status_id != '13' && $sign_status_id != '16' && $sign_status_id != '8') && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer'))
+					if(($inter_allow == 1 || $inter_allow == 0) && ($sign_status_id != '15' && $sign_status_id != '14' && $sign_status_id != '24' && $sign_status_id != '13' && $sign_status_id != '16' && $sign_status_id != '8') && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer'))
 
 					{
 						?>
 
-						<a href="#" id="intermediate" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i
-									class="fas fa-file-export first_menu"></i> Ծանուցում </a>
+						<a href="#" id="intermediate" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i class="fas fa-file-export first_menu"></i> Ծանուցում </a>
 						<?php
 					}
 				?>
@@ -463,23 +460,45 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 		<button class="tablinks" onclick="openCity(event, 'case_history')">Ընթացքի պատմություն</button>
 		<button class="tablinks" onclick="openCity(event, 'files')">Որոշման նախագծի շրջանառում</button>
 		<button class="tablinks" onclick="openCity(event, 'translations')">Թարգմանություններ</button>
+		<button class="tablinks" onclick="openCity(event, 'inter_msgs')">Ծանուցումներ</button>
 	</div>
+
+
+	<div id="inter_msgs" class="tabcontent">
+ 		<div class="row">
+			<div class="col-md-12">
+				<h5 class="sub_title" style="margin-top: 5px;">Ուղարկված ծանուցումներ</h5>
+				<table id="inter_msg_table" class="display" style="width:100%">
+					<thead>
+					<tr>
+						<th class="table_a2"></th>
+						<th class="table_a2">Տեսակ</th>
+						<th class="table_a2">Ամսաթիվ</th>
+						<th class="table_a2">Ստացող</th>
+						<th class="table_a2">Առաքման եղանակը</th>
+						<th class="table_a2">Կարգավիճակ</th>
+					</tr>
+					</thead>
+				</table>				
+			</div>	
+ 		</div>
+	</div>	
 
 
 	<div id="translations" class="tabcontent">
 		<div class="row">
-			<div class="col-md-10">
+			<div class="col-md-12">
 				<h5 class="sub_title" style="margin-top: 5px;">Թարգմանության հարցումներ</h5>
 				<table id="translations_table" class="display" style="width:100%">
 					<thead>
 					<tr>
-						<th></th>
-						<th>Տեսակ</th>
-						<th>Կազմակերպություն</th>
-						<th>Թարգմանության ա/թ</th>
-						<th>Սկիզբ</th>
-						<th>Ավարտ</th>
-						<th>Կարգավիճակ</th>
+						<th class="table_a2"></th>
+						<th class="table_a2">Տեսակ</th>
+						<th class="table_a2">Կազմակերպություն</th>
+						<th class="table_a2">Թարգմանության ա/թ</th>
+						<th class="table_a2">Սկիզբ</th>
+						<th class="table_a2">Ավարտ</th>
+						<th class="table_a2">Կարգավիճակ</th>
 					</tr>
 					</thead>
 				</table>
@@ -805,15 +824,14 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 					?>
 
 					<?php 
-
-						
-
-						if ($_SESSION['role'] === 'devhead' && $inter_receiver_id == $_SESSION['user_id'] && $inter_status_id == 1) {
+					
+						if ($_SESSION['role'] === 'devhead' && $inter_receiver_id == $u_id && $inter_status_id == 1) {
 							
 							$approve_inter_div = '';
 							$approve_inter_div.= '
 							<h5 class="sub_title" style="margin-top: 5px;">Ծանուցագիր</h5>
 							<div class="row">
+
                                 <div class="col-md-6 mt-1">
                                   <label class="label_pers_page">Տեսակը</label>              
                                   <input type="text" class="form-control form-control-sm" value=" ' . $inter_type_text . '" readonly/>
