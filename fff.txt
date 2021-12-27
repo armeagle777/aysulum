@@ -1,0 +1,39 @@
+	if (isset($_GET['cmd']) || $_GET['cmd'] === 'get_hystory_table') {
+		$case_id = $_GET['case_id'];
+		$myObj = new stdClass();
+		$data = [];
+
+
+		$query_translations = " SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, c.inter_reciever_text, a.inter_type, d.inter_type AS INTER_TYPE_TEXT, a.send_type, b.inter_send_type, e.notified_date, e.file_name AS NOTE_FILE, f.actioned AS PROCESS_ACTIONED, f.action_type, g.action_type AS ACTION_TYPE_TEXT, FL.inter_file_actual, FL.inter_file
+								FROM tb_inter a 
+								INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id
+								INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id
+								INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
+								LEFT JOIN tb_inter_notified e ON a.inter_id = e.inter_id
+								INNER JOIN tb_inter_process f ON a.inter_id = f.inter_id
+								INNER JOIN tb_inter_action_types g ON f.action_type = g.inter_action_type_id
+								INNER JOIN (SELECT p.inter_file_id, p.inter_file, p.inter_process_id, p.inter_file_actual, p.uploaded, p.inter_id FROM tb_inter_file p WHERE p.inter_file_actual = 1) AS FL ON FL.inter_id = a.inter_id 
+								WHERE a.case_id = $case_id";
+
+		$result_translations = $conn->query($query_translations);
+		if ($result_translations->num_rows > 0) {
+			while ($row_translations = $result_translations->fetch_assoc()) {
+				$translation_info = new stdClass();
+				$inter_status = 'Սպասում է առաքման';
+				if($row_translations['inter_status'] == 1){
+					$inter_status = 'Սպասում է հաստատման';
+				}elseif ($row_translations['inter_status'] == 2){
+					$inter_status = 'Ծանուցված';
+				}
+
+				$translation_info->type = $row_translations['inter_send_type'];
+				$translation_info->receiver = $row_translations['inter_reciever_text'];
+				$translation_info->status = $inter_status;
+				$translation_info->send_type = $row_translations['inter_send_type'];
+				$data[] = $translation_info;
+			}
+
+		}
+		$myObj->data = $data;
+		echo json_encode($myObj);
+		exit;
