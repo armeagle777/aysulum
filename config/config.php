@@ -8302,9 +8302,9 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 			$send_type_id = $row_inter['send_type'];
 
-		  $send_type_text = $row_inter['SEND_TYPE_TEXT'];
+			$send_type_text = $row_inter['SEND_TYPE_TEXT'];
 
-		  if ($send_type_id == 2) {
+			if ($send_type_id == 2) {
 				$send_button = '<input type="submit" name="send_semi_email" class="btn btn-success" form="semi_edit_note" value="Առաքել էլեկտրոնային">';
 			} else {
 				$send_button = '<input type="submit" name="send_semi_usual" class="btn btn-success" form="semi_edit_note" value="Առաքել">';
@@ -8367,7 +8367,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 				<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցագիր </label>
             		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
-            	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' .$inter_id. '/' . $filename . '" />
+            	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' . $inter_id . '/' . $filename . '" />
             	</div>
              </div>	
             	<h5 class="sub_title">Ապաստան հայցեղի կոնտակտային տվյալներ</h5>
@@ -8447,39 +8447,37 @@ c.actual = 1 AND a.inter_id = $inter_id";
 		$sender = $_SESSION['user_id'];
 		$msg = 'առաքվել է';
 		$reciver_id = $_POST['author'];
-    $attachment_file =[];
-    $action_type = '3';
+		$attachment_file = [];
+		$action_type = '3';
 
 		if (isset($_POST['send_semi_email'])) {
-			$mail_subject='Ծանուցում ՀՀ Միգրացիոն ծառայության կողմից';
+			$mail_subject = 'Ծանուցում ՀՀ Միգրացիոն ծառայության կողմից';
 			$mail_body = 'Խնդրում ենք ընթերցել կցված փաստաթղթերը';
-			$attachment_file[] = '../'.$_POST['mail_notification_file'];
+			$attachment_file[] = '../' . $_POST['mail_notification_file'];
 			$note_date = date('Y-m-d');
-			if(!empty($_POST['contact_email'])){
+			if (!empty($_POST['contact_email'])) {
 				$contact_email[] = $_POST['contact_email'];
-				if(!empty($_POST['lawyer_email'])){
-					$contact_email[]=$_POST['lawyer_email'];
+				if (!empty($_POST['lawyer_email'])) {
+					$contact_email[] = $_POST['lawyer_email'];
 				}
 
 				sendMail($gmail_login, $gmail_pass, $gmail_host, $gmail_port, $contact_email, $mail_subject, $mail_body, $attachment_file);
 
 				$sql_inter_notified = "INSERT INTO `tb_inter_notified`(`notified_date`, `inter_id`) VALUES ('$note_date', '$inter_id')";
-  			if($conn->query($sql_inter_notified) === TRUE){
-				$update_inter_status = "UPDATE tb_inter SET inter_status = '2' WHERE inter_id = $inter_id";
-				$action_type = '5';
-				$msg = 'ծանուցվել է';
-				}
-				else
-				{
+				if ($conn->query($sql_inter_notified) === TRUE) {
+					$update_inter_status = "UPDATE tb_inter SET inter_status = '2' WHERE inter_id = $inter_id";
+					$action_type = '5';
+					$msg = 'ծանուցվել է';
+				} else {
 					echo "Error: " . $sql_inter_notified . "<br>" . $conn->error;
 				}
 			}
 
-		}else {
-				$update_inter_status = "UPDATE tb_inter SET inter_status = '0' WHERE inter_id = $inter_id";
+		} else {
+			$update_inter_status = "UPDATE tb_inter SET inter_status = '0' WHERE inter_id = $inter_id";
 		}
 
-		
+
 		if ($conn->query($update_inter_status) === TRUE) {
 			$update_inter_process = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
 
@@ -8493,7 +8491,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 					if ($conn->query($sql_notify) === TRUE) {
 
 						if ($conn->query($sql_notify) === TRUE) {
-							
+
 							header('location: ../user.php?page=cases&homepage=general_list');
 						} else {
 							echo "Error: " . $sql_notify . "<br>" . $conn->error;
@@ -8518,14 +8516,12 @@ c.actual = 1 AND a.inter_id = $inter_id";
 	}
 
 
+	if (isset($_POST['general_case_approve'])) {
 
+		$case_id = $_POST['general_case_approve'];
+		$inter_id = $_POST['general_inter'];
 
-if(isset($_POST['general_case_approve'])){
-
-	$case_id = $_POST['general_case_approve'];
-	$inter_id = $_POST['general_inter'];
-
-	$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email 
+		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email 
 FROM tb_inter a 
 INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
 INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
@@ -8614,7 +8610,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 			$send_type_id = $row_inter['send_type'];
 
-			
+
 			$send_type_text = $row_inter['SEND_TYPE_TEXT'];
 
 
@@ -8710,21 +8706,21 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 		echo $inter_approve_msg_modal;
 
-}
+	}
 
-if(isset($_POST['approve_inter_rec'])) {
-	$inter_id   = $_POST['inter_id'];
-	$case_id    = $_POST['case_id'];
-	$note_date  = $_POST['nitified_date'];
-	$sender     = $_SESSION['user_id'];
-	$rec_id     = '0';
-	$msg        = 'Ծանուցվել է';
+	if (isset($_POST['approve_inter_rec'])) {
+		$inter_id = $_POST['inter_id'];
+		$case_id = $_POST['case_id'];
+		$note_date = $_POST['nitified_date'];
+		$sender = $_SESSION['user_id'];
+		$rec_id = '0';
+		$msg = 'Ծանուցվել է';
 
-	$filename = $_FILES['file']['name'];
+		$filename = $_FILES['file']['name'];
 
 
 		# Location
-		$location = "../uploads/" . $case_id . "/inters/" . $inter_id ;
+		$location = "../uploads/" . $case_id . "/inters/" . $inter_id;
 
 		# create directoy if not exists in upload/ directory
 		if (!is_dir($location)) {
@@ -8734,56 +8730,43 @@ if(isset($_POST['approve_inter_rec'])) {
 		$location .= "/" . $filename;
 
 
-
 		$update_inter_process = "UPDATE tb_inter_process SET actual = '0' WHERE inter_id = $inter_id";
 
-			if ($conn->query($update_inter_process) === TRUE) {
+		if ($conn->query($update_inter_process) === TRUE) {
 
-				$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender','$rec_id','1','5','$msg')";
+			$insert_new_inter_process = "INSERT INTO `tb_inter_process`(`inter_id`, `sender`, `rec_id`, `actual`, `action_type`, `inter_msg`) VALUES ('$inter_id','$sender','$rec_id','1','5','$msg')";
 
-				if ($conn->query($insert_new_inter_process)) {
-					if (move_uploaded_file($_FILES['file']['tmp_name'], $location)){
-						$sql_inter_notified = "INSERT INTO `tb_inter_notified`(`notified_date`, `file_name`, `inter_id`) VALUES ('$note_date', '$filename','$inter_id')";
+			if ($conn->query($insert_new_inter_process)) {
+				if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
+					$sql_inter_notified = "INSERT INTO `tb_inter_notified`(`notified_date`, `file_name`, `inter_id`) VALUES ('$note_date', '$filename','$inter_id')";
 
-						if ($conn->query($sql_inter_notified) === TRUE) {
+					if ($conn->query($sql_inter_notified) === TRUE) {
 
-							$update_inter_status = "UPDATE tb_inter SET inter_status = '2' WHERE inter_id = $inter_id";
+						$update_inter_status = "UPDATE tb_inter SET inter_status = '2' WHERE inter_id = $inter_id";
 
-							if($conn->query($update_inter_status))
-							{
-							 header('location: ../user.php?page=cases&homepage=general_list');	
-							}
-							else
-							{
-								echo "Error: " . $update_inter_status . "<br>" . $conn->error;
-							}						
-						} 
-						else 
-						{
-							echo "Error: " . $sql_inter_notified . "<br>" . $conn->error;
+						if ($conn->query($update_inter_status)) {
+							header('location: ../user.php?page=cases&homepage=general_list');
+						} else {
+							echo "Error: " . $update_inter_status . "<br>" . $conn->error;
 						}
+					} else {
+						echo "Error: " . $sql_inter_notified . "<br>" . $conn->error;
 					}
 				}
-				else
-				{
-				echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;	
-				}	
+			} else {
+				echo "Error: " . $insert_new_inter_process . "<br>" . $conn->error;
 			}
-			else
-			{
-				echo "Error: " . $update_inter_process . "<br>" . $conn->error;
-			}	
-}
+		} else {
+			echo "Error: " . $update_inter_process . "<br>" . $conn->error;
+		}
+	}
 
 
-
-if (isset($_POST['dev_approve_inter'])) {
+	if (isset($_POST['dev_approve_inter'])) {
 
 
 		$case_id = $_POST['dev_approve_inter'];
 		$inter_id = $_POST['general_inter'];
-
-
 
 
 		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email, PERSON.f_name_arm, PERSON.l_name_arm 
@@ -8871,16 +8854,16 @@ c.actual = 1 AND a.inter_id = $inter_id";
 			}
 
 
-			  if ($row_inter['inter_reciever'] == 1) {
-              $rec_name = $row_inter['f_name_arm'] . ' ' . $row_inter['l_name_arm'];
-            }
-            if ($row_inter['inter_reciever'] == 2) {
-              $rec_name = $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
-            }
+			if ($row_inter['inter_reciever'] == 1) {
+				$rec_name = $row_inter['f_name_arm'] . ' ' . $row_inter['l_name_arm'];
+			}
+			if ($row_inter['inter_reciever'] == 2) {
+				$rec_name = $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
+			}
 
-            if ($row_inter['inter_reciever'] == 3) {
-              $rec_name = 'ապաստան հանցող՝' . $row_inter['f_name_arm'] . ' ' . $row_inter['l_name_arm'] .', փաստաբան'. $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
-            }
+			if ($row_inter['inter_reciever'] == 3) {
+				$rec_name = 'ապաստան հանցող՝' . $row_inter['f_name_arm'] . ' ' . $row_inter['l_name_arm'] . ', փաստաբան' . $row_inter['lawyer_name'] . ' ' . $row_inter['lawyer_surname'];
+			}
 
 
 			$inter_type_id = $row_inter['inter_type'];
@@ -8998,10 +8981,10 @@ c.actual = 1 AND a.inter_id = $inter_id";
 		echo $inter_approve_modal;
 
 
-}
+	}
 
 
-	if(isset($_POST['approve_send_general'])){
+	if (isset($_POST['approve_send_general'])) {
 
 
 		$case_id = $_POST['case_id'];
@@ -9020,7 +9003,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 
 		# Location
-		$location = "../uploads/" . $case_id . "/inters/" .$inter_id;
+		$location = "../uploads/" . $case_id . "/inters/" . $inter_id;
 
 		# create directoy if not exists in upload/ directory
 		if (!is_dir($location)) {
@@ -9074,22 +9057,48 @@ c.actual = 1 AND a.inter_id = $inter_id";
 	}
 
 
+	if (isset($_GET['cmd']) || $_GET['cmd'] === 'get_hystory_table') {
+		$case_id = $_GET['case_id'];
+		$myObj = new stdClass();
+		$data = [];
 
-if(isset()){
- $case_id = '';
+
+		$query_translations = " SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, c.inter_reciever_text, a.inter_type, d.inter_type AS INTER_TYPE_TEXT, a.send_type, b.inter_send_type, e.notified_date, e.file_name AS NOTE_FILE, f.actioned AS PROCESS_ACTIONED, f.action_type, g.action_type AS ACTION_TYPE_TEXT, FL.inter_file_actual, FL.inter_file
+								FROM tb_inter a 
+								INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id
+								INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id
+								INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
+								LEFT JOIN tb_inter_notified e ON a.inter_id = e.inter_id
+								INNER JOIN tb_inter_process f ON a.inter_id = f.inter_id
+								INNER JOIN tb_inter_action_types g ON f.action_type = g.inter_action_type_id
+								INNER JOIN (SELECT p.inter_file_id, p.inter_file, p.inter_process_id, p.inter_file_actual, p.uploaded, p.inter_id FROM tb_inter_file p WHERE p.inter_file_actual = 1) AS FL ON FL.inter_id = a.inter_id 
+								WHERE a.case_id = $case_id";
+
+		$result_translations = $conn->query($query_translations);
+		if ($result_translations->num_rows > 0) {
+			while ($row_translations = $result_translations->fetch_assoc()) {
+				$translation_info = new stdClass();
+				$inter_status = 'Սպասում է առաքման';
+				if($row_translations['inter_status'] == 1){
+					$inter_status = 'Սպասում է հաստատման';
+				}elseif ($row_translations['inter_status'] == 2){
+					$inter_status = 'Ծանուցված';
+				}
+
+				$translation_info->type = $row_translations['inter_send_type'];
+				$translation_info->receiver = $row_translations['inter_reciever_text'];
+				$translation_info->status = $inter_status;
+				$translation_info->send_type = $row_translations['inter_send_type'];
+				$data[] = $translation_info;
+			}
+
+		}
+		$myObj->data = $data;
+		echo json_encode($myObj);
+		exit;
 
 
-	$queruy = 'SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, c.inter_reciever_text, a.inter_type, d.inter_type AS INTER_TYPE_TEXT, a.send_type, b.inter_send_type, e.notified_date, e.file_name AS NOTE_FILE, f.actioned AS PROCESS_ACTIONED, f.action_type, g.action_type AS ACTION_TYPE_TEXT, FL.inter_file_actual, FL.inter_file
-FROM tb_inter a 
-INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id
-INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id
-INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
-LEFT JOIN tb_inter_notified e ON a.inter_id = e.inter_id
-INNER JOIN tb_inter_process f ON a.inter_id = f.inter_id
-INNER JOIN tb_inter_action_types g ON f.action_type = g.inter_action_type_id
-INNER JOIN (SELECT p.inter_file_id, p.inter_file, p.inter_process_id, p.inter_file_actual, p.uploaded, p.inter_id FROM tb_inter_file p WHERE p.inter_file_actual = 1) AS FL ON FL.inter_id = a.inter_id 
-WHERE a.case_id = $case_id';
-}
+	}
 
 
 	$conn->close();
