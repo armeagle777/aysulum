@@ -9075,21 +9075,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 
 
-// if(isset()){
-//  $case_id = '';
 
-
-// 	$queruy = 'SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, c.inter_reciever_text, a.inter_type, d.inter_type AS INTER_TYPE_TEXT, a.send_type, b.inter_send_type, e.notified_date, e.file_name AS NOTE_FILE, f.actioned AS PROCESS_ACTIONED, f.action_type, g.action_type AS ACTION_TYPE_TEXT, FL.inter_file_actual, FL.inter_file
-// FROM tb_inter a 
-// INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id
-// INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id
-// INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
-// LEFT JOIN tb_inter_notified e ON a.inter_id = e.inter_id
-// INNER JOIN tb_inter_process f ON a.inter_id = f.inter_id
-// INNER JOIN tb_inter_action_types g ON f.action_type = g.inter_action_type_id
-// INNER JOIN (SELECT p.inter_file_id, p.inter_file, p.inter_process_id, p.inter_file_actual, p.uploaded, p.inter_id FROM tb_inter_file p WHERE p.inter_file_actual = 1) AS FL ON FL.inter_id = a.inter_id 
-// WHERE a.case_id = $case_id';
-// }
 
 
 	$conn->close();
