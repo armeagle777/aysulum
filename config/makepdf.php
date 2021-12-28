@@ -739,8 +739,8 @@ if(isset($_GET["id_card"]))
 
     $mpdf->WriteHTML($pdfPage);
     $fileName=$f_name_arm." ".$l_name_arm;
-	$mpdf->Output();
-//    $mpdf->Output("$fileName.pdf","D");
+//	$mpdf->Output();
+    $mpdf->Output("$fileName.pdf","D");
     $conn->close();
     exit;
 }
