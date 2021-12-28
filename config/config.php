@@ -9074,7 +9074,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 	}
 
 
-	if (isset($_GET['cmd']) || $_GET['cmd'] === 'get_hystory_table') {
+	if (isset($_GET['cmd']) && $_GET['cmd'] === 'get_hystory_table') {
 		$case_id = $_GET['case_id'];
 		$myObj = new stdClass();
 		$data = [];
@@ -9102,7 +9102,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 					$inter_status = 'Ծանուցված';
 				}
 
-				$translation_info->type = $row_translations['inter_send_type'];
+				$translation_info->type = $row_translations['INTER_TYPE_TEXT'];
 				$translation_info->receiver = $row_translations['inter_reciever_text'];
 				$translation_info->status = $inter_status;
 				$translation_info->send_type = $row_translations['inter_send_type'];
