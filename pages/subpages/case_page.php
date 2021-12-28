@@ -470,6 +470,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 					<thead>
 					<tr>
 						<th class="table_a2"></th>
+						<th class="table_a2">N</th>
 						<th class="table_a2">Տեսակ</th>
 						<th class="table_a2">Ստացող</th>
 						<th class="table_a2">Առաքման եղանակը</th>
@@ -1780,12 +1781,11 @@ WHERE a.case_id = $case";
 			});
 
 
-$(document).on('click', '#return_intern', function() {
-	var value = $('#intern_approve_by_dev')
-	value.removeAttr("required")
-})
+			$(document).on('click', '#return_intern', function () {
+				var value = $('#intern_approve_by_dev')
+				value.removeAttr("required")
+			})
 
-			
 
 			function format(d) {
 				let documents = d.documents.map(doc => `<a href= "${doc.doc_href}" download class="dt_download_a">${doc.doc_name}</a>`);
@@ -1816,6 +1816,21 @@ $(document).on('click', '#return_intern', function() {
 						'</table>' +
 						'</div>';
 			}
+			function formatInter(d) {
+				let processTbody = d.inter_processes.map(process => `<tr><td>${process.action_type_text}</td><td>${process.process_actioned}</td><td class="text-center"><a download href="${process.inter_file}" ><i class="fa fa-download" aria-hidden="true"></i></a></td></tr>`);
+
+				// `d` is the original data object for the row
+				return '<div class="dt_content">' +
+						'<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;margin-right: 30px;">' +
+						'<tr>' +
+						'<th>Հաղորդագրություն</th>' +
+						'<th>Ամսաթիվ</th>' +
+						'<th>Փաստաթուղթ</th>' +
+						'</tr>' +
+						processTbody +
+						'</table>' +
+						'</div>';
+			}
 
 			$(document).ready(function () {
 				var table = $('#translations_table').DataTable({
@@ -1841,836 +1856,314 @@ $(document).on('click', '#return_intern', function() {
 					]
 				});
 
-			
-					var inter_msg_table = $('#inter_msg_table').DataTable({
-						"searching": false,
-						"lengthChange": false,
-						"language": {
-							"emptyTable": "Տվյալները բացակայում են",
+
+				var inter_msg_table = $('#inter_msg_table').DataTable({
+					"searching": false,
+					"lengthChange": false,
+					"language": {
+						"emptyTable": "Տվյալները բացակայում են",
+					},
+					"ajax": "config/config.php?cmd=get_hystory_table&case_id=<?php echo $case; ?>",
+					"columns": [
+						{
+							"className": 'details-control',
+							"orderable": false,
+							"data": null,
+							"defaultContent": ''
 						},
-						"ajax": "config/config.php?cmd=get_hystory_table&case_id=<?php echo $case; ?>",
-						"columns": [
-							{
-								"className": 'details-control',
-								"orderable": false,
-								"data": null,
-								"defaultContent": ''
-							},
-							{"data": "type"},
-							{"data": "receiver"},
-							{"data": "send_type"},
-							{"data": "status"},
-						]
-					})
-
-
-					// Add event listener for opening and closing details
-					$('#translations_table tbody').on('click', 'td.details-control', function () {
-						var tr = $(this).closest('tr');
-						var row = table.row(tr);
-
-						if (row.child.isShown()) {
-							// This row is already open - close it
-							row.child.hide();
-							tr.removeClass('shown');
-						} else {
-							// Open this row
-							row.child(format(row.data())).show();
-							tr.addClass('shown');
-						}
-					});
-				});
-
-
-				//Send translate to approve button on click
-				$(document).on('submit', '#translation_modal', function () {
-					$('#send_approve_translate').attr("disabled", true);
-					$('#send_approve_translate').html('<i class="fa fa-spinner fa-spin"></i>Loading');
-				})
-
-				//Approving translate by devhead button on click
-				$(document).on('submit', '#send_mail_form', function () {
-					$('#send_email_button').attr("disabled", true);
-					$('#send_email_button').html('<i class="fa fa-spinner fa-spin"></i>Loading');
+						{"data": "inter_id"},
+						{"data": "type"},
+						{"data": "receiver"},
+						{"data": "send_type"},
+						{"data": "status"},
+					]
 				})
 
 
-				$('#mail_translate').on('click', function (e) {
-					e.preventDefault();
-					var translate_caseId = $(this).attr('case');
-					var language = $(this).attr('language');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {translate_case: translate_caseId, language: language},
-								success: function (data) {
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal('show');
-								}
-							});
-				})
+				// Add event listener for opening and closing details
+				$('#translations_table tbody').on('click', 'td.details-control', function () {
+					var tr = $(this).closest('tr');
+					var row = table.row(tr);
 
-
-				$("#approve_special_change").click(function () {
-					var case_id = $(this).attr('modal_id');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {special_change_devhead: case_id},
-								success: function (data) {
-									//console.log(appeal_id);
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
+					if (row.child.isShown()) {
+						// This row is already open - close it
+						row.child.hide();
+						tr.removeClass('shown');
+					} else {
+						// Open this row
+						row.child(format(row.data())).show();
+						tr.addClass('shown');
+					}
 				});
 
-				$("#edit_inter").click(function () {
-					var case_id = $(this).attr('case_id');
-					var inter_id = $(this).attr('inter_id');
+				// Add event listener for opening and closing details
+				$('#inter_msg_table tbody').on('click', 'td.details-control', function () {
+					var tr = $(this).closest('tr');
+					var row = inter_msg_table.row(tr);
 
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {edit_inter: case_id, inter_id: inter_id},
-								success: function (data) {
-
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
-				});
-
-				$("#close_inter").click(function () {
-					var case_id = $(this).attr('case_id');
-					var inter_id = $(this).attr('inter_id');
-
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {close_inter: case_id, inter_id: inter_id},
-								success: function (data) {
-
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
+					if (row.child.isShown()) {
+						row.child.hide();
+						tr.removeClass('shown');
+					} else {
+						row.child(formatInter(row.data())).show();
+						tr.addClass('shown');
+					}
 				});
 
 
-				$("#court_decission").click(function () {
-					var case_id = $(this).attr('modal_id');
-					var claim_id = $(this).attr('claim');
-					var appeal_id = $(this).attr('appeal');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {decision_3: case_id, claim_id: claim_id, appeal_id: appeal_id},
-								success: function (data) {
-									//console.log(appeal_id);
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
-				});
-
-				$("#intermediate").click(function () {
-					var case_id = $(this).attr('modal_id');
-
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {inter_note: case_id},
-								success: function (data) {
-									console.log(case_id);
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
-				});
+			});
 
 
-				$("#asign_lawer").click(function () {
-					var case_id = $(this).attr('modal_id');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {ms_lawyer: case_id},
-								success: function (data) {
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
-				});
+			//Send translate to approve button on click
+			$(document).on('submit', '#translation_modal', function () {
+				$('#send_approve_translate').attr("disabled", true);
+				$('#send_approve_translate').html('<i class="fa fa-spinner fa-spin"></i>Loading');
+			})
 
-				$("#court_accept").click(function () {
-					var case_id = $(this).attr('modal_id');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {accept_claim: case_id},
-								success: function (data) {
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
-				});
-
-				$("#court_claim").click(function () {
-					var case_id = $(this).attr('modal_id');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {claim_court: case_id},
-								success: function (data) {
-									$('#approve_special_type').html(data);
-									$("#approve_special_type").modal({backdrop: "static"});
-								}
-							});
-				});
+			//Approving translate by devhead button on click
+			$(document).on('submit', '#send_mail_form', function () {
+				$('#send_email_button').attr("disabled", true);
+				$('#send_email_button').html('<i class="fa fa-spinner fa-spin"></i>Loading');
+			})
 
 
-				$("#change_case_type").click(function () {
-					var case_id = $(this).attr('modal_id');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {request_change_special: case_id},
-								success: function (data) {
-									$('#change_special_type').html(data);
-									$("#change_special_type").modal({backdrop: "static"});
-								}
-							});
-				});
+			$('#mail_translate').on('click', function (e) {
+				e.preventDefault();
+				var translate_caseId = $(this).attr('case');
+				var language = $(this).attr('language');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {translate_case: translate_caseId, language: language},
+							success: function (data) {
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal('show');
+							}
+						});
+			})
 
 
-				$("#change_deadline").click(function () {
-					var case_id = $(this).attr('modal_id');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {change_deadline: case_id},
-								success: function (data) {
-									$('#change_deadline_special').html(data);
-									$("#change_deadline_special").modal({backdrop: "static"});
-								}
-							});
-				});
+			$("#approve_special_change").click(function () {
+				var case_id = $(this).attr('modal_id');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {special_change_devhead: case_id},
+							success: function (data) {
+								//console.log(appeal_id);
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+			$("#edit_inter").click(function () {
+				var case_id = $(this).attr('case_id');
+				var inter_id = $(this).attr('inter_id');
+
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {edit_inter: case_id, inter_id: inter_id},
+							success: function (data) {
+
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+			$("#close_inter").click(function () {
+				var case_id = $(this).attr('case_id');
+				var inter_id = $(this).attr('inter_id');
+
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {close_inter: case_id, inter_id: inter_id},
+							success: function (data) {
+
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
 
 
-				$("#return_redev").click(function () {
-					var case_id = $(this).attr('re_case');
-					var srole = $(this).attr('sender_role');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {re_case: case_id, role: srole},
-								success: function (data) {
-									console.log(srole);
-									$('#return_to_redev').html(data);
-									$("#return_to_redev").modal({backdrop: "static"});
-								}
-							});
-				});
+			$("#court_decission").click(function () {
+				var case_id = $(this).attr('modal_id');
+				var claim_id = $(this).attr('claim');
+				var appeal_id = $(this).attr('appeal');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {decision_3: case_id, claim_id: claim_id, appeal_id: appeal_id},
+							success: function (data) {
+								//console.log(appeal_id);
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
 
-				$("#upload_file").on("click", function (event) {
-					var file_type = $("#file_type_select").val();
-					if (!file_type) {
-						alert("\"Ֆայլի տիպը\" պարտադիր դաշտ է");
+			$("#intermediate").click(function () {
+				var case_id = $(this).attr('modal_id');
+
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {inter_note: case_id},
+							success: function (data) {
+								console.log(case_id);
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+
+			$("#asign_lawer").click(function () {
+				var case_id = $(this).attr('modal_id');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {ms_lawyer: case_id},
+							success: function (data) {
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+			$("#court_accept").click(function () {
+				var case_id = $(this).attr('modal_id');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {accept_claim: case_id},
+							success: function (data) {
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+			$("#court_claim").click(function () {
+				var case_id = $(this).attr('modal_id');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {claim_court: case_id},
+							success: function (data) {
+								$('#approve_special_type').html(data);
+								$("#approve_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+
+			$("#change_case_type").click(function () {
+				var case_id = $(this).attr('modal_id');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {request_change_special: case_id},
+							success: function (data) {
+								$('#change_special_type').html(data);
+								$("#change_special_type").modal({backdrop: "static"});
+							}
+						});
+			});
+
+
+			$("#change_deadline").click(function () {
+				var case_id = $(this).attr('modal_id');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {change_deadline: case_id},
+							success: function (data) {
+								$('#change_deadline_special').html(data);
+								$("#change_deadline_special").modal({backdrop: "static"});
+							}
+						});
+			});
+
+
+			$("#return_redev").click(function () {
+				var case_id = $(this).attr('re_case');
+				var srole = $(this).attr('sender_role');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {re_case: case_id, role: srole},
+							success: function (data) {
+								console.log(srole);
+								$('#return_to_redev').html(data);
+								$("#return_to_redev").modal({backdrop: "static"});
+							}
+						});
+			});
+
+			$("#upload_file").on("click", function (event) {
+				var file_type = $("#file_type_select").val();
+				if (!file_type) {
+					alert("\"Ֆայլի տիպը\" պարտադիր դաշտ է");
+					event.preventDefault()
+					return;
+				} else if (file_type == 1) {
+					var case_file_types = $("#case_file_types").val();
+					if (!case_file_types) {
+						alert("\"Ֆայլի տեսակը\" պարտադիր դաշտ է");
 						event.preventDefault()
 						return;
-					} else if (file_type == 1) {
-						var case_file_types = $("#case_file_types").val();
-						if (!case_file_types) {
-							alert("\"Ֆայլի տեսակը\" պարտադիր դաշտ է");
-							event.preventDefault()
-							return;
-						}
-					} else {
-						var case_file_types = $("#case_file_types").val();
-						var select_member = $("#select_member").val();
-						if (!case_file_types || !select_member) {
-							alert("<Ֆայլի տեսակը> և <ընտանիքի անդամը> պարտադիր լրացման դաշտ են");
-							event.preventDefault()
-							return;
-						}
 					}
-
-
-				})
-
-				$("#file_type_select").on("change", function () {
-					var file_type_select = $("#file_type_select").val();
-					var my_case = $("#case").val();
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {file_type_select, my_case},
-								success: function (data) {
-									$('#dropdown_container').html(data);
-
-								}
-							});
-				})
-
-
-				var url_string = window.location.href;
-				var url = new URL(url_string);
-				var active_tab = url.searchParams.get("active_tab");
-				if (active_tab) {
-
-					var i, tabcontent, tablinks;
-					tabcontent = document.getElementsByClassName("tabcontent");
-					for (i = 0; i < tabcontent.length; i++) {
-						tabcontent[i].style.display = "none";
+				} else {
+					var case_file_types = $("#case_file_types").val();
+					var select_member = $("#select_member").val();
+					if (!case_file_types || !select_member) {
+						alert("<Ֆայլի տեսակը> և <ընտանիքի անդամը> պարտադիր լրացման դաշտ են");
+						event.preventDefault()
+						return;
 					}
-					tablinks = document.getElementsByClassName("tablinks");
-					for (i = 0; i < tablinks.length; i++) {
-						tablinks[i].className = tablinks[i].className.replace(" active", "");
-					}
-					document.getElementById("family").style.display = "block";
-
-					$(`#${active_tab}`).addClass("active");
-
-
 				}
 
-				$("#ref_to_center").click(function () {
-					var case_id = $(this).attr('ref_case');
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {order: case_id},
-								success: function (data) {
-									console.log(case_id);
-									$('#order_center').html(data);
-									$("#order_center").modal({backdrop: "static"});
 
-								}
-							});
-				});
+			})
 
-				$(".del_mo").click(function () {
-					var pers_id = $(this).attr('mo_id');
-					var case_id = $(this).attr('mo_case');
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {mo_del_info: pers_id, case_mo: case_id},
-						success: function (data) {
-							//console.log(pers_id);
-							$('#om_edit').html(data);
-							$("#om_edit").modal({backdrop: "static"});
+			$("#file_type_select").on("change", function () {
+				var file_type_select = $("#file_type_select").val();
+				var my_case = $("#case").val();
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {file_type_select, my_case},
+							success: function (data) {
+								$('#dropdown_container').html(data);
 
-						}
-					});
-				});
+							}
+						});
+			})
 
-				$(".view_mo").click(function () {
-					var pers_id = $(this).attr('mo_id');
-					var case_id = $(this).attr('mo_case');
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {mo_view_info: pers_id, case_mo: case_id},
-						success: function (data) {
-							//console.log(pers_id);
-							$('#om_edit').html(data);
-							$("#om_edit").modal({backdrop: "static"});
 
-						}
-					});
-				});
+			var url_string = window.location.href;
+			var url = new URL(url_string);
+			var active_tab = url.searchParams.get("active_tab");
+			if (active_tab) {
 
-				$(".edit_mo").click(function () {
-					var pers_id = $(this).attr('mo_id');
-					var case_id = $(this).attr('mo_case');
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {mo_edit_info: pers_id, case_mo: case_id},
-						success: function (data) {
-							//console.log(pers_id);
-							$('#om_edit').html(data);
-							$("#om_edit").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#member_out").click(function () {
-
-					var case_id = $(this).attr('modal_id');
-
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {out_member: case_id},
-						success: function (data) {
-							$('#new_out_member').html(data);
-							$("#new_out_member").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-				$(document).on("keyup", ".validation", function () {
-					var this_id = $(this).attr("id");
-					if ($(this).attr("type") === "text") {
-						$(`#${this_id}`).css("border", "1px solid #ced4da");
-						$(`#error-message${this_id}`).css("visibility", "hidden");
-						return;
-					}
-					if ($(this).attr("type") === "number") {
-						$(`#${this_id}`).css("border", "1px solid #ced4da");
-						$(`#error-messagebdate`).css("visibility", "hidden");
-					}
-
-				})
-				$(document).on("change", ".validation", function () {
-					var this_id = $(this).attr("id");
-					if ($(this).attr("type") === "number") {
-						$(`#${this_id}`).css("border", "1px solid #ced4da");
-						$(`#error-messagebdate`).css("visibility", "hidden");
-						return;
-					}
-					$(`#${this_id}`).css("border", "1px solid #ced4da");
-					$(`#error-message${this_id}`).css("visibility", "hidden");
-
-				})
-				$(document).on("click", ".save_open_close", function () {
-					var command = $(this).attr("id");
-					var modal_case_id = $("#modal_case_id").val();
-					var select_out_role = $("#select_out_role").val();
-					var bday = $("#bday").val().trim();
-					var bmonth = $("#bmonth").val().trim();
-					var byear = $("#byear").val().trim();
-					var o_fname_arm = $("#o_fname_arm").val().trim();
-					var o_lname_arm = $("#o_lname_arm").val().trim();
-					var o_mname_arm = $("#o_mname_arm").val().trim();
-					var o_fname_eng = $("#o_fname_eng").val().trim();
-					var o_lname_eng = $("#o_lname_eng").val().trim();
-					var o_mname_eng = $("#o_mname_eng").val().trim();
-					var select_out_citizenship = $("#select_out_citizenship").val();
-					var select_out_res = $("#select_out_res").val();
-					var out_gender = $("#out_gender").val();
-					if (o_fname_eng == '' || o_lname_eng == '' || o_fname_arm == '' || o_lname_arm == '' || bday == '' || bmonth == '' || byear == '' || !select_out_role || !select_out_citizenship || !out_gender) {
-						if (!out_gender) {
-							$("#out_gender").css("border", "1px solid red");
-							$(`#error-messageout_gender`).css("visibility", "visible");
-						}
-						if (!select_out_citizenship) {
-							$("#select_out_citizenship").css("border", "1px solid red");
-							$(`#error-messageselect_out_citizenship`).css("visibility", "visible");
-						}
-						if (!select_out_role) {
-							$("#select_out_role").css("border", "1px solid red");
-							$(`#error-messageselect_out_role`).css("visibility", "visible");
-						}
-						if (o_fname_eng == '') {
-							$("#o_fname_eng").css("border", "1px solid red");
-							$(`#error-messageo_fname_eng`).css("visibility", "visible");
-						}
-						if (o_lname_eng == '') {
-							$("#o_lname_eng").css("border", "1px solid red");
-							$(`#error-messageo_lname_eng`).css("visibility", "visible");
-						}
-						if (o_fname_arm == '') {
-							$("#o_fname_arm").css("border", "1px solid red");
-							$(`#error-messageo_fname_arm`).css("visibility", "visible");
-						}
-						if (o_lname_arm == '') {
-							$("#o_lname_arm").css("border", "1px solid red");
-							$(`#error-messageo_lname_arm`).css("visibility", "visible");
-						}
-						if (bday == '') {
-							$("#bday").css("border", "1px solid red");
-							$(`#error-messagebdate`).css("visibility", "visible");
-						}
-						if (bmonth == '') {
-							$("#bmonth").css("border", "1px solid red");
-							$(`#error-messagebdate`).css("visibility", "visible");
-						}
-						if (byear == '') {
-							$("#byear").css("border", "1px solid red");
-							$(`#error-messagebdate`).css("visibility", "visible");
-						}
-
-						return;
-					}
-					$.ajax(
-							{
-								url: "config/config.php",
-								method: "POST",
-								data: {
-									save_open_close: command,
-									modal_case_id,
-									select_out_role,
-									bday,
-									bmonth,
-									byear,
-									o_fname_arm,
-									o_lname_arm,
-									o_mname_arm,
-									o_fname_eng,
-									o_lname_eng,
-									o_mname_eng,
-									select_out_citizenship,
-									select_out_res,
-									out_gender
-								},
-								success: function (data) {
-									var modal_case_id = $("#modal_case_id").val('');
-									var select_out_role = $("#select_out_role").val('');
-									var bday = $("#bday").val('');
-									var bmonth = $("#bmonth").val('');
-									var byear = $("#byear").val('');
-									var o_fname_arm = $("#o_fname_arm").val('');
-									var o_lname_arm = $("#o_lname_arm").val('');
-									var o_mname_arm = $("#o_mname_arm").val('');
-									var o_fname_eng = $("#o_fname_eng").val('');
-									var o_lname_eng = $("#o_lname_eng").val('');
-									var o_mname_eng = $("#o_mname_eng").val('');
-									var select_out_citizenship = $("#select_out_citizenship").val('');
-									var select_out_res = $("#select_out_res").val('');
-									var out_gender = $("#out_gender").val('');
-
-									if (data === 'saved_close') {
-										$("#new_out_member").modal("hide");
-									} else {
-										var resp = JSON.parse(data);
-										var new_case_id = resp.out_member_save_and_open;
-										$.ajax(
-												{
-													url: "config/config.php",
-													method: "POST",
-													data: {out_member: new_case_id},
-													success: function (data) {
-														$('#new_out_member').html(data);
-														$("#new_out_member").modal({backdrop: "static"});
-
-													}
-												});
-									}
-
-								}
-							});
-				})
-
-
-				$("#attach_lawyer").click(function () {
-
-					var case_id = $(this).attr('casenum1');
-
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {lawyer: case_id},
-						success: function (data) {
-
-							$('#lawyer_attach_modal').html(data);
-							$("#lawyer_attach_modal").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#approve_head").click(function () {
-
-					var case_id = $(this).attr('casenum');
-
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {aprove_case: case_id},
-						success: function (data) {
-							// console.log(case_id);
-							$('#head_aprove').html(data);
-							$("#head_aprove").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#draft").click(function () {
-
-					var case_id = $(this).attr('modal_id');
-					var sender = $(this).attr('modal_case');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {case_draft: case_id, sender: sender},
-						success: function (data) {
-							$('#draft_modal').html(data);
-							$("#draft_modal").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#call_modal").click(function () {
-
-					var case_id = $(this).attr('modal_id');
-					var caller = $(this).attr('modal_case');
-					var role = $(this).attr('modal_role');
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {case_call: case_id, caller: caller, role: role},
-						success: function (data) {
-							console.log(role);
-							$('#call_back').html(data);
-							$("#call_back").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$(".delete_file").click(function () {
-
-					var case_id = $(this).attr('modal_id');
-					var file_id = $(this).attr('delete_id');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {file_id: file_id, case_id: case_id},
-						success: function (data) {
-							$('#delete_files').html(data);
-							$("#delete_files").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#decision_to_head_1").click(function () {
-					var decision_2 = $(this).attr('modal_id');
-					var user_devhead = $(this).attr('modal_user');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {decision_2: decision_2, user: user_devhead},
-						success: function (data) {
-							$('#decision_to_head').html(data);
-							$("#decision_to_head").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#decision").click(function () {
-					//$("#coi_answer").modal({backdrop: "static"});
-					var decision_1 = $(this).attr('modal_id');
-					var user_officer = $(this).attr('modal_user');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {decision_1: decision_1, user: user_officer},
-						success: function (data) {
-							$('#decision_final').html(data);
-							$("#decision_final").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#answer_coi").click(function () {
-					//$("#coi_answer").modal({backdrop: "static"});
-					var coi_num = $(this).attr('coi_id');
-
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {coi_answer: coi_num},
-						success: function (data) {
-							$('#coi_answer').html(data);
-							$("#coi_answer").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-				$("#re_sign").click(function () {
-					// $("#myModal3").modal({backdrop: "static"});
-					var case_id = $(this).attr('modal_id');
-					var user = $(this).attr('modal_case');
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {resign_case: case_id, resender: user},
-						success: function (data) {
-							$('#to_re_sign').html(data);
-							$("#to_re_sign").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#request").click(function () {
-					// $("#myModal3").modal({backdrop: "static"});
-					var case_id = $(this).attr('modal_id');
-					var user = $(this).attr('modal_case');
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {request_case: case_id, officer: user},
-						success: function (data) {
-
-							$('#request_body').html(data);
-							$("#request_body").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-				$("#to_asign").click(function () {
-					// $("#myModal3").modal({backdrop: "static"});
-					var case_id = $(this).attr('modal_id');
-					var user = $(this).attr('modal_case');
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {asign_case: case_id, sender: user},
-						success: function (data) {
-
-							$('#send_a_sign').html(data);
-							$("#send_a_sign").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#myBtn5").click(function () {
-					// $("#myModal3").modal({backdrop: "static"});
-					var case_id = $(this).attr('modal_id');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {edit_case: case_id},
-						success: function (data) {
-
-							$('#edit_case').html(data);
-							$("#edit_case").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#myBtn3").click(function () {
-					// $("#myModal3").modal({backdrop: "static"});
-					var case_id = $(this).attr('modal_id');
-					var user = $(this).attr('modal_case');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {case: case_id, user: user},
-						success: function (data) {
-
-							$('#modal_asign').html(data);
-							$("#modal_asign").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-				$("#myBtn4").click(function () {
-					// $("#myModal3").modal({backdrop: "static"});
-					var case_id = $(this).attr('modal_id');
-					var user = $(this).attr('modal_case');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {coi_case: case_id, user: user},
-						success: function (data) {
-
-							$('#modal_coi').html(data);
-							$("#modal_coi").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$("#myBtn3").click(function () {
-					// $("#myModal3").modal({backdrop: "static"});
-					var case_id = $(this).attr('modal_id');
-					var user = $(this).attr('modal_case');
-
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {case: case_id, user: user},
-						success: function (data) {
-
-							$('#myModal2').html(data);
-							$("#myModal2").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-
-				$(".pers_modal").click(function () {
-					// $("#myModal").modal({backdrop: "static"});
-					var pers_id = $(this).attr('modalid');
-
-					console.log(pers_id);
-					$.ajax({
-						url: "config/config.php",
-						method: "POST",
-						data: {person_modal: pers_id, pers_id: pers_id},
-						success: function (data) {
-
-							$('#myModal').html(data);
-							$("#myModal").modal({backdrop: "static"});
-
-						}
-					});
-				});
-
-			});
-
-			$(document).on("change", ".custom-file-input", function () {
-				var fileName = $(this).val().split("\\").pop();
-				$(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-			});
-
-			function openCity(evt, cityName) {
 				var i, tabcontent, tablinks;
 				tabcontent = document.getElementsByClassName("tabcontent");
 				for (i = 0; i < tabcontent.length; i++) {
@@ -2680,65 +2173,604 @@ $(document).on('click', '#return_intern', function() {
 				for (i = 0; i < tablinks.length; i++) {
 					tablinks[i].className = tablinks[i].className.replace(" active", "");
 				}
-				document.getElementById(cityName).style.display = "block";
-				evt.currentTarget.className += " active";
+				document.getElementById("family").style.display = "block";
+
+				$(`#${active_tab}`).addClass("active");
+
+
 			}
 
-			// Get the element with id="defaultOpen" and click on it
-			document.getElementById("defaultOpen").click();
-
-			$(document).ready(function () {
-				// Country dependent ajax
-				$(document).on("change", "#select_marz", function () {
-					var marzId = $(this).val();
-
-					if (marzId) {
-						$.ajax({
-							url: "pages/subpages/action.php",
-							type: "POST",
-							cache: false,
-							data: {marzId: marzId},
+			$("#ref_to_center").click(function () {
+				var case_id = $(this).attr('ref_case');
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {order: case_id},
 							success: function (data) {
-								$("#select_community").html(data);
-								$('#select_setl').html('<option value="">Նշե՛ք համայնքը</option>');
+								console.log(case_id);
+								$('#order_center').html(data);
+								$("#order_center").modal({backdrop: "static"});
+
 							}
 						});
-					} else {
-						$('#select_community').html('<option value="">Նշե՛ք մարզը</option>');
-						$('#select_setl').html('<option value="">Ընտրե՛ք բնակավայրը</option>');
-					}
-				});
+			});
 
-// state dependent ajax
-				$(document).on("change", "#select_community", function () {
-					var bnakId = $(this).val();
+			$(".del_mo").click(function () {
+				var pers_id = $(this).attr('mo_id');
+				var case_id = $(this).attr('mo_case');
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {mo_del_info: pers_id, case_mo: case_id},
+					success: function (data) {
+						//console.log(pers_id);
+						$('#om_edit').html(data);
+						$("#om_edit").modal({backdrop: "static"});
 
-					if (bnakId) {
-						$.ajax({
-							url: "pages/subpages/action.php",
-							type: "POST",
-							cache: false,
-							data: {bnakId: bnakId},
-							success: function (data) {
-								$("#select_setl").html(data);
-							}
-						});
-					} else {
-						$('#select_setl').html('<option value="">Նշե՛ք համայնքը/option>');
 					}
 				});
 			});
 
-			function checkextension(e) {
-				var file = document.querySelector("#signed_cover");
-				if (/\.(pdf)$/i.test(file.files[0].name) === false) {
-					alert("Պարտադիր պետք է լինի ՛pdf՛ ֆորմատի");
-					file.value = '';
-				}
-			}
+			$(".view_mo").click(function () {
+				var pers_id = $(this).attr('mo_id');
+				var case_id = $(this).attr('mo_case');
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {mo_view_info: pers_id, case_mo: case_id},
+					success: function (data) {
+						//console.log(pers_id);
+						$('#om_edit').html(data);
+						$("#om_edit").modal({backdrop: "static"});
 
-			var loadFile = function (event) {
-				var image = document.getElementById('output');
-				image.src = URL.createObjectURL(event.target.files[0]);
-			};
+					}
+				});
+			});
+
+			$(".edit_mo").click(function () {
+				var pers_id = $(this).attr('mo_id');
+				var case_id = $(this).attr('mo_case');
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {mo_edit_info: pers_id, case_mo: case_id},
+					success: function (data) {
+						//console.log(pers_id);
+						$('#om_edit').html(data);
+						$("#om_edit").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#member_out").click(function () {
+
+				var case_id = $(this).attr('modal_id');
+
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {out_member: case_id},
+					success: function (data) {
+						$('#new_out_member').html(data);
+						$("#new_out_member").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+			$(document).on("keyup", ".validation", function () {
+				var this_id = $(this).attr("id");
+				if ($(this).attr("type") === "text") {
+					$(`#${this_id}`).css("border", "1px solid #ced4da");
+					$(`#error-message${this_id}`).css("visibility", "hidden");
+					return;
+				}
+				if ($(this).attr("type") === "number") {
+					$(`#${this_id}`).css("border", "1px solid #ced4da");
+					$(`#error-messagebdate`).css("visibility", "hidden");
+				}
+
+			})
+			$(document).on("change", ".validation", function () {
+				var this_id = $(this).attr("id");
+				if ($(this).attr("type") === "number") {
+					$(`#${this_id}`).css("border", "1px solid #ced4da");
+					$(`#error-messagebdate`).css("visibility", "hidden");
+					return;
+				}
+				$(`#${this_id}`).css("border", "1px solid #ced4da");
+				$(`#error-message${this_id}`).css("visibility", "hidden");
+
+			})
+			$(document).on("click", ".save_open_close", function () {
+				var command = $(this).attr("id");
+				var modal_case_id = $("#modal_case_id").val();
+				var select_out_role = $("#select_out_role").val();
+				var bday = $("#bday").val().trim();
+				var bmonth = $("#bmonth").val().trim();
+				var byear = $("#byear").val().trim();
+				var o_fname_arm = $("#o_fname_arm").val().trim();
+				var o_lname_arm = $("#o_lname_arm").val().trim();
+				var o_mname_arm = $("#o_mname_arm").val().trim();
+				var o_fname_eng = $("#o_fname_eng").val().trim();
+				var o_lname_eng = $("#o_lname_eng").val().trim();
+				var o_mname_eng = $("#o_mname_eng").val().trim();
+				var select_out_citizenship = $("#select_out_citizenship").val();
+				var select_out_res = $("#select_out_res").val();
+				var out_gender = $("#out_gender").val();
+				if (o_fname_eng == '' || o_lname_eng == '' || o_fname_arm == '' || o_lname_arm == '' || bday == '' || bmonth == '' || byear == '' || !select_out_role || !select_out_citizenship || !out_gender) {
+					if (!out_gender) {
+						$("#out_gender").css("border", "1px solid red");
+						$(`#error-messageout_gender`).css("visibility", "visible");
+					}
+					if (!select_out_citizenship) {
+						$("#select_out_citizenship").css("border", "1px solid red");
+						$(`#error-messageselect_out_citizenship`).css("visibility", "visible");
+					}
+					if (!select_out_role) {
+						$("#select_out_role").css("border", "1px solid red");
+						$(`#error-messageselect_out_role`).css("visibility", "visible");
+					}
+					if (o_fname_eng == '') {
+						$("#o_fname_eng").css("border", "1px solid red");
+						$(`#error-messageo_fname_eng`).css("visibility", "visible");
+					}
+					if (o_lname_eng == '') {
+						$("#o_lname_eng").css("border", "1px solid red");
+						$(`#error-messageo_lname_eng`).css("visibility", "visible");
+					}
+					if (o_fname_arm == '') {
+						$("#o_fname_arm").css("border", "1px solid red");
+						$(`#error-messageo_fname_arm`).css("visibility", "visible");
+					}
+					if (o_lname_arm == '') {
+						$("#o_lname_arm").css("border", "1px solid red");
+						$(`#error-messageo_lname_arm`).css("visibility", "visible");
+					}
+					if (bday == '') {
+						$("#bday").css("border", "1px solid red");
+						$(`#error-messagebdate`).css("visibility", "visible");
+					}
+					if (bmonth == '') {
+						$("#bmonth").css("border", "1px solid red");
+						$(`#error-messagebdate`).css("visibility", "visible");
+					}
+					if (byear == '') {
+						$("#byear").css("border", "1px solid red");
+						$(`#error-messagebdate`).css("visibility", "visible");
+					}
+
+					return;
+				}
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {
+								save_open_close: command,
+								modal_case_id,
+								select_out_role,
+								bday,
+								bmonth,
+								byear,
+								o_fname_arm,
+								o_lname_arm,
+								o_mname_arm,
+								o_fname_eng,
+								o_lname_eng,
+								o_mname_eng,
+								select_out_citizenship,
+								select_out_res,
+								out_gender
+							},
+							success: function (data) {
+								var modal_case_id = $("#modal_case_id").val('');
+								var select_out_role = $("#select_out_role").val('');
+								var bday = $("#bday").val('');
+								var bmonth = $("#bmonth").val('');
+								var byear = $("#byear").val('');
+								var o_fname_arm = $("#o_fname_arm").val('');
+								var o_lname_arm = $("#o_lname_arm").val('');
+								var o_mname_arm = $("#o_mname_arm").val('');
+								var o_fname_eng = $("#o_fname_eng").val('');
+								var o_lname_eng = $("#o_lname_eng").val('');
+								var o_mname_eng = $("#o_mname_eng").val('');
+								var select_out_citizenship = $("#select_out_citizenship").val('');
+								var select_out_res = $("#select_out_res").val('');
+								var out_gender = $("#out_gender").val('');
+
+								if (data === 'saved_close') {
+									$("#new_out_member").modal("hide");
+								} else {
+									var resp = JSON.parse(data);
+									var new_case_id = resp.out_member_save_and_open;
+									$.ajax(
+											{
+												url: "config/config.php",
+												method: "POST",
+												data: {out_member: new_case_id},
+												success: function (data) {
+													$('#new_out_member').html(data);
+													$("#new_out_member").modal({backdrop: "static"});
+
+												}
+											});
+								}
+
+							}
+						});
+			})
+
+
+			$("#attach_lawyer").click(function () {
+
+				var case_id = $(this).attr('casenum1');
+
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {lawyer: case_id},
+					success: function (data) {
+
+						$('#lawyer_attach_modal').html(data);
+						$("#lawyer_attach_modal").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#approve_head").click(function () {
+
+				var case_id = $(this).attr('casenum');
+
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {aprove_case: case_id},
+					success: function (data) {
+						// console.log(case_id);
+						$('#head_aprove').html(data);
+						$("#head_aprove").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#draft").click(function () {
+
+				var case_id = $(this).attr('modal_id');
+				var sender = $(this).attr('modal_case');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {case_draft: case_id, sender: sender},
+					success: function (data) {
+						$('#draft_modal').html(data);
+						$("#draft_modal").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#call_modal").click(function () {
+
+				var case_id = $(this).attr('modal_id');
+				var caller = $(this).attr('modal_case');
+				var role = $(this).attr('modal_role');
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {case_call: case_id, caller: caller, role: role},
+					success: function (data) {
+						console.log(role);
+						$('#call_back').html(data);
+						$("#call_back").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$(".delete_file").click(function () {
+
+				var case_id = $(this).attr('modal_id');
+				var file_id = $(this).attr('delete_id');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {file_id: file_id, case_id: case_id},
+					success: function (data) {
+						$('#delete_files').html(data);
+						$("#delete_files").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#decision_to_head_1").click(function () {
+				var decision_2 = $(this).attr('modal_id');
+				var user_devhead = $(this).attr('modal_user');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {decision_2: decision_2, user: user_devhead},
+					success: function (data) {
+						$('#decision_to_head').html(data);
+						$("#decision_to_head").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#decision").click(function () {
+				//$("#coi_answer").modal({backdrop: "static"});
+				var decision_1 = $(this).attr('modal_id');
+				var user_officer = $(this).attr('modal_user');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {decision_1: decision_1, user: user_officer},
+					success: function (data) {
+						$('#decision_final').html(data);
+						$("#decision_final").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#answer_coi").click(function () {
+				//$("#coi_answer").modal({backdrop: "static"});
+				var coi_num = $(this).attr('coi_id');
+
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {coi_answer: coi_num},
+					success: function (data) {
+						$('#coi_answer').html(data);
+						$("#coi_answer").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+			$("#re_sign").click(function () {
+				// $("#myModal3").modal({backdrop: "static"});
+				var case_id = $(this).attr('modal_id');
+				var user = $(this).attr('modal_case');
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {resign_case: case_id, resender: user},
+					success: function (data) {
+						$('#to_re_sign').html(data);
+						$("#to_re_sign").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#request").click(function () {
+				// $("#myModal3").modal({backdrop: "static"});
+				var case_id = $(this).attr('modal_id');
+				var user = $(this).attr('modal_case');
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {request_case: case_id, officer: user},
+					success: function (data) {
+
+						$('#request_body').html(data);
+						$("#request_body").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+			$("#to_asign").click(function () {
+				// $("#myModal3").modal({backdrop: "static"});
+				var case_id = $(this).attr('modal_id');
+				var user = $(this).attr('modal_case');
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {asign_case: case_id, sender: user},
+					success: function (data) {
+
+						$('#send_a_sign').html(data);
+						$("#send_a_sign").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#myBtn5").click(function () {
+				// $("#myModal3").modal({backdrop: "static"});
+				var case_id = $(this).attr('modal_id');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {edit_case: case_id},
+					success: function (data) {
+
+						$('#edit_case').html(data);
+						$("#edit_case").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#myBtn3").click(function () {
+				// $("#myModal3").modal({backdrop: "static"});
+				var case_id = $(this).attr('modal_id');
+				var user = $(this).attr('modal_case');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {case: case_id, user: user},
+					success: function (data) {
+
+						$('#modal_asign').html(data);
+						$("#modal_asign").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+			$("#myBtn4").click(function () {
+				// $("#myModal3").modal({backdrop: "static"});
+				var case_id = $(this).attr('modal_id');
+				var user = $(this).attr('modal_case');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {coi_case: case_id, user: user},
+					success: function (data) {
+
+						$('#modal_coi').html(data);
+						$("#modal_coi").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$("#myBtn3").click(function () {
+				// $("#myModal3").modal({backdrop: "static"});
+				var case_id = $(this).attr('modal_id');
+				var user = $(this).attr('modal_case');
+
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {case: case_id, user: user},
+					success: function (data) {
+
+						$('#myModal2').html(data);
+						$("#myModal2").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+
+			$(".pers_modal").click(function () {
+				// $("#myModal").modal({backdrop: "static"});
+				var pers_id = $(this).attr('modalid');
+
+				console.log(pers_id);
+				$.ajax({
+					url: "config/config.php",
+					method: "POST",
+					data: {person_modal: pers_id, pers_id: pers_id},
+					success: function (data) {
+
+						$('#myModal').html(data);
+						$("#myModal").modal({backdrop: "static"});
+
+					}
+				});
+			});
+
+		});
+
+		$(document).on("change", ".custom-file-input", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+		});
+
+		function openCity(evt, cityName) {
+			var i, tabcontent, tablinks;
+			tabcontent = document.getElementsByClassName("tabcontent");
+			for (i = 0; i < tabcontent.length; i++) {
+				tabcontent[i].style.display = "none";
+			}
+			tablinks = document.getElementsByClassName("tablinks");
+			for (i = 0; i < tablinks.length; i++) {
+				tablinks[i].className = tablinks[i].className.replace(" active", "");
+			}
+			document.getElementById(cityName).style.display = "block";
+			evt.currentTarget.className += " active";
+		}
+
+		// Get the element with id="defaultOpen" and click on it
+		document.getElementById("defaultOpen").click();
+
+		$(document).ready(function () {
+			// Country dependent ajax
+			$(document).on("change", "#select_marz", function () {
+				var marzId = $(this).val();
+
+				if (marzId) {
+					$.ajax({
+						url: "pages/subpages/action.php",
+						type: "POST",
+						cache: false,
+						data: {marzId: marzId},
+						success: function (data) {
+							$("#select_community").html(data);
+							$('#select_setl').html('<option value="">Նշե՛ք համայնքը</option>');
+						}
+					});
+				} else {
+					$('#select_community').html('<option value="">Նշե՛ք մարզը</option>');
+					$('#select_setl').html('<option value="">Ընտրե՛ք բնակավայրը</option>');
+				}
+			});
+
+// state dependent ajax
+			$(document).on("change", "#select_community", function () {
+				var bnakId = $(this).val();
+
+				if (bnakId) {
+					$.ajax({
+						url: "pages/subpages/action.php",
+						type: "POST",
+						cache: false,
+						data: {bnakId: bnakId},
+						success: function (data) {
+							$("#select_setl").html(data);
+						}
+					});
+				} else {
+					$('#select_setl').html('<option value="">Նշե՛ք համայնքը/option>');
+				}
+			});
+		});
+
+		function checkextension(e) {
+			var file = document.querySelector("#signed_cover");
+			if (/\.(pdf)$/i.test(file.files[0].name) === false) {
+				alert("Պարտադիր պետք է լինի ՛pdf՛ ֆորմատի");
+				file.value = '';
+			}
+		}
+
+		var loadFile = function (event) {
+			var image = document.getElementById('output');
+			image.src = URL.createObjectURL(event.target.files[0]);
+		};
 	</script>

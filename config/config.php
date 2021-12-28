@@ -9080,33 +9080,59 @@ c.actual = 1 AND a.inter_id = $inter_id";
 		$data = [];
 
 
-		$query_translations = " SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, c.inter_reciever_text, a.inter_type, d.inter_type AS INTER_TYPE_TEXT, a.send_type, b.inter_send_type, e.notified_date, e.file_name AS NOTE_FILE, f.actioned AS PROCESS_ACTIONED, f.action_type, g.action_type AS ACTION_TYPE_TEXT, FL.inter_file_actual, FL.inter_file
+		$query_inter_info = " SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, c.inter_reciever_text, a.inter_type, d.inter_type AS INTER_TYPE_TEXT, a.send_type, b.inter_send_type, e.notified_date, e.file_name AS NOTE_FILE
 								FROM tb_inter a 
 								INNER JOIN tb_inter_send_type b ON a.send_type = b.inter_send_type_id
-								INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id
-								INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id
-								LEFT JOIN tb_inter_notified e ON a.inter_id = e.inter_id
-								INNER JOIN tb_inter_process f ON a.inter_id = f.inter_id
-								INNER JOIN tb_inter_action_types g ON f.action_type = g.inter_action_type_id
-								INNER JOIN (SELECT p.inter_file_id, p.inter_file, p.inter_process_id, p.inter_file_actual, p.uploaded, p.inter_id FROM tb_inter_file p WHERE p.inter_file_actual = 1) AS FL ON FL.inter_id = a.inter_id 
+								INNER JOIN tb_inter_recivers c ON a.inter_reciever = c.inter_reciever_id								
+								INNER JOIN tb_inter_type d ON a.inter_type = d.inter_type_id								    
+								LEFT JOIN tb_inter_notified e ON a.inter_id = e.inter_id								
 								WHERE a.case_id = $case_id";
 
-		$result_translations = $conn->query($query_translations);
-		if ($result_translations->num_rows > 0) {
-			while ($row_translations = $result_translations->fetch_assoc()) {
-				$translation_info = new stdClass();
+		$result_inter_info = $conn->query($query_inter_info);
+		if ($result_inter_info->num_rows > 0) {
+			while ($row_inter_info = $result_inter_info->fetch_assoc()) {
+				$inter_info = new stdClass();
+				$inter_processes=[];
 				$inter_status = 'Սպասում է առաքման';
-				if ($row_translations['inter_status'] == 1) {
+				if ($row_inter_info['inter_status'] == 1) {
 					$inter_status = 'Սպասում է հաստատման';
-				} elseif ($row_translations['inter_status'] == 2) {
+				} elseif ($row_inter_info['inter_status'] == 2) {
 					$inter_status = 'Ծանուցված';
 				}
+				$query_inter_id = $row_inter_info['inter_id'];
+				$inter_info->inter_id = $query_inter_id;
+				$inter_info->type = $row_inter_info['INTER_TYPE_TEXT'];
+				$inter_info->receiver = $row_inter_info['inter_reciever_text'];
+				$inter_info->status = $inter_status;
+				$inter_info->send_type = $row_inter_info['inter_send_type'];
 
-				$translation_info->type = $row_translations['INTER_TYPE_TEXT'];
-				$translation_info->receiver = $row_translations['inter_reciever_text'];
-				$translation_info->status = $inter_status;
-				$translation_info->send_type = $row_translations['inter_send_type'];
-				$data[] = $translation_info;
+					$query_inter_processes = "SELECT f.actioned AS PROCESS_ACTIONED, f.action_type,f.inter_msg,g.action_type AS ACTION_TYPE_TEXT, FL.inter_file_actual, FL.inter_file
+					FROM tb_inter_process f
+					INNER JOIN tb_inter_action_types g ON f.action_type = g.inter_action_type_id
+					INNER JOIN (SELECT p.inter_file_id, p.inter_file, p.inter_process_id, p.inter_file_actual, p.uploaded, p.inter_id FROM tb_inter_file p WHERE p.inter_file_actual = 1) AS FL ON FL.inter_id = f.inter_id 
+					WHERE f.inter_id = $query_inter_id";
+					$result_inter_processes = $conn->query($query_inter_processes);
+					if ($result_inter_processes->num_rows > 0) {
+						while ($row_inter_processes = $result_inter_processes->fetch_assoc()) {
+							$single_process = new stdClass();
+
+							$process_actioned = $row_inter_processes['PROCESS_ACTIONED'];
+							$inter_msg = $row_inter_processes['inter_msg'];
+							$action_type_text = $row_inter_processes['ACTION_TYPE_TEXT'];
+							$inter_file = $row_inter_processes['inter_file'];
+
+							$single_process->process_actioned = $process_actioned;
+							$single_process->inter_msg = $inter_msg;
+							$single_process->action_type_text = $action_type_text;
+							$single_process->inter_file = $inter_file;
+
+							$inter_processes[] = $single_process;
+						}
+					}
+
+
+				$inter_info->inter_processes = $inter_processes;
+				$data[] = $inter_info;
 			}
 
 		}
