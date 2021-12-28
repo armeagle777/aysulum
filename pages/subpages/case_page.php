@@ -861,7 +861,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
                                 <hr>
 
                                  <div class="row">
-                                <form method="POST"  action="config/config.php?cmd=approve_inter" id="approve_inter" enctype="multipart/form-data">          
+                                <form method="POST"  action="config/config.php" id="approve_inter" enctype="multipart/form-data">          
                                   <input type="hidden" name="case_id_inter" value="' . $case . '">   
                                   <input type="hidden" name="hidden_inter_id" value="' . $inter_id . '">   
                                   
@@ -872,7 +872,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
                                     	<div class="col-md-12"> 
 	                                    	 <label class="label_pers_page">Վերբեռնել ստորագրված տարբերակը</label>
 	                                         <div class="form-group custom-file">
-		                                        <input type="file" id="signed_cover" name="file" class="custom-file-input signed_cover" />
+		                                        <input type="file" id="signed_cover" name="file" class="custom-file-input signed_cover" required />
 		                                        <label class="custom-file-label" for="customFile">Ընտրե՛ք ֆայլը</label>
 		                                      </div>   
 		                                </div>
@@ -884,7 +884,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 		                                    <div class="col-md-12 mt-1">
 		                                       <button type="submit" name="approve_send_inter"  class="btn btn-success btn-sm" >ՀԱՍՏԱՏԵԼ</button>
-		                                       <button type="submit" name="cancel_inter"  class="btn btn-warning btn-sm" >Վերադարձնել</button>
+		                                       <input type="submit" name="cancel_inter"  class="btn btn-warning btn-sm" onClick="removeRequired(this.form) value="Վերադարձնել" >
 		                                    </div> 
                                     	</div>    
                                   </div>              
@@ -1778,6 +1778,14 @@ WHERE a.case_id = $case";
 			});
 
 
+			function removeRequired(form){
+    			$.each(form, function(key, value) {
+        		if ( value.hasAttribute("required")){
+            value.removeAttribute("required");
+        	}
+    		});
+			}
+
 			function format(d) {
 				let documents = d.documents.map(doc => `<a href= "${doc.doc_href}" download class="dt_download_a">${doc.doc_name}</a>`);
 
@@ -1833,26 +1841,26 @@ WHERE a.case_id = $case";
 				});
 
 			
-					var inter_msg_table = $('#inter_msg_table').DataTable({
-						"searching": false,
-						"lengthChange": false,
-						"language": {
-							"emptyTable": "Տվյալները բացակայում են",
-						},
-						"ajax": "config/config.php?cmd=get_hystory_table&case_id=<?php echo $case; ?>",
-						"columns": [
-							{
-								"className": 'details-control',
-								"orderable": false,
-								"data": null,
-								"defaultContent": ''
-							},
-							{"data": "type"},
-							{"data": "receiver"},
-							{"data": "send_type"},
-							{"data": "status"},
-						]
-					});
+					// var inter_msg_table = $('#inter_msg_table').DataTable({
+					// 	"searching": false,
+					// 	"lengthChange": false,
+					// 	"language": {
+					// 		"emptyTable": "Տվյալները բացակայում են",
+					// 	},
+					// 	"ajax": "config/config.php?cmd=get_hystory_table&case_id=<?php echo $case; ?>",
+					// 	"columns": [
+					// 		{
+					// 			"className": 'details-control',
+					// 			"orderable": false,
+					// 			"data": null,
+					// 			"defaultContent": ''
+					// 		},
+					// 		{"data": "type"},
+					// 		{"data": "receiver"},
+					// 		{"data": "send_type"},
+					// 		{"data": "status"},
+					// 	]
+					// });
 
 
 					// Add event listener for opening and closing details
