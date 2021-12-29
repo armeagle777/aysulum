@@ -570,7 +570,10 @@ if(isset($_POST['save_card'])){
   $card_number = $_POST['card_num'];
   $issued = $_POST['issued'];
   $valid = $_POST['valid'];
-  $bar = "adkljf145";
+  
+  $solt = '1986';
+  $bar_num = $pers_id * $solt;
+  $bar = $serial.$bar_num;
 
   $query_cards = "SELECT * FROM tb_cards WHERE personal_id = $pers_id";
   $res_curds   = $conn->query($query_cards);

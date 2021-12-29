@@ -131,10 +131,20 @@ $result_inter_over = $conn->query($sql_inters_over);
             ?>  
 
 
-            <a href="#" case_id="<?php echo $case_id ?>" inter_id="<?php echo $inter_id ?>" class="btn btn-success btn-sm devhead_app_inter " ><i class="fas fa-check" style="color: white;"></i>ադֆ</a>
+            <a href="#" case_id="<?php echo $case_id ?>" inter_id="<?php echo $inter_id ?>" class="btn btn-success btn-sm devhead_app_inter " ><i class="fas fa-check" style="color: white;"></i></a>
 
+             <a href="#" case_id="<?php echo $case_id ?>" inter_id="<?php echo $inter_id ?>" class="btn btn-warning btn-sm return_from_list" ><i class="fas fa-undo" style="color: white;"></i></a>
 
-          <?php } ?>
+          <?php } 
+
+          if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer'){ ?>
+
+            <a href="#" case_id="<?php echo $case_id ?>" inter_id="<?php echo $inter_id ?>" class="btn btn-danger btn-sm officer_cancel " ><i class="fas fa-times" style="color: white;"></i></a>
+
+            <a href="#" case_id="<?php echo $case_id ?>" inter_id="<?php echo $inter_id ?>" class="btn btn-warning btn-sm officer_edit" ><i class="fas fa-pen-square" style="color: white;"></i></a>
+        <?php
+        }
+        ?>
 
             </td>
       			
@@ -189,7 +199,7 @@ $result_inter_over = $conn->query($sql_inters_over);
             $msg_text       = $row_all['inter_msg'];
             $send_type      = $row_all['SEND_TYPE_TEXT'];
             
-            if($_SESSION['role'] === 'devhead'){
+            if($_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'lawyer' || $_SESSION['role'] === 'coispec'){
               $general_btn = ' ';
             }
             
@@ -207,6 +217,8 @@ $result_inter_over = $conn->query($sql_inters_over);
             <td><?php echo $rec_name ?></td>
             <td><?php echo $send_type ?></td>
             <td><?php echo $msg_text ?></td>
+            
+
             <td><?php echo $general_btn ?> </td>
             
        
@@ -300,9 +312,54 @@ $result_inter_over = $conn->query($sql_inters_over);
 
 
 
+
+
 <script>
   
   $(document).ready(function () {
+
+
+
+      $(".return_from_list").click(function () {
+
+        var list_inter = $(this).attr('inter_id');
+        var list_case = $(this).attr('case_id');
+        
+        $.ajax({
+          url: "config/config.php",
+          method: "POST",
+          data: { return_from_list:list_case, inter_id: list_inter},
+          success: function (data) {
+            $('#general_send_modal').html(data);
+            $("#general_send_modal").modal({backdrop: "static"});
+
+          }
+        });
+      });   
+
+
+
+
+     $(".officer_edit").click(function () {
+
+        var general_inter = $(this).attr('inter_id');
+        var general_case = $(this).attr('case_id');
+
+        $.ajax({
+          url: "config/config.php",
+          method: "POST",
+          data: {eidt_from_list: general_inter, edit_inter:general_case, inter_id: general_inter},
+          success: function (data) {
+            $('#general_send_modal').html(data);
+            $("#general_send_modal").modal({backdrop: "static"});
+
+          }
+        });
+      });  
+
+
+
+
     $(".devhead_app_inter").click(function () {
         var general_inter = $(this).attr('inter_id');
         var general_case = $(this).attr('case_id');
@@ -310,6 +367,22 @@ $result_inter_over = $conn->query($sql_inters_over);
           url: "config/config.php",
           method: "POST",
           data: {dev_approve_inter:general_case, general_inter: general_inter},
+          success: function (data) {
+            $('#general_send_modal').html(data);
+            $("#general_send_modal").modal({backdrop: "static"});
+
+          }
+        });
+      });
+
+
+    $(".officer_cancel").click(function () {
+        var general_inter = $(this).attr('inter_id');
+        var general_case = $(this).attr('case_id');
+        $.ajax({
+          url: "config/config.php",
+          method: "POST",
+          data: {close_from_list: general_case, close_inter:general_case, inter_id: general_inter},
           success: function (data) {
             $('#general_send_modal').html(data);
             $("#general_send_modal").modal({backdrop: "static"});
