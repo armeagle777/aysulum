@@ -602,7 +602,6 @@ if(isset($_GET["id_card"]))
         float: left;
         width: 68%;
       }
-      
     .left {
         float: left;
         width: 29%;
@@ -621,6 +620,7 @@ if(isset($_GET["id_card"]))
     }
     .name{
         font-size: 10px;
+        width: 100%;
     }
     .littleFont{
         font-size: 9px;
@@ -739,7 +739,8 @@ if(isset($_GET["id_card"]))
 
     $mpdf->WriteHTML($pdfPage);
     $fileName=$f_name_arm." ".$l_name_arm;
-    $mpdf->Output("$fileName.pdf","D");
+	$mpdf->Output();
+//    $mpdf->Output("$fileName.pdf","D");
     $conn->close();
     exit;
 }
