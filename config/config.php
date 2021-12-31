@@ -7667,8 +7667,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
           <div class="col-md-12">
                       
             <label class="label_pers_page">Ստացող</label> 
-           	<select class="form-control" name="reciver" id="reciver">
-           		<option selected disabled hidden>Ընտրե՛ք ստացողին </option>
+           	<select class="form-control" name="reciver" id="reciver" required=required>
+           		<option selected disabled hidden value="">Ընտրե՛ք ստացողին </option>
            		<option value="1">ապաստան հայցողին</option>
            		<option value="2">փաստաբանին</option>
            		<option value="3">ապաստան հայցողին և փաստաբանին</option>
@@ -7678,8 +7678,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
            	<div class="row">
            	<div class="col-md-6">            
             <label class="label_pers_page">Տեսակ</label> 
-           	<select class="form-control" name="inter_type" id="inter_type">
-           		<option selected disabled hidden>Ընտրե՛ք ծանուցման տեսակը </option>
+           	<select class="form-control" name="inter_type" id="inter_type" required=required>
+           		<option selected disabled hidden value="">Ընտրե՛ք ծանուցման տեսակը </option>
            		<option value="1">հարցազրույցի հրավեր</option>
            		<option value="2">երկարաձգման ծանուցագիր</option>
            		<option value="3">բավարարման / մերժման ծանուցագիր</option>
@@ -7690,8 +7690,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
           	</div>
           	<div class="col-md-6">            
           	 <label class="label_pers_page">Առաքման եղանակը</label> 
-           	<select class="form-control" name="send_type" id="send_type">
-           		<option selected disabled hidden>Ընտրե՛ք առաքման եղանակը </option>
+           	<select class="form-control" name="send_type" id="send_type" required=required>
+           		<option selected disabled hidden value="">Ընտրե՛ք առաքման եղանակը </option>
            		<option value="1">փոստ</option>
            		<option value="2">էլ. փոստ</option>
            		<option value="3">առձեռն</option>
@@ -7808,9 +7808,63 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 	}
 	##########################
 
+	if(isset($_POST['return_from_list'])) {
+
+		$case_id  		= $_POST['return_from_list'];
+		$inter_id 		= $_POST['inter_id'];
+		$msg 					= 'Վերադարձվել է վերախմբագրման';
+		$action_type 	= '4';
+
+
+		$sender_id = $_SESSION['user_id'];
+		$reciver_id_sql = "SELECT * FROM tb_inter_process WHERE inter_id = $inter_id AND actual = 1";
+		$result_recicer_id_sql = $conn->query($reciver_id_sql);
+
+		if ($result_recicer_id_sql->num_rows > 0) {
+			$row_rec_id_sql = $result_recicer_id_sql->fetch_assoc();
+			$reciver_id = $row_rec_id_sql['sender'];
+
+		} else {
+			echo "ERROR: reciever not found ";
+		}
+
+
+		$modal_return_from_list = '
+			<div class="modal-dialog modal-confirm">
+    <div class="modal-content">
+      <div class="modal-header flex-column">
+        <div class="icon-box">
+          <i class="fas fa-undo" style="color: #f15e5e; font-size: 46px; display: inline-block; margin-top: 13px;"></i>
+        </div>            
+       					<h4 class="modal-title w-100">Վերադարձնել խմբագրման</h4>  
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      </div>
+     <form action="config/config.php" method="POST" id="return_from_list">
+      <div class="modal-body">
+        <input type="hidden" name="hidden_inter_id"  value="' . $inter_id . '">
+        <input type="hidden" name="case_id_inter" id="delete_case_id" value="' . $case_id . '">
+        
+            <label class="label_pers_page">Հաղորդագրություն</label>
+            <textarea class="form-control" rows="3" name="inter_msg"> ' . $msg . ' </textarea>
+      </div>
+      <div class="modal-footer justify-content-center">
+       		<button type="button" class="btn btn-default" data-dismiss="modal">ՉԵՂԱՐԿԵԼ</button>
+          <input type="submit" name="dev_return_from_list" class="btn btn-success" form="return_from_list" value="Վերադարձնել">
+      </div>
+      </form>
+    </div>
+  </div>';
+
+    echo $modal_return_from_list;
+	}
+
+
+
+	##########################
+
 	//cancel inter and return to author.
 
-	if (isset($_POST['cancel_inter'])) {
+	if (isset($_POST['cancel_inter']) || isset($_POST['dev_return_from_list'])) {
 
 		$case_id = $_POST['case_id_inter'];
 		$inter_id = $_POST['hidden_inter_id'];
@@ -7836,7 +7890,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 				NULLIF('$inter_msg', ''))";
 			if ($conn->query($insert_new_inter_process) === TRUE) {
 				$sql_notify = "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Ծանուցումը վերադարձվել է', NULLIF('$inter_msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
-				if ($conn->query($sql_notify) === TRUE) {
+				if ($conn->query($sql_notify) === TRUE ) {
 					header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
 				} else {
 					echo "Error: " . $sql_notify . "<br>" . $conn->error;
@@ -7855,7 +7909,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 	###########
 	// edit returned inter
 
-	if (isset($_POST['edit_inter'])) {
+	if (isset($_POST['edit_inter']) || isset($_POST['eidt_from_list'])) {
 		$case_id = $_POST['edit_inter'];
 		$inter_id = $_POST['inter_id'];
 
@@ -7878,7 +7932,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 		$sql_reciver = "SELECT * FROM tb_inter_recivers";
 		$result_reciever = $conn->query($sql_reciver);
-		$optreciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm">';
+		$optreciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm" required=required>';
 		while ($row = $result_reciever->fetch_assoc()) {
 
 			if ($row['inter_reciever_id'] == $inter_receiver_id) {
@@ -7891,7 +7945,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 		$sql_inter_type = "SELECT * FROM tb_inter_type";
 		$result_inter_type = $conn->query($sql_inter_type);
-		$opt_inter_type = '<select name="select_inter_type" id="select_inter_type" class="form-control form-control-sm">';
+		$opt_inter_type = '<select name="select_inter_type" id="select_inter_type" class="form-control form-control-sm" required=required>';
 		while ($row1 = $result_inter_type->fetch_assoc()) {
 
 			if ($row1['inter_type_id'] == $inter_type_id) {
@@ -7904,7 +7958,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 		$sql_inter_send_type = "SELECT * FROM tb_inter_send_type";
 		$result_inter_send_type = $conn->query($sql_inter_send_type);
-		$opt_inter_send_type = '<select name="select_inter_send_type" id="select_inter_send_type" class="form-control form-control-sm">';
+		$opt_inter_send_type = '<select name="select_inter_send_type" id="select_inter_send_type" class="form-control form-control-sm" required=required>';
 		while ($row2 = $result_inter_send_type->fetch_assoc()) {
 
 			if ($row2['inter_send_type_id'] == $inter_send_type_id) {
@@ -8061,7 +8115,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 	//cancel inter
 
 
-	if (isset($_POST['close_inter'])) {
+	if (isset($_POST['close_inter']) || isset($_POST['close_from_list'])) {
 		$case_id = $_POST['close_inter'];
 		$inter_id = $_POST['inter_id'];
 
@@ -8073,7 +8127,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
         <div class="icon-box">
           <i class="fa fa-trash-alt" style="color: #f15e5e; font-size: 46px; display: inline-block; margin-top: 13px;"></i>
         </div>            
-        <h4 class="modal-title w-100">Ավարտել ծանուցումը</h4>  
+       					<h4 class="modal-title w-100">Ավարտել ծանուցումը</h4>  
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       </div>
      <form action="config/config.php" method="POST" id="delete_inter">
@@ -8975,7 +9029,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
             	<div class="col-md-12">
              		<label class="label_pers_page">Վերբեռնե՛ք ստորագրված ֆայլը</label>
              			<div class="form-group custom-file">
-                		<input type="file" name="file" class="custom-file-input" id="customFile" required="required" />
+                		<input type="file" name="file" class="dev_approve_inter custom-file-input" id="customFile" required="required" />
                 		<label class="custom-file-label" for="customFile">Կցե՛ք ֆայլը</label>
             			</div>
              	</div>
