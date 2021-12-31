@@ -7667,8 +7667,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
           <div class="col-md-12">
                       
             <label class="label_pers_page">Ստացող</label> 
-           	<select class="form-control" name="reciver" id="reciver">
-           		<option selected disabled hidden>Ընտրե՛ք ստացողին </option>
+           	<select class="form-control" name="reciver" id="reciver" required=required>
+           		<option selected disabled hidden value="">Ընտրե՛ք ստացողին </option>
            		<option value="1">ապաստան հայցողին</option>
            		<option value="2">փաստաբանին</option>
            		<option value="3">ապաստան հայցողին և փաստաբանին</option>
@@ -7678,8 +7678,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
            	<div class="row">
            	<div class="col-md-6">            
             <label class="label_pers_page">Տեսակ</label> 
-           	<select class="form-control" name="inter_type" id="inter_type">
-           		<option selected disabled hidden>Ընտրե՛ք ծանուցման տեսակը </option>
+           	<select class="form-control" name="inter_type" id="inter_type" required=required>
+           		<option selected disabled hidden value="">Ընտրե՛ք ծանուցման տեսակը </option>
            		<option value="1">հարցազրույցի հրավեր</option>
            		<option value="2">երկարաձգման ծանուցագիր</option>
            		<option value="3">բավարարման / մերժման ծանուցագիր</option>
@@ -7690,8 +7690,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
           	</div>
           	<div class="col-md-6">            
           	 <label class="label_pers_page">Առաքման եղանակը</label> 
-           	<select class="form-control" name="send_type" id="send_type">
-           		<option selected disabled hidden>Ընտրե՛ք առաքման եղանակը </option>
+           	<select class="form-control" name="send_type" id="send_type" required=required>
+           		<option selected disabled hidden value="">Ընտրե՛ք առաքման եղանակը </option>
            		<option value="1">փոստ</option>
            		<option value="2">էլ. փոստ</option>
            		<option value="3">առձեռն</option>
@@ -7932,7 +7932,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 		$sql_reciver = "SELECT * FROM tb_inter_recivers";
 		$result_reciever = $conn->query($sql_reciver);
-		$optreciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm">';
+		$optreciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm" required=required>';
 		while ($row = $result_reciever->fetch_assoc()) {
 
 			if ($row['inter_reciever_id'] == $inter_receiver_id) {
@@ -7945,7 +7945,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 		$sql_inter_type = "SELECT * FROM tb_inter_type";
 		$result_inter_type = $conn->query($sql_inter_type);
-		$opt_inter_type = '<select name="select_inter_type" id="select_inter_type" class="form-control form-control-sm">';
+		$opt_inter_type = '<select name="select_inter_type" id="select_inter_type" class="form-control form-control-sm" required=required>';
 		while ($row1 = $result_inter_type->fetch_assoc()) {
 
 			if ($row1['inter_type_id'] == $inter_type_id) {
@@ -7958,7 +7958,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 		$sql_inter_send_type = "SELECT * FROM tb_inter_send_type";
 		$result_inter_send_type = $conn->query($sql_inter_send_type);
-		$opt_inter_send_type = '<select name="select_inter_send_type" id="select_inter_send_type" class="form-control form-control-sm">';
+		$opt_inter_send_type = '<select name="select_inter_send_type" id="select_inter_send_type" class="form-control form-control-sm" required=required>';
 		while ($row2 = $result_inter_send_type->fetch_assoc()) {
 
 			if ($row2['inter_send_type_id'] == $inter_send_type_id) {
