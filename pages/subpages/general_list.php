@@ -472,7 +472,11 @@ $result_inter_over = $conn->query($sql_inters_over);
           "zeroRecords": "Ելից ծանուցումներ առկա չեն։",
           }
       });    
-      
+      $(document).on("change", ".custom-file-input", function () {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
 
    var table_over = $('#inter_over').DataTable({
         "pageLength": 25,

@@ -9029,7 +9029,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
             	<div class="col-md-12">
              		<label class="label_pers_page">Վերբեռնե՛ք ստորագրված ֆայլը</label>
              			<div class="form-group custom-file">
-                		<input type="file" name="file" class="custom-file-input" id="customFile" required="required" />
+                		<input type="file" name="file" class="dev_approve_inter custom-file-input" id="customFile" required="required" />
                 		<label class="custom-file-label" for="customFile">Կցե՛ք ֆայլը</label>
             			</div>
              	</div>
