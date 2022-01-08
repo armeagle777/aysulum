@@ -168,18 +168,8 @@
 					p.deport_prescurator, 
 					p.prison, 
 					p.role, 
-					p.image,  
-					p.pnum, 
-					p.doc_type, 
-					p.document_num, 
-					p.doc_issued_date, 
-					p.doc_valid,
-					p.doc_issued_by, 
-					p.bpr_community, 
-					p.bpr_bnakavayr, 
-					p.bpr_street, 
-					p.bpr_house, 
-					p.bpr_aprt,
+					p.image,
+       				ps.person_status,
        				c.country_arm AS citizenship_country,
        				r.country_arm AS residence_country,
        				e.etnic_eng AS etnicity,
@@ -193,6 +183,7 @@
 					cs.RA_apartment AS address_appartment
 				FROM 
 					tb_person p 
+				INNER JOIN tb_person_status ps ON p.person_status = ps.person_status_id
 				LEFT JOIN tb_country  c ON p.citizenship = c.country_id 
 				LEFT JOIN tb_country  r ON p.previous_residence = r.country_id 
 				LEFT JOIN tb_etnics   e ON p.etnicity = e.etnic_id  
