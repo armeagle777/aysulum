@@ -3,4 +3,30 @@
         header("location: ../index.php");
     }
 ?>
-<h1>statics</h1>
+
+<body>
+    <div class="case_area mt-1">
+     <!-- Nav tabs -->
+<ul class="nav nav-tabs">
+   <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#home"><i class="fas fa-running"></i> Ընդհանուր</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#menu1"><i class="fas fa-pause"></i> Որոշումներ</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#menu2"><i class="fas fa-history"></i> Սպասում են բողոքարկման</a>
+  </li>
+  
+ </ul>
+ 
+ <!-- Tab panes -->
+    <div class="tab-content">
+      
+      <div id="home" class="tab-pane active"><br>
+        <h5>1</h5>
+      </div>
+
+    </div>
+   </div> 
+</body>        

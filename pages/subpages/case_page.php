@@ -237,19 +237,18 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 
 				<?php
-					if (($sign_status_id == 13 && $case_status != 4 && $case_status != 3) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'devhead')) {
+					if (($sign_status_id == 13 && $case_status != 4 && $case_status != 3 && $holder_id == $_SESSION['user_id']) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'devhead')) {
 						?>
 
 						<a href="#" id="decision_to_head_1" modal_id="<?php echo $case ?>"
-						   modal_user="<?php echo $u_id ?>"><i class="far fa-paper-plane first_menu"></i> Ուղարկել
-							հաստատման</a>
+						   modal_user="<?php echo $u_id ?>"><i class="far fa-paper-plane first_menu"></i> Ուղարկել հաստատման</a>
 
 						<?php
 					}
 				?>
 
 				<?php
-					if (($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'head') && ($case_status != 4 && $case_status != 3 && $sign_status_id != 8 && $sign_status_id != 16 && $sign_status_id != 7)) {
+					if (($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'head') && ($case_status != 4 && $case_status != 3 && $sign_status_id != 8 && $sign_status_id != 16 && $sign_status_id != 7) && ($sign_status_id == 13 && $holder_id == $_SESSION['user_id'])) {
 						?>
 
 						<a href="#" id="approve_head" casenum="<?php echo $case ?>"><i
@@ -997,7 +996,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 					<?php
 
-						if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'head' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'operator') {
+						if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'head' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'lawyer' || $_SESSION['role'] === 'coispec') {
 							?>
 
 							<h5 class="sub_title" style="margin-top: 5px;">Որոշումներ </h5>
@@ -1005,7 +1004,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 							<table class="table">
 								<tr>
 									<th class="table_a1">տեսակ</th>
-									<th class="table_a1">վերբեռնման ամսաթիվ</th>
+									<th class="table_a1">ամսաթիվ</th>
 									<th class="table_a1">ներբեռնել</th>
 									<th class="table_a1">համաձայնեցումներ</th>
 
@@ -1025,9 +1024,9 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 											<td><?php echo $file_type ?></td>
 											<td><?php echo $uploaded ?></td>
 											<td>
-												<a href="uploads/<?= $row_files['case_id'] . '/' . $row_files['file_name'] ?>"
+												<a href="uploads/<?= $row_files['case_id'] . '/' . $file_name ?>"
 												   download> <i class="fa fa-download"
-												                aria-hidden="true"></i>
+												                aria-hidden="true"></i> <?php echo $file_name ?>
 												</a>
 											</td>
 											<td> <?php echo $decision_status ?> </td>

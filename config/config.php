@@ -2499,13 +2499,16 @@ WHERE a.case_id = $case AND c.actual = '1'";
 			}
 		}
 		$resutl_decisions_types = $conn->query($sql_decision_types);
+		
 		$opt_decisions = '';
-
+		$opt_decisions = '<select name="decision_type"  class="form-control" required>';
+		$opt_decisions .= '<option selected disabled hidden value="">Ընտրե՛ք որոշումը</option>';
 		while ($row_decisions = mysqli_fetch_array($resutl_decisions_types)) {
-
-			$opt_decisions = $opt_decisions . "<option value=" . $row_decisions['decision_type_id'] . ">" . $row_decisions['decision_type'] . "</option>";
-
+			$opt_decisions.="<option value=" . $row_decisions['decision_type_id'] . ">" . $row_decisions['decision_type'] . "</option>";
 		}
+
+		$opt_decisions .='</select>';
+
 
 		$msg1 = 'Խնդրում եմ ուղարկել հաստատման։';
 
@@ -2529,10 +2532,9 @@ WHERE a.case_id = $case AND c.actual = '1'";
             ' . $opt_reciver . '
             </select>
             <label class="label_pers_page">Նշեք որոշման տեսակը</label> 
-            <select class="form-control" name="decision_type"> 
-            <option selected disabled hidden>Ընտրե՛ք որոշումը</option>
+                     
             ' . $opt_decisions . '
-            </select>
+           
             
             <label class="label_pers_page">Կցել որոշման նախագիծը</label> 
             <div class="form-group custom-file">
@@ -2665,6 +2667,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 			$row = $result_decision_status->fetch_assoc();
 			$decision_type = $row['decision_type'];
 			$decision_type_id = $row['decision_type_id'];
+			$decision_id = $row['decision_id'];
 		}
 
 		$resutl_reciver = $conn->query($sql_reciver);
@@ -2690,15 +2693,15 @@ WHERE a.case_id = $case AND c.actual = '1'";
         <form method="POST" action="config/config.php" id="decision_file_head" enctype="multipart/form-data">
           <div class="col-md-12">
            
-           
+           	<input type="hidden" name="decision_id" value="'.$decision_id.'" />
             <label class="label_pers_page">Ում</label> 
             <select class="form-control" name="reciver_id"> 
             ' . $opt_reciver . '
             </select>
-            <label class="label_pers_page">Նշեք որոշման տեսակը</label> 
-            <input type="text" name="decision_type" class="form-control form-control-sm" value="' . $decision_type . '" >
+            <label class="label_pers_page">Ոոշման տեսակը</label> 
+            <input type="text" name="decision_type" class="form-control form-control-sm" value="' . $decision_type . '"  readonly>
             
-             ' . $prolongation_period . '
+            
             <input type="hidden" class="form-control form-control-sm" name="from" value="' . $sender_id . '">
             <input type="hidden" class="form-control form-control-sm" name="dacision_case" value="' . $case_id . '">
         
@@ -2729,16 +2732,16 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		$comment_decision_head = $_POST['decision_comment'];
 		$sign_by = $_POST['from'];
 		$decision_to = $_POST['reciver_id'];
+		$decision_id = $_POST['decision_id'];
 
-
-		$update_decision = "UPDATE tb_decisions SET decision_status = 3";
+		$update_decision = "UPDATE tb_decisions SET decision_status = 3 WHERE decision_id = $decision_id";
 
 		if ($conn->query($update_decision) === TRUE) {
 
 			$sql_change_actual = "UPDATE `tb_process` SET `actual`= '0' WHERE case_id = $case_id";
 
 			if ($conn->query($sql_change_actual) === TRUE) {
-				$sql_process = "INSERT INTO `tb_process`(`case_id`, `sign_status`, `sign_by`, `processor`, `actual`, `comment_status`) VALUES ('$case_id', '13', '$sign_by', '$decision_to', '1', '0')";
+				$sql_process = "INSERT INTO `tb_process`(`case_id`, `sign_status`, `sign_by`, `processor`, `actual`, `comment_status`, `comment_to`) VALUES ('$case_id', '13', '$sign_by', '$decision_to', '1', '0', '$comment_decision_head')";
 
 				if ($conn->query($sql_process) === TRUE) {
 					$sql_notify = "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Որոշման նախագիծ', NULLIF('$comment_decision_head', ''), '0', '$sign_by', '$decision_to', '$case_id', '1')";
@@ -3456,7 +3459,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
             </select>
 
             <label class="label_pers_page">Որոշման տեսակը</label> 
-            <input type="text" class="form-control" name="decision_type" value="' . $decision_type . '">
+            <input type="text" class="form-control" name="decision_type" value="' . $decision_type . '" readonly />
             <input type="hidden" class="form-control" name="decision_type_id" value="' . $decision_type_id . '">';
 
 		if ($decision_type_id == 1) {
