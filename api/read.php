@@ -170,7 +170,7 @@
 						'decision_id' => $decision_id,
 						'decision_file' => $decision_file,
 						'decision_type' => $decision_type,
-						'decision_date' => $decison_date,
+						'decision_date' => date("Y-m-d", strtotime($decison_date)),
 						'decision_status' => $decision_status,
 						'DECISION_TYPE_TEXT' => $DECISION_TYPE_TEXT,
 						'DECISION_STATUS_TEXT' => $DECISION_STATUS_TEXT
