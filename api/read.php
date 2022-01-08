@@ -168,7 +168,8 @@
 					extract($row_decisions);
 					$decision_item = array(
 						'decision_id' => $decision_id,
-						'decision_file' => file_get_contents("../uploads/$case_id/$personal_id/".$decision_file),
+						'decision_file' => $decision_file,
+						// 'decision_file' => file_get_contents("../uploads/$case_id/".$decision_file),
 						'decision_type' => $decision_type,
 						'decision_date' => date("Y-m-d", strtotime($decison_date)),
 						'decision_status' => $decision_status,
