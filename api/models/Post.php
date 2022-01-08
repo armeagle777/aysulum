@@ -15,6 +15,50 @@
 			$this->conn = $db;
 		}
 
+		//Get single person decisions
+		public function read_decisions($case_id){
+			$query_decisions='SELECT 
+       						d.decision_id, 
+       						d.decision_file, 
+       						d.case_id, 
+       						d.decision_type, 
+       						d.decison_date, 
+       						d.decision_status, 
+       						dt.decision_type AS DECISION_TYPE_TEXT, 
+       						ds.decision_status AS DECISION_STATUS_TEXT 
+					FROM tb_decisions d 
+					INNER JOIN tb_decision_types dt ON d.decision_type = dt.decision_type_id 
+					INNER JOIN tb_decision_status ds ON d.decision_status = ds.decision_status_id 
+					WHERE d.decision_status = 5 AND d.case_id = '.$case_id;
+
+			//Prepare statement
+			$stmt = $this->conn->prepare($query_decisions);
+
+			//Execute query
+			$stmt->execute();
+
+			return $stmt;
+		}
+
+		//Get single person cards
+		public function read_cards($personalId){
+			$query_cards = 'SELECT
+					card_id,
+					serial,
+					issued,
+					valid           
+				FROM tb_cards
+				WHERE personal_id = '.$personalId;
+
+			//Prepare statement
+			$stmt = $this->conn->prepare($query_cards);
+
+			//Execute query
+			$stmt->execute();
+
+			return $stmt;
+		}
+
 		//Get Posts
 		public function read()
 		{
@@ -51,18 +95,8 @@
 					p.deport_prescurator, 
 					p.prison, 
 					p.role, 
-					p.image,  
-					p.pnum, 
-					p.doc_type, 
-					p.document_num, 
-					p.doc_issued_date, 
-					p.doc_valid,
-					p.doc_issued_by, 
-					p.bpr_community, 
-					p.bpr_bnakavayr, 
-					p.bpr_street, 
-					p.bpr_house, 
-					p.bpr_aprt,
+					p.image,
+       				ps.person_status,
        				c.country_arm AS citizenship_country,
        				r.country_arm AS residence_country,
        				e.etnic_eng AS etnicity,
@@ -75,7 +109,8 @@
 					cs.RA_building AS address_building,
 					cs.RA_apartment AS address_appartment
 				FROM 
-					tb_person p 
+					tb_person p
+				INNER JOIN tb_person_status ps ON p.person_status = ps.person_status_id
 				LEFT JOIN tb_country  c ON p.citizenship = c.country_id 
 				LEFT JOIN tb_country  r ON p.previous_residence = r.country_id 
 				LEFT JOIN tb_etnics   e ON p.etnicity = e.etnic_id  
