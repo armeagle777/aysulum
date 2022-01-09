@@ -25,13 +25,14 @@
 		$result = $post->read();
 
 	} elseif (
-		isset($_GET['f_name_arm']) ||
-		isset($_GET['l_name_arm']) ||
-		isset($_GET['m_name_arm']) ||
-		isset($_GET['f_name_eng']) ||
-		isset($_GET['l_name_eng']) ||
-		isset($_GET['m_name_eng']) ||
-		isset($_GET['pnum']) ||
+		isset($_GET['f_name_arm'])  ||
+		isset($_GET['l_name_arm'])  ||
+		isset($_GET['m_name_arm'])  ||
+		isset($_GET['f_name_eng'])  ||
+		isset($_GET['l_name_eng'])  ||
+		isset($_GET['m_name_eng'])  ||
+		isset($_GET['pnum']) 		||
+		isset($_GET['personal_id']) ||
 		isset($_GET['document_num'])
 	) {
 		$getKeysArray = [];
@@ -63,6 +64,10 @@
 		if(isset($_GET['pnum'])){
 			$getKeysArray[] = 'pnum';
 			$getValuesArray[] =  htmlspecialchars($_GET['pnum']);
+		}
+		if(isset($_GET['personal_id'])){
+			$getKeysArray[] = 'personal_id';
+			$getValuesArray[] =  htmlspecialchars($_GET['personal_id']);
 		}
 		if(isset($_GET['doc_num'])){
 			$getKeysArray[] = 'doc_num';
