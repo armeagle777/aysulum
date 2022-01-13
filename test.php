@@ -7,13 +7,20 @@ if($conn->connect_error){
   die("Error in DB connection: ".$conn->connect_errno." : ".$conn->connect_error);    
 }
 
+$case_id = 167;
 
- $sql_reciever_change_special = "SELECT id, f_name, l_name, FROM users WHERE user_type = devhead";
-  $result_reciever = $conn->query($sql_reciever_change_special);
-  if($result_reciever -> num_rows > 0) {
-    $rec_row  = $result_reciever->fetch_assoc();
-    $rec_id   = $rec_row['id'];
-    $rec_name = $rec_row['f_name'] .' '. $rec_row['l_name'];
-  }
+    $check_inters = "SELECT * FROM tb_inter WHERE case_id = $case_id AND inter_status = 2";
+    $result_check_inter = $conn->query($check_inters);
+    $count_drafts = '';
+    if($result_check_inter -> num_rows > 0){
+      $count_inters = mysqli_num_rows($result_check_inter);
+      $count_inters++;
+      $final_id = $count_inters;
+    }
+    else {
+      $final_id = '1';
+    }
 
-  echo $rec_name ;
+
+
+  echo  $final_id;

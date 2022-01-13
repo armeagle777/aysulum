@@ -99,7 +99,7 @@ $request_inbox_result = $conn->query($query_request_inbox);
           "lengthChange": false,
           "pagingType": 'full_numbers',
       		"responsive": true,
-      		 "order": [[ 5, "desc" ]],
+      		 "order": [[ 5, "acs" ]],
           	
           "language": {
           	  "search": "_INPUT_",            // Removes the 'Search' field label

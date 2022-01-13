@@ -155,12 +155,11 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 						<?php
 					}
 				?>
+				
 				<?php
 					if (($sign_status_id === '23') && $_SESSION['role'] === 'devhead') {
 						?>
-						<a href="#" id="asign_lawer" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i
-									class="fas fa-user-plus first_menu"></i> Նշանակել իրավաբան</a>
-
+    					<a href="#" id="asign_lawer" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i class="fas fa-user-plus first_menu"> </i> Նշանակել իրավաբան</a>
 
 						<?php
 					}
@@ -171,8 +170,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 						?>
 
 						<a href="#" id="return_redev" re_case="<?php echo $case ?>"
-						   sender_role="<?php echo $_SESSION['role'] ?>"><i class="fas fa-exchange-alt first_menu"></i>
-							Վերադարձնել լրամշակման</a>
+						   sender_role="<?php echo $_SESSION['role'] ?>"><i class="fas fa-exchange-alt first_menu"></i>	Վերադարձնել լրամշակման</a>
 
 
 						<?php
@@ -864,7 +862,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
                                 <form method="POST"  action="config/config.php" id="approve_inter" enctype="multipart/form-data">          
                                   <input type="hidden" name="case_id_inter" value="' . $case . '">   
                                   <input type="hidden" name="hidden_inter_id" value="' . $inter_id . '">   
-                                  
+                                  <input type="hidden" name="hidden_type_id" value="' . $inter_type_id . '">   
 
 
                                   <div class="col-md-12">

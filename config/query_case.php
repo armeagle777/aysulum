@@ -208,6 +208,7 @@ WHERE a.case_id = $case AND b.actual = 1 AND a.inter_status = 1";
             $action_type_text = $row_inter['ACTION_TYPE_TEXT'];
             $inter_id = $row_inter['inter_id'];
             $inter_msg = $row_inter['inter_msg'];
+            $inter_type_id = $row_inter['inter_type'];
             $inter_status_id = $row_inter['inter_status'];
             if ($inter_status_id == 1) {
               $inter_status_text = 'ընթացիկ';

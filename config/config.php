@@ -3607,16 +3607,32 @@ WHERE a.case_id = $case AND c.actual = '1'";
 
 			}
 
-			if ($decision_type_id == 3 || $decision_type_id == 5) {
+			if ($decision_type_id == 3) {
 				$sign_status = '11';
 				$case_status = '3';
 				$new_deadline = 'NULL';
 				$new_deadline_type = '15';
 
 				$update_case = "UPDATE tb_case SET `case_status` = '3' WHERE case_id = $decision_case";
-				$res_status_change = $conn->query($update_case);
+				if($conn->query($update_case) === TRUE){
+					$update_person_status = "UPDATE tb_person SET person_status = '2' WHERE case_id = $decision_case";
+					$result_person_status = $conn->query($update_person_status);
+				}
 			}
 
+
+			if ($decision_type_id == 5) {
+				$sign_status = '11';
+				$case_status = '3';
+				$new_deadline = 'NULL';
+				$new_deadline_type = '15';
+
+				$update_case = "UPDATE tb_case SET `case_status` = '3' WHERE case_id = $decision_case";
+				if($conn->query($update_case) === TRUE){
+					$update_person_status = "UPDATE tb_person SET person_status = '5' WHERE case_id = $decision_case";
+					$result_person_status = $conn->query($update_person_status);
+				}
+			}
 
 			if ($decision_type_id == 4 || $decision_type_id == 10) {
 				$sign_status = '15';
@@ -3625,7 +3641,10 @@ WHERE a.case_id = $case AND c.actual = '1'";
 
 				$new_deadline_type = '6';
 				$update_case = "UPDATE tb_case SET `case_status` = '4' WHERE case_id = $decision_case";
-				$res_status_change = $conn->query($update_case);
+				if($conn->query($update_case) === TRUE){
+					$update_person_status = "UPDATE tb_person SET person_status = '5' WHERE case_id = $decision_case";
+					$result_person_status = $conn->query($update_person_status);
+				}
 
 			}
 
@@ -3675,6 +3694,8 @@ WHERE a.case_id = $case AND c.actual = '1'";
 								if ($conn->query($sql_process) === TRUE) {
 									$sql_notify = "INSERT INTO `tb_notifications`(`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Որոշման հաստատում', NULLIF('$comment_a_sign', ''), '0', '$sign_by', '$decision_to', '$decision_case', '1')";
 									if ($conn->query($sql_notify) === TRUE) {
+										
+
 										header('location: ../user.php?page=cases&homepage=case_page&case=' . $decision_case);
 									} else {
 										echo "Error: " . $sql_notify . "<br>" . $conn->error;
@@ -7645,6 +7666,8 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 		$res_rec_sql = $conn->query($rec_sql);
 
 
+
+
 		$opt_reciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm">';
 		while ($row5 = mysqli_fetch_array($res_rec_sql)) {
 			$opt_reciver .= "<option value=" . $row5['id'] . ">" . $row5['f_name'] . ' ' . $row5['l_name'] . "</option>";
@@ -8193,13 +8216,54 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 		$inter_id = $_POST['hidden_inter_id'];
 		$msg = $_POST['inter_msg'];
 		$sender_id = $_SESSION['user_id'];
+		$inter_type_id = $_POST['hidden_type_id'];
+		$inter_type_letter = '';
 
-		$rec_sql = "SELECT * FROM users WHERE user_type = 'general' AND user_status = '1'";
+			if($inter_type_id == 1){
+				$inter_type_letter = 'Հ';				
+			}
+			if($inter_type_id == 2){
+				$inter_type_letter = 'Ե';				
+			}
+			if($inter_type_id == 3){
+				$inter_type_letter = 'Ո';				
+			}
+			if($inter_type_id == 4){
+				$inter_type_letter = 'Կ';				
+			}
+			if($inter_type_id == 5){
+				$inter_type_letter = 'Վ';				
+			}
+			if($inter_type_id == 6){
+				$inter_type_letter = 'Ա';				
+			}
+
+		$rec_sql = "SELECT * FROM users WHERE user_type = 'general' AND user_status IN (0,2)";
 		$res_rec_sql = $conn->query($rec_sql);
 		if ($res_rec_sql->num_rows > 0) {
 			$rec_id = $res_rec_sql->fetch_assoc();
 			$reciver_id = $rec_id['id'];
 		}
+
+
+		$uot_num = '';
+
+	 $check_inters = "SELECT * FROM tb_inter WHERE case_id = $case_id AND inter_status = 2";
+    $result_check_inter = $conn->query($check_inters);
+    $count_drafts = '';
+    if($result_check_inter -> num_rows > 0){
+      $count_inters = mysqli_num_rows($result_check_inter);
+      $count_inters++;
+      $final_id = $count_inters;
+    }
+    else {
+      $final_id = '1';
+    }
+
+    $out_num = "ՄԾ/ԱԻԿԲ" .'/'. "Ծ-" . $inter_type_id . $inter_type_letter . '(' . $final_id . ')';
+
+
+
 
 		$filename = $_FILES['file']['name'];
 
@@ -8233,7 +8297,17 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 							$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Նոր ծանուցագիր', NULLIF('$msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
 
 							if ($conn->query($sql_notify) === TRUE) {
-								header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);
+								
+								$update_tb_inter = "UPDATE tb_inter SET out_num = '$out_num' WHERE inter_id = $inter_id";
+
+								if($conn->query($update_tb_inter) === TRUE){
+								 header('location: ../user.php?page=cases&homepage=case_page&case=' . $case_id);	
+								}
+								else
+								{
+									echo "Error: " . $update_tb_inter . "<br>" . $conn->error;
+								}
+								
 							} else {
 								echo "Error: " . $sql_notify . "<br>" . $conn->error;
 							}
@@ -8270,7 +8344,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 		$inter_id = $_POST['general_inter'];
 
 
-		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email 
+		$sql_inter = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, a.out_num, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type AS ACTION_TYPE_ID, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, f.action_type AS ACTION_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded, h.RA_marz, h.RA_community, h.RA_settlement, h.RA_street, h.RA_building, h.RA_apartment, h.contact_tel, h.contact_email, i.ADM1_ARM, j.ADM3_ARM, k.ADM4_ARM, l.lawyer_id, l.lawyer_name, l.lawyer_surname, l.lawyer_tel, l.lawyer_address, l.lawyer_email 
 FROM tb_inter a 
 INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
 INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
@@ -8299,6 +8373,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 			$inter_id = $row_inter['inter_id'];
 			$inter_msg = $row_inter['inter_msg'];
 			$inter_status_id = $row_inter['inter_status'];
+			$out_num = $row_inter['out_num'];
 			if ($inter_status_id == 1) {
 				$inter_status_text = 'ընթացիկ';
 			}
@@ -8361,9 +8436,12 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 		  $send_type_text = $row_inter['SEND_TYPE_TEXT'];
 
-		  if ($send_type_id == 2) {
+		  if ($send_type_id == 2) 
+		  {
 				$send_button = '<input type="submit" name="send_semi_email" class="btn btn-success" form="semi_edit_note" value="Առաքել էլեկտրոնային">';
-			} else {
+			} 
+			else 
+			{
 				$send_button = '<input type="submit" name="send_semi_usual" class="btn btn-success" form="semi_edit_note" value="Առաքել">';
 			}
 
@@ -8395,7 +8473,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
             	<div class="col-md-2">
             		<label class="label_pers_page">Ելից # </label>
-            		<input  class="form-control form-control-sm" name="inter_id" value="' . $inter_id . '" readonly />
+            		<input  class="form-control form-control-sm" name="inter_id" value="' . $out_num . '" readonly />
             	</div>
 
             	<div class="col-md-8">
@@ -8950,6 +9028,8 @@ c.actual = 1 AND a.inter_id = $inter_id";
 		}
 
 
+
+
 		$inter_approve_modal = '
 <div class="modal-dialog modal-xl">
     
@@ -9073,6 +9153,46 @@ c.actual = 1 AND a.inter_id = $inter_id";
 			$reciver_id = $rec_id['id'];
 		}
 
+
+		$inter_type_id = $_POST['inter_type_id'];
+    $inter_type_letter = '';
+
+      if($inter_type_id == 1){
+        $inter_type_letter = 'Հ';       
+      }
+      if($inter_type_id == 2){
+        $inter_type_letter = 'Ե';       
+      }
+      if($inter_type_id == 3){
+        $inter_type_letter = 'Ո';       
+      }
+      if($inter_type_id == 4){
+        $inter_type_letter = 'Կ';       
+      }
+      if($inter_type_id == 5){
+        $inter_type_letter = 'Վ';       
+      }
+      if($inter_type_id == 6){
+        $inter_type_letter = 'Ա';       
+      }
+
+    
+    $uot_num = '';
+
+   $check_inters = "SELECT * FROM tb_inter WHERE case_id = $case_id AND inter_status IN (0,2)";
+    $result_check_inter = $conn->query($check_inters);
+    $count_drafts = '';
+    if($result_check_inter -> num_rows > 0){
+      $count_inters = mysqli_num_rows($result_check_inter);
+      $count_inters++;
+      $final_id = $count_inters;
+    }
+    else {
+      $final_id = '1';
+    }
+
+    $out_num = "ՄԾ/ԱԻԿԲ" .'/'. "Ծ-" . $inter_type_id . $inter_type_letter . '(' . $final_id . ')';
+
 		$filename = $_FILES['file']['name'];
 
 
@@ -9105,8 +9225,20 @@ c.actual = 1 AND a.inter_id = $inter_id";
 							$sql_notify = "INSERT INTO `tb_notifications` (`comment_subject`, `comment_text`, `comment_status`, `comment_from`, `comment_to`, `case_id`, `note_type`) VALUES ('Նոր ծանուցագիր', NULLIF('$msg', ''), '0', '$sender_id', '$reciver_id', '$case_id', '1')";
 
 							if ($conn->query($sql_notify) === TRUE) {
-								header('location: ../user.php?page=cases&homepage=general_list');
-							} else {
+								
+								$update_tb_inter = "UPDATE tb_inter SET out_num = '$out_num' WHERE inter_id = $inter_id";
+								if ($conn->query($update_tb_inter) === TRUE) {
+									header('location: ../user.php?page=cases&homepage=general_list');
+								}
+								else
+								{
+								echo "Error: " . $update_tb_inter . "<br>" . $conn->error;
+								}	
+
+								
+							} 
+							else 
+							{
 								echo "Error: " . $sql_notify . "<br>" . $conn->error;
 							}
 

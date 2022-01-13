@@ -65,7 +65,7 @@ include('config/connect.php');
                 <td><?php echo $officer ?></td>
                 <td><?php echo $decision_date ?></td>
                 <td><?php echo $ms_decision ?></td>
-                <td>...</td>
+                <td><a href="#" id="archive_case" class="archive_case" archive_case="<?php echo $case_id?>" ><i class="fas fa-info"></i> </a> </td>
 
             </tr>
         
@@ -78,5 +78,26 @@ include('config/connect.php');
 
 </div>
 
+<div class="modal fade" id="archive_case_modal">
+</div>
+
+<script> 
+	$('.archive_case').on('click', function (e) {
+				e.preventDefault();
+				var archive_case_id = $(this).attr('archive_case');
+				
+				$.ajax(
+						{
+							url: "config/config.php",
+							method: "POST",
+							data: {archive_case_id: archive_case_id},
+							success: function (data) {
+								$('#archive_case_modal').html(data);
+								$("#archive_case_modal").modal('show');
+							}
+						});
+			})
+
+</script>
 
 
