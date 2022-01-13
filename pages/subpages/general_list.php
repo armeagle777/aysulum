@@ -318,7 +318,10 @@ $result_inter_over = $conn->query($sql_inters_over);
   
   $(document).ready(function () {
 
-
+    $(document).on('submit', '.disabled_spinner', function () {
+				$(this).attr("disabled", true);
+				$(this).html('<i class="fa fa-spinner fa-spin"></i>Loading');
+			})
 
       $(".return_from_list").click(function () {
 

@@ -8438,11 +8438,11 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 		  if ($send_type_id == 2) 
 		  {
-				$send_button = '<input type="submit" name="send_semi_email" class="btn btn-success" form="semi_edit_note" value="Առաքել էլեկտրոնային">';
+				$send_button = '<input type="submit" name="send_semi_email" class="btn btn-success disabled_spinner" form="semi_edit_note" value="Առաքել էլեկտրոնային">';
 			} 
 			else 
 			{
-				$send_button = '<input type="submit" name="send_semi_usual" class="btn btn-success" form="semi_edit_note" value="Առաքել">';
+				$send_button = '<input type="submit" name="send_semi_usual" class="btn btn-success disabled_spinner" form="semi_edit_note" value="Առաքել">';
 			}
 
 			$inter_msg_out = $row_inter['inter_msg'];
