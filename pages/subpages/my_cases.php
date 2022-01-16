@@ -19,7 +19,7 @@ $query_cases = "SELECT a.case_id, b.f_name_arm, b.l_name_arm, c.deadline, a.offi
 	LEFT JOIN tb_coi e ON a.case_id = e.case_id
 	INNER JOIN tb_process h ON a.case_id = h.case_id
 
-		WHERE b.role = 1 AND  c.actual_dead = 1 AND a.officer = $u_id AND h.actual = 1 AND h.sign_status <> 16 AND a.case_status IN (1,2,4) GROUP BY a.case_id";
+		WHERE b.role = 1 AND  c.actual_dead = 1 AND a.officer = $u_id AND h.actual = 1 AND h.sign_status <> 16 AND a.case_status IN (1,2,4,5) GROUP BY a.case_id";
 		$query_cases_result = $conn->query($query_cases);
 
 	 $role_base = '';

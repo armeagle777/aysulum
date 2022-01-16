@@ -3,7 +3,7 @@ require_once 'config/connect.php';
 
 $u_id = $_SESSION['user_id'];
 
-$sql_inters = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded 
+$sql_inters = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.out_num, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, g.inter_file_id, g.inter_file, g.inter_process_id, g.inter_file_actual, g.uploaded 
 FROM tb_inter a 
 INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
 INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
@@ -16,7 +16,7 @@ c.actual = 1 AND c.rec_id = $u_id";
 
 $result_inter_list = $conn->query($sql_inters);
 
-$sql_inters_out = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, PERSON.f_name_arm, PERSON.l_name_arm, LAWYER.lawyer_name, LAWYER.lawyer_surname 
+$sql_inters_out = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, a.out_num, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, PERSON.f_name_arm, PERSON.l_name_arm, LAWYER.lawyer_name, LAWYER.lawyer_surname 
 FROM tb_inter a 
 INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
 INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
@@ -39,7 +39,7 @@ if ($_SESSION['role'] === 'officer' || $_SESSION['role'] === 'lawyer' || $_SESSI
 }
 
 
-$sql_inters_over = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, PERSON.f_name_arm, PERSON.l_name_arm, LAWYER.lawyer_name, LAWYER.lawyer_surname, k.inter_notified_id, k.notified_date, k.file_name
+$sql_inters_over = "SELECT a.inter_id, a.case_id, a.author_id, a.inter_status, a.inter_reciever, a.inter_type, a.send_type, a.out_num, b.inter_reciever_text, c.inter_process_id, c.sender, c.rec_id, c.actual, c.actioned, c.action_type, c.inter_msg, d.inter_type AS INTER_TYPE_TEXT, e.inter_send_type AS SEND_TYPE_TEXT, PERSON.f_name_arm, PERSON.l_name_arm, LAWYER.lawyer_name, LAWYER.lawyer_surname, k.inter_notified_id, k.notified_date, k.file_name
 FROM tb_inter a 
 INNER JOIN tb_inter_recivers b ON a.inter_reciever = b.inter_reciever_id 
 INNER JOIN tb_inter_process c ON a.inter_id = c.inter_id
@@ -86,6 +86,7 @@ $result_inter_over = $conn->query($sql_inters_over);
       		<tr style="font-size: 0.9em; font-weight: normal; color: #828282; text-align: center; vertical-align: middle;">
       			<th width="10%">Ծանուցագիր #</th>
       			<th width="10%">Գործ #</th>
+            <th width="10%">Ելից #</th>
       			<th width="15%">Ամսաթիվ</th>
       			<th width="15%">Ստացող</th>
       			<th width="15%">Առաքման եղանակը</th>
@@ -97,9 +98,17 @@ $result_inter_over = $conn->query($sql_inters_over);
       		<tbody>
       		<?php 
       		while($row_all = $result_inter_list->fetch_assoc()){
-      			$case_id 			= $row_all['case_id'];
+      			$case_id 			  = $row_all['case_id'];
+            $out_num        = '';
+            if (!empty($row_all['out_num'])) {
+              $out_num = $row_all['out_num'];
+            }
+            else
+            {
+              $out_num = 'Ն/ք';
+            }
       			$inter_id 			= $row_all['inter_id'];
-      			$in_date 			= date('d.m.Y', strtotime($row_all['actioned']));
+      			$in_date 			  = date('d.m.Y', strtotime($row_all['actioned']));
       			$rec_text 			= $row_all['inter_reciever_text'];
       			$msg_text 			= $row_all['inter_msg'];
       			$send_type 			= $row_all['SEND_TYPE_TEXT']
@@ -109,6 +118,7 @@ $result_inter_over = $conn->query($sql_inters_over);
       		<tr class="curs_pointer" style="text-align:center;">
       			<td><?php echo $inter_id ?></td>
       			<td><?php echo $case_id ?></td>
+            <td><?php echo $out_num ?></td>
       			<td><?php echo $in_date ?></td>
       			<td><?php echo $rec_text ?></td>
       			<td><?php echo $send_type ?></td>
@@ -122,7 +132,7 @@ $result_inter_over = $conn->query($sql_inters_over);
 
 
       			<a href="#" case_id="<?php echo $case_id ?>" inter_id="<?php echo $inter_id ?>" class="btn btn-success btn-sm send_inter " ><i class="fas fa-file-import" style="color: white;"></i></a>
-
+            <a href="#" case_id="<?php echo $case_id ?>" inter_id="<?php echo $inter_id ?>" class="btn btn-success btn-sm send_retutn " ><i class="fas fa-undo" style="color: red;"></i></a>
 
           <?php } 
 
@@ -164,6 +174,7 @@ $result_inter_over = $conn->query($sql_inters_over);
           <tr style="font-size: 0.9em; font-weight: normal; color: #828282; text-align: center; vertical-align: middle;">
             <th width="10%">Ծանուցագիր #</th>
             <th width="10%">Գործ #</th>
+            <th width="10%">Ելից #</th>
             <th width="15%">Ամսաթիվ</th>
             <th width="15%">Ստացող</th>
             <th width="15%">Ստացողի ա.ա.հ.</th>
@@ -181,6 +192,15 @@ $result_inter_over = $conn->query($sql_inters_over);
           while($row_all = $result_inter_out->fetch_assoc()){
             $case_id        = $row_all['case_id'];
             $inter_id       = $row_all['inter_id'];
+             $out_num        = '';
+            if (!empty($row_all['out_num'])) {
+              $out_num = $row_all['out_num'];
+            }
+            else
+            {
+              $out_num = 'Ն/ք';
+            }
+
             $out_date       = date('d.m.Y', strtotime($row_all['actioned']));
             $rec_text       = $row_all['inter_reciever_text'];
             $rec_name       = '';
@@ -212,6 +232,7 @@ $result_inter_over = $conn->query($sql_inters_over);
           <tr class="curs_pointer" style="text-align:center;">
             <td><?php echo $inter_id ?></td>
             <td><?php echo $case_id ?></td>
+            <td><?php echo $out_num ?></td>
             <td><?php echo $out_date ?></td>
             <td><?php echo $rec_text ?></td>
             <td><?php echo $rec_name ?></td>
@@ -240,6 +261,7 @@ $result_inter_over = $conn->query($sql_inters_over);
           <tr style="font-size: 0.9em; font-weight: normal; color: #828282; text-align: center; vertical-align: middle;">
             <th width="10%">Ծանուցագիր #</th>
             <th width="10%">Գործ #</th>
+            <th width="10%">Ելից #</th>
             <th width="15%">Առաքման ամսաթիվ</th>
             <th width="15%">Ծանուցման ամսաթիվ</th>
             <th width="15%">Ստացող</th>
@@ -254,6 +276,15 @@ $result_inter_over = $conn->query($sql_inters_over);
           <?php 
           while($row_all = $result_inter_over->fetch_assoc()){
             $case_id        = $row_all['case_id'];
+             $out_num        = '';
+            if (!empty($row_all['out_num'])) {
+              $out_num = $row_all['out_num'];
+            }
+            else
+            {
+              $out_num = 'Ն/ք';
+            }
+
             $inter_id       = $row_all['inter_id'];
             $out_date       = date('d.m.Y', strtotime($row_all['actioned']));
             $approve_date   = date('d.m.Y', strtotime($row_all['notified_date']));
@@ -279,6 +310,7 @@ $result_inter_over = $conn->query($sql_inters_over);
           <tr class="curs_pointer" style="text-align:center;">
             <td><?php echo $inter_id ?></td>
             <td><?php echo $case_id ?></td>
+            <td><?php echo $out_num ?></td>
             <td><?php echo $out_date ?></td>
             <td><?php echo $approve_date ?></td>
             <td><?php echo $rec_text ?></td>
@@ -318,10 +350,10 @@ $result_inter_over = $conn->query($sql_inters_over);
   
   $(document).ready(function () {
 
-    $(document).on('submit', '.disabled_spinner', function () {
-				$(this).attr("disabled", true);
-				$(this).html('<i class="fa fa-spinner fa-spin"></i>Loading');
-			})
+   //  $(document).on('submit', '#semi_edit_note', function () {
+   //    $('#disabledSpinner').attr("disabled", true);
+   //    $('#disabledSpinner').html('<i class="fa fa-spinner fa-spin"></i>Loading');
+			// })
 
       $(".return_from_list").click(function () {
 
@@ -339,6 +371,24 @@ $result_inter_over = $conn->query($sql_inters_over);
           }
         });
       });   
+
+
+      $(".send_retutn").click(function () {
+
+        var general_inter = $(this).attr('inter_id');
+        var general_case = $(this).attr('case_id');
+
+        $.ajax({
+          url: "config/config.php",
+          method: "POST",
+          data: {general_return: general_inter, case_id: general_case},
+          success: function (data) {
+            $('#general_send_modal').html(data);
+            $("#general_send_modal").modal({backdrop: "static"});
+
+          }
+        });
+      });  
 
 
 

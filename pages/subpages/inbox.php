@@ -13,7 +13,7 @@ $query_cases = "SELECT a.case_id, b.f_name_arm, b.l_name_arm, c.sign_status, d.s
 	LEFT JOIN users g ON a.officer = g.id 
 	INNER JOIN users h ON c.processor = h.id 
 	LEFT JOIN tb_deadline k ON a.case_id = k.case_id 
-	WHERE b.role = 1 AND c.actual = 1 AND k.actual_dead = 1 AND c.processor = $u_id AND a.case_status IN (1,2) AND c.sign_status != 16";
+	WHERE b.role = 1 AND c.actual = 1 AND k.actual_dead = 1 AND c.processor = $u_id AND a.case_status IN (1,2,5) AND c.sign_status != 16";
 $query_cases_result = $conn->query($query_cases);
 
 ?>

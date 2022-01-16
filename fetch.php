@@ -111,7 +111,7 @@ if(isset($_POST['inboxes'])){
        $sql_inboxes = "SELECT a.case_id, c.sign_status, c.sign_date, a.input_date, c.sign_by
        FROM tb_case a 
        INNER JOIN tb_process c ON a.case_id = c.case_id 
-       WHERE  c.actual = 1 AND c.processor = $u_id AND a.case_status IN (1,2) AND c.sign_status != 16";
+       WHERE  c.actual = 1 AND c.processor = $u_id AND a.case_status IN (1,2,5) AND c.sign_status != 16";
         $result_inbox = mysqli_query($conn, $sql_inboxes);
         $count_inbox = mysqli_num_rows($result_inbox);
         $data = array(
