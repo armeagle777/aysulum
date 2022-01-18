@@ -1253,7 +1253,7 @@ WHERE a.personal_id = $personal_id";
 		$modal_re_sign = '';
 		$sender_id = $_POST['resender'];
 		$case_id = $_POST['resign_case'];
-
+		$msg = "Խնդրում եմ վերամակագրել այլ մասնագետի։";
 		$sql_sender = "SELECT * FROM users WHERE id = $sender_id";
 		$result_sender = $conn->query($sql_sender);
 		if ($result_sender->num_rows > 0) {
@@ -1292,7 +1292,7 @@ WHERE a.personal_id = $personal_id";
             ' . $opt_reciver . '
             </select>
             <label class="label_pers_page">Մեկնաբանություններ</label>
-            <textarea class="form-control" rows="3" name="resign_comment"></textarea>
+            <textarea class="form-control" rows="3" name="resign_comment">'.$msg.'</textarea>
 
 
 
@@ -2442,7 +2442,9 @@ WHERE a.case_id = $case AND c.actual = '1'";
 					} else {
 						echo "Error: " . $sql_notify . "<br>" . $conn->error;
 					}
-				} else {
+				} 
+				else 
+				{
 					echo "failed to uplpad";
 				}
 			}
@@ -2456,17 +2458,38 @@ WHERE a.case_id = $case AND c.actual = '1'";
 		$modal_send = '';
 		$case_id = $_POST['decision_1'];
 		$sender_id = $_POST['user'];
+		
+		$a='';
+
+		$proc_status = $_POST['proc_status'];
+
+		if ($proc_status == 9) {
+			$sql_decision = "SELECT * FROM tb_decisions WHERE case_id = $case_id AND actual = 1";
+			$res_dec = $conn->query($sql_decision);
+			if($res_dec->num_rows > 0){
+				$row_dec = $res_dec->fetch_assoc();
+				$dec_type = $row_dec['decision_type'];
+
+				if ($dec_type == 9) {
+					$a = ',9';
+				}
+			}
+		}
+
 
 		$sql_reciver = "SELECT * FROM users WHERE user_type = 'devhead' AND user_status = '1'";
 
 		$resutl_reciver = $conn->query($sql_reciver);
 		$opt_reciver = '';
 
-		while ($row_reciver = mysqli_fetch_array($resutl_reciver)) {
-
+		while ($row_reciver = mysqli_fetch_array($resutl_reciver)) 
+		{
 			$opt_reciver = $opt_reciver . "<option value=" . $row_reciver['id'] . ">" . $row_reciver['f_name'] . ' ' . $row_reciver['l_name'] . "</option>";
-
 		}
+
+
+
+
 
 
 		$sql_decision_types = "SELECT * FROM tb_decision_types";
@@ -2477,7 +2500,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 			$sql_decision_types .= " WHERE decision_type_id IN (2,3,4,5)";
 		} else {
 
-			$chk_ceased = "SELECT a.case_id, a.special, a.reopened, c.sign_status, c.actual FROM tb_case a INNER JOIN tb_process c ON a.case_id = c.case_id WHERE c.actual = 1 AND c.sign_status = 16 AND a.case_id = $case_id";
+			$chk_ceased = "SELECT a.case_id, a.special, a.reopened, c.sign_status, c.actual FROM tb_case a INNER JOIN tb_process c ON a.case_id = c.case_id WHERE c.actual = 1 AND c.sign_status IN (16,17$a) AND a.case_id = $case_id";
 			$result_chk_ceased = $conn->query($chk_ceased);
 			if ($result_chk_ceased->num_rows > 0) {
 				$sql_decision_types .= " WHERE decision_type_id IN (5,9)";
@@ -2526,7 +2549,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
         <form method="POST" action="config/config.php" id="decision_file" enctype="multipart/form-data">
           <div class="col-md-12">
            
-           
+          
             <label class="label_pers_page">Ում</label> 
             <select class="form-control" name="reciver_id"> 
             ' . $opt_reciver . '
@@ -2545,6 +2568,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 
             <input type="hidden" class="form-control form-control-sm" name="from" value="' . $sender_id . '">
             <input type="hidden" class="form-control form-control-sm" name="dacision_case" value="' . $case_id . '">
+     
         
            
            <label class="label_pers_page">Հաղորդագրություն</label>
@@ -3514,12 +3538,26 @@ WHERE a.case_id = $case AND c.actual = '1'";
 			$case_status = '';
 			$sign_date = date("Y-m-d");
 			$decision_type_id = $_POST['decision_type_id'];
+			$decision_out_num = '';
+			$decision_letter  = '';
+
 
 
 			$new_deadline = '';
 			$new_deadline_type = '';
 
+
+			$query_decisions_count = "SELECT * FROM tb_decisions WHERE case_id = $case_id";
+			$result_count_decisions = $conn->query($query_decisions_count);
+			$dec_count = '1';
+			if($result_count_decisions->num_rows > 0){
+				$dec_count = mysqli_num_rows($result_count_decisions);
+				$dec_count++;
+			}
+
+
 			if ($decision_type_id == 1) {
+				$decision_letter = 'Ե';
 				$sign_status = '7';
 				$chk_prolongations = "SELECT * FROM tb_deadline WHERE case_id = $decision_case AND actual_dead = '1'";
 				$result_chk_prolongation = $conn->query($chk_prolongations);
@@ -3570,6 +3608,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 			}
 
 			if ($decision_type_id == 9) {
+				$decision_letter = 'Վ';
 				$sign_status = '20';
 				$new_deadline_type = '7';
 				$prev_deadline = '';
@@ -3601,6 +3640,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 			}
 
 			if ($decision_type_id == 2) {
+				$decision_letter = 'Կս';
 				$sign_status = '16';
 				$new_deadline = date('Y-m-d', strtotime("+3  months", strtotime($sign_date)));
 				$new_deadline_type = '5';
@@ -3608,6 +3648,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 			}
 
 			if ($decision_type_id == 3) {
+				$decision_letter = 'Բ';
 				$sign_status = '11';
 				$case_status = '5';
 				$new_deadline = 'NULL';
@@ -3622,16 +3663,25 @@ WHERE a.case_id = $case AND c.actual = '1'";
 
 
 			if ($decision_type_id == 5) {
+				$decision_letter = 'Կճ';
 				$sign_status = '11';
 				$case_status = '3';
 				$new_deadline = 'NULL';
 				$new_deadline_type = '15';
 
-				$update_case = "UPDATE tb_case SET `case_status` = '3' WHERE case_id = $decision_case";
+				$update_case = "UPDATE tb_case SET `case_status` = '5' WHERE case_id = $decision_case";
 				if($conn->query($update_case) === TRUE){
 					$update_person_status = "UPDATE tb_person SET person_status = '5' WHERE case_id = $decision_case";
 					$result_person_status = $conn->query($update_person_status);
 				}
+			}
+
+			if ($decision_type_id == 4){
+				$decision_letter = 'Մ';
+			}
+			
+			if ($decision_type_id == 10){
+				$decision_letter = 'Թ';
 			}
 
 			if ($decision_type_id == 4 || $decision_type_id == 10) {
@@ -3648,6 +3698,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 
 			}
 
+			$decision_out_num = "ՄԾ-" . $decision_letter . '/' . $decision_case .'('. $dec_count . ')';
 
 			# Get file name
 
@@ -3676,7 +3727,7 @@ WHERE a.case_id = $case AND c.actual = '1'";
 
 			# Upload file
 			if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
-				$sql_decision = "INSERT INTO `tb_decisions`(`case_id`, `decision_file`, `decision_type`, `decision_status`, `actual`) VALUES ('$decision_case', '$filename', '$decision_type', '5', '1')";
+				$sql_decision = "INSERT INTO `tb_decisions`(`case_id`, `decision_file`, `decision_type`, `decision_status`, `actual`, `decision_out_num`) VALUES ('$decision_case', '$filename', '$decision_type', '5', '1', '$decision_out_num')";
 
 				if ($conn->query($sql_decision) === TRUE) {
 
@@ -5888,7 +5939,7 @@ WHERE a.case_id = $case_id";
 
 	if (isset($_POST['re_case'])) {
 		$case_id = $_POST['re_case'];
-
+		$proc_status = $_POST['proc_status'];
 		$sender_id = '';
 
 
@@ -5919,6 +5970,16 @@ WHERE a.case_id = $case_id";
 			}
 		}
 
+		$decision_type = '';
+
+		$check_decision = "SELECT * FROM tb_decisions WHERE case_id = $case_id AND actual = 1";
+		$result_chk_dec = $conn->query($check_decision);
+
+		if ($result_chk_dec -> num_rows > 0) {
+			$row = $result_chk_dec->fetch_assoc();
+			$decision_type = $row['decision_type'];
+		}
+
 
 		$modal_return = '';
 
@@ -5945,6 +6006,8 @@ WHERE a.case_id = $case_id";
         </div>
         <div class="modal-body">
         <form method="POST" action="config/config.php" id="redev">
+          <input type="text" name="decision_type" value="'.$decision_type.'" />
+
           <div class="col-md-12">
             <label class="label_pers_page">Ում </label> 
             ' . $opt_reciver . '  
@@ -5957,7 +6020,7 @@ WHERE a.case_id = $case_id";
 
           
           <input type="hidden" value="' . $case_id . '"  name="return_case_id" />
-           
+          <input type="hidden" value="'.$proc_status.'" name="proc_status" />
         
         </div>
         <div class="modal-footer">
@@ -5981,6 +6044,14 @@ WHERE a.case_id = $case_id";
 		$sender = $_SESSION['user_id'];
 		$reciver_id = $_POST['select_receiver'];
 		$sign_status = '9';
+		$proc_status = $_POST['proc_status'];
+		$decision_type = $_POST['decision_type'];
+
+		if ($proc_status == 13) {
+			$update_decision = "UPDATE tb_decisions SET decision_status = 2 WHERE case_id = $case_id AND actual = 1";
+			$result = $conn->query($update_decision);
+		}
+
 
 
 		$sql_update_actual = "UPDATE tb_process SET actual = 0 WHERE case_id = $case_id";
@@ -7661,13 +7732,53 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 	if (isset($_POST['inter_note'])) {
 		$case_id = $_POST['inter_note'];
+			$dec_type = '';
+
+		// $note_type_where = ' ';
+
+		
+
+
+		// $query_decisions = "SELECT * FROM tb_decisions WHERE case_id = $case_id AND actual = '1'";
+		// if($conn->query($query_decisions) -> num_rows > 0){
+		// 	$res = $conn->query($query_decisions);
+		// 	$row_res = $res->fetch_assoc();
+		// 	$dec_type = $row_res['decision_type'];
+		// }
+
+		// if ($dec_type == 1) {
+		// 	$note_type_where = " WHERE inter_type_id = '1'";
+		// }
+		// if ($dec_type == 2) {
+		// 	$note_type_where = " WHERE inter_type_id = '2'";
+		// }
+		// 	if ($dec_type == 3) {
+		// 	$note_type_where = " WHERE inter_type_id = '3' ";
+		// }
+		// if ($dec_type == 4) {
+		// 	$note_type_where = " WHERE inter_type_id = '4' ";
+		// }
+		// if ($dec_type == 5) {
+		// 	$note_type_where = " WHERE inter_type_id = '5' ";
+		// }
+		// 	if ($dec_type == 6) {
+		// 	$note_type_where = " WHERE inter_type_id = '6' ";
+		// }
+
+
+		$note_type = "SELECT * FROM tb_inter_type";
+		$note_type_1 = $conn->query($note_type);
+		$opt_note_type = '<select name="inter_type" id="inter_type" class="form-control form-control-sm">
+											<option selected disabled hidden value="">Ընտրե՛ք ծանուցման տեսակը </option>
+		';
+		while ($row5 = mysqli_fetch_array($note_type_1)) {
+			$opt_note_type .= "<option value=" . $row5['inter_type_id'] . ">"  . $row5['inter_type'] . "</option>";
+		}
+		$opt_note_type .= "</select>";
+
 
 		$rec_sql = "SELECT * FROM users WHERE user_type = 'devhead' AND user_status = '1'";
 		$res_rec_sql = $conn->query($rec_sql);
-
-
-
-
 		$opt_reciver = '<select name="select_receiver" id="select_receiver" class="form-control form-control-sm">';
 		while ($row5 = mysqli_fetch_array($res_rec_sql)) {
 			$opt_reciver .= "<option value=" . $row5['id'] . ">" . $row5['f_name'] . ' ' . $row5['l_name'] . "</option>";
@@ -7704,15 +7815,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
            	<div class="row">
            	<div class="col-md-6">            
             <label class="label_pers_page">Տեսակ</label> 
-           	<select class="form-control" name="inter_type" id="inter_type" required=required>
-           		<option selected disabled hidden value="">Ընտրե՛ք ծանուցման տեսակը </option>
-           		<option value="1">հարցազրույցի հրավեր</option>
-           		<option value="2">երկարաձգման ծանուցագիր</option>
-           		<option value="3">բավարարման / մերժման ծանուցագիր</option>
-           		<option value="4">կասեցման ծանուցագիր</option>
-           		<option value="5">կարճման ծանուցագիր</option>
-           		<option value="6">այլ ծանուցագիր</option>
-          	</select>
+           '.$opt_note_type.'
           	</div>
           	<div class="col-md-6">            
           	 <label class="label_pers_page">Առաքման եղանակը</label> 
@@ -7843,12 +7946,12 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
 
 
 		$sender_id = $_SESSION['user_id'];
-		$reciver_id_sql = "SELECT * FROM tb_inter_process WHERE inter_id = $inter_id AND actual = 1";
+		$reciver_id_sql = "SELECT * FROM tb_inter WHERE inter_id = $inter_id";
 		$result_recicer_id_sql = $conn->query($reciver_id_sql);
 
 		if ($result_recicer_id_sql->num_rows > 0) {
 			$row_rec_id_sql = $result_recicer_id_sql->fetch_assoc();
-			$reciver_id = $row_rec_id_sql['sender'];
+			$reciver_id = $row_rec_id_sql['author_id'];
 
 		} else {
 			echo "ERROR: reciever not found ";
@@ -7862,7 +7965,7 @@ WHERE a.case_id = $case_id AND a.claim_actual = 1 AND b.apeal_status = 0 AND b.a
         <div class="icon-box">
           <i class="fas fa-undo" style="color: #f15e5e; font-size: 46px; display: inline-block; margin-top: 13px;"></i>
         </div>            
-       					<h4 class="modal-title w-100">Վերադարձնել խմբագրման</h4>  
+       					<h4 class="modal-title w-100">Վերադարձնել հեղինակին խմբագրման</h4>  
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       </div>
      <form action="config/config.php" method="POST" id="return_from_list">
@@ -8370,7 +8473,6 @@ c.actual = 1 AND a.inter_id = $inter_id";
 			$filename = $row_inter['inter_file'];
 			$action_type_id = $row_inter['ACTION_TYPE_ID'];
 			$action_type_text = $row_inter['ACTION_TYPE_TEXT'];
-			$inter_id = $row_inter['inter_id'];
 			$inter_msg = $row_inter['inter_msg'];
 			$inter_status_id = $row_inter['inter_status'];
 			$out_num = $row_inter['out_num'];
@@ -8430,7 +8532,18 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 			$inter_type_id = $row_inter['inter_type'];
 			$inter_type_text = $row_inter['INTER_TYPE_TEXT'];
+			$over_case = '';
 
+			if($inter_type_id == 3){
+				$sql_dec_type = "SELECT * FROM tb_decisions WHERE case_id = $case_id AND actual = '1'";
+				$result = $conn->query($sql_dec_type);
+				$row = $result->fetch_assoc();
+				$dec_type_id = $row['decision_type'];
+
+				if ($dec_type_id == 3) {
+					$over_case = '1';
+				}
+			}
 
 			$send_type_id = $row_inter['send_type'];
 
@@ -8464,6 +8577,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
           <div class="col-md-12">
                       
             <input type="hidden" value="' . $author . '" name="author" />
+            <input type="hidden" value="' . $over_case . '" name="over_case" />
             <div class ="row">
 
             	<div class="col-md-2">
@@ -8479,7 +8593,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
             	<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցման տեսակը </label>
-            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="' . $inter_type_text . '" readonly />
+            		<input type="text" class="form-control form-control-sm" name="" value="' . $inter_type_text . '" readonly />
             		<input type="hidden" name="inter_type_id" value="' . $inter_type_id . '" />
             	</div>
 
@@ -8502,7 +8616,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 				<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցագիր </label>
-            		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
+            		<a href="uploads/' . $case_id . '/inters/'. $inter_id . '/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
             	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' .$inter_id. '/' . $filename . '" />
             	</div>
              </div>	
@@ -8575,7 +8689,6 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 	}
 
-
 	if (isset($_POST['send_semi_usual']) || isset($_POST['send_semi_email'])) {
 		$inter_id = $_POST['inter_id'];
 		$case_id = $_POST['case_id'];
@@ -8585,19 +8698,13 @@ c.actual = 1 AND a.inter_id = $inter_id";
 		$reciver_id = $_POST['author'];
     $attachment_file =[];
     $action_type = '3';
+    $over_case = $_POST['over_case'];
 
     $sql_decision_type = "SELECT * FROM tb_decisions WHERE case_id = $case_id AND actual = 1";
     $result_decisions = $conn->query($sql_decision_types);
     	if ($result_decisions -> num_rows > 0) {
     		$row_decisions = $result_decisions->fetch_assoc();
     		$decision_type = $row_decisions['decision_type'];
-
-    		if ($decision_type == 3 ) {
-    			{
-						$update_tb_case = "UPDATE tb_case SET case_status = '3' WHERE case_id = $case_id";
-						$result = $conn->query($update_tb_case);
-    		}
-
     	}
 
 
@@ -8617,8 +8724,11 @@ c.actual = 1 AND a.inter_id = $inter_id";
 				$sql_inter_notified = "INSERT INTO `tb_inter_notified`(`notified_date`, `inter_id`) VALUES ('$note_date', '$inter_id')";
   			if($conn->query($sql_inter_notified) === TRUE){
 				$update_inter_status = "UPDATE tb_inter SET inter_status = '2' WHERE inter_id = $inter_id";
-				$result_update_inter_status = $conn->query($update_inter_status);
-				
+					if($conn->query($update_inter_status) === TRUE)
+					{
+						$update_tb_case = "UPDATE tb_case SET case_status = '3' WHERE case_id = $case_id";
+						$result = $conn->query($update_tb_case);
+					}
 				$action_type = '5';
 				$msg = 'ծանուցվել է';
 				}
@@ -8631,6 +8741,12 @@ c.actual = 1 AND a.inter_id = $inter_id";
 		}else {
 				$update_inter_status = "UPDATE tb_inter SET inter_status = '0' WHERE inter_id = $inter_id";
 		}
+
+		if($over_case == 1){
+			$update_tb_case = "UPDATE tb_case SET case_status = '3' WHERE case_id = $case_id";
+			$result = $conn->query($update_tb_case);
+		}
+
 
 		
 		if ($conn->query($update_inter_status) === TRUE) {
@@ -8827,7 +8943,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
 							<div class="col-md-8">
             		<label class="label_pers_page">Ծանուցագիր </label>
-            		<a href="uploads/' . $case_id . '/inters/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
+            		<a href="uploads/' . $case_id . '/inters/' . $inter_id . '/' . $filename . '" class="form-control form-control-sm" download readonly > <i class="fas fa-download"></i>Ներբեռնել ծանուցումը </a>
             	    <input type="hidden" name="mail_notification_file" value="uploads/' . $case_id . '/inters/' . $inter_id . '/' . $filename . '" />
             	</div>
              </div>
@@ -9077,7 +9193,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 
             	<div class="col-md-4">
             		<label class="label_pers_page">Ծանուցման տեսակը </label>
-            		<input type="text" class="form-control form-control-sm" name="inter_type_id" value="' . $inter_type_text . '" readonly />
+            		<input type="text" class="form-control form-control-sm" name="inter_type_text" value="' . $inter_type_text . '" readonly />
             		<input type="hidden" name="inter_type_id" value="' . $inter_type_id . '" />
             	</div>
 
@@ -9455,7 +9571,7 @@ c.actual = 1 AND a.inter_id = $inter_id";
 							$process_actioned = $row_inter_processes['PROCESS_ACTIONED'];
 							$inter_msg = $row_inter_processes['inter_msg'];
 							$action_type_text = $row_inter_processes['ACTION_TYPE_TEXT'];
-							$inter_file = $row_inter_processes['inter_file'];
+							$inter_file = 'uploads/' .$case_id. '/inters/' . $query_inter_id . '/' . $row_inter_processes['inter_file'];
 
 							$single_process->process_actioned = $process_actioned;
 							$single_process->inter_msg = $inter_msg;

@@ -11,88 +11,50 @@ $query_cases_result = $conn->query($query_cases);
 
 
 <body>
-	<table class="table table-stripped table-bordered" id="outbox">
-			<thead>
-			<tr style="font-size: 0.9em; font-weight: normal; color: #828282; text-align: center; vertical-align: middle;">
-				<th width="7%">Գործ #</th>
-				<th width="10%">ապաստան հայցողի ա․ա․հ․</th>
-				<th width="15%">գործառույթ</th>
-				<th width="7%">գործառույթի ամսաթիվ</th>
-				<th width="10%">գրանցման ամսաթիվ</th>
-				<th width="10%">վերջնաժամկետ</th>
-				<th width="10%">ստացող</th>
-				<th width="10%">գործը վարող</th>
-				
-			</tr>
-			</thead>
-			<?php 
-			while ($row = mysqli_fetch_array($query_cases_result)) {
-				$sign_date = $row["sign_date"];
-				$new_sign_date = date("d.m.Y", strtotime($sign_date));
 
-				$input = $row["input_date"];
-				$new_input = date("d.m.Y", strtotime($input));
 
-				$deadline = $row["deadline"];
-				$formated_deadline = date("d.m.Y", strtotime($deadline));
-			?>
-			<tbody>
-			<tr style="font-size: 1em; color:#324157; text-align: center; " class="curs_pointer">
-				<td><?= $row["case_id"] ?></td>
-				<td><?= $row["f_name_arm"] .' '. $row["l_name_arm"] ?></td>
-				<td><?= $row["status"] ?></td>
-				<td><?php echo $new_sign_date; ?></td>
-				<td><?php echo $new_input; ?></td>
-				<td><?php echo $formated_deadline; ?></td>
-				<td><?= $row["PROCESSOR_NAME"] .' '.$row["PROCESSOR_LNAME"] ?></td>
-				<td><?= $row["OFFICER_NAME"] .' '. $row["OFFICER_LNAME"] ?></td>
-				
+	<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#home"><i class="fas fa-arrow-down"></i> Որոշումներ</a>
+    
+  </li>
 
-			</tr>
-			</tbody>
-			<?php 
-			} 
-			?>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#menu1"><i class="fas fa-arrow-up"></i> Ծանուցագրեր</a>
+  </li>
 
-	</table>
 
-<script>
+  
+  
+ </ul>
+ 
+ <!-- Tab panes -->
+    <div class="tab-content">
+      
+      <div id="home" class="tab-pane active"><br> 
+      	<table class="table" id="out_dec">
+      		<thead>
+      			<tr style="font-size: 0.9em; font-weight: normal; color: #828282; text-align: center; vertical-align: middle;">
+      				<th>Գործի #</th>
+      				<th>Մտից #</th>
+      				<th>Ելից #</th>
+      				<th>Տեսակ</th>
+      				<th>Ելից ամսաթիվ</th>
+
+
+      			</tr>
+      		</thead>
+      	</table>
+      </div>
+
+      <div id="menu1" class="tab-pane"><br>
+      	
+      </div>
+      
+    </div>  	
 	
 
-	 $(document).ready(function () {             
-          $('.dataTables_filter input[type="search"]').css(
-          {'width':'500px','display':'inline-block'}
-      );  
-      });
 
-	 var table = $('#outbox').DataTable({
-    		"pageLength": 25,
-          	"lengthChange": false,
-          	"bInfo": true,
-          	"pagingType": 'full_numbers',
-      		"responsive": true,
-      		 "order": [[ 0, "desc" ]],
-          	
-          "language": {
-          	 "search": "_INPUT_",            // Removes the 'Search' field label
-              "searchPlaceholder": "ՈՐՈՆԵԼ",   // Placeholder for the search box
-          	"paginate": {
-      			"next": '<i class="fas fa-arrow-right"></i>', // or '→'
-      			"previous": '<i class="fas fa-arrow-left"></i>', // or '←' 
-      			"first": '<i class="fas fa-chevron-left"></i>',
-      			"last": '<i class="fas fa-chevron-right"></i>'
-    },
-    				"info": " _PAGE_ էջ _PAGES_ ից",
-    				"infoEmpty": "",
-      			"zeroRecords": "Ելից գրություններ չկան։",
-          }
-    	});
-       
-      $('#outbox').on( 'click', 'tr', function () {
-          var data = table.row( this ).data()[0];
-          location.replace(`user.php?page=cases&homepage=case_page&case=${data}`);
-          //alert( 'Clicked row id '+data[0]+'\'s row' );
-      } );
 
-</script>
+	 
 </body>

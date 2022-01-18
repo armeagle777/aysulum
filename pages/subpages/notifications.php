@@ -121,8 +121,7 @@ $request_inbox_result = $conn->query($query_request_inbox);
 	 
        
       
-	 $('.row-links').on('click', 'td:not(.special-td)', function(){
-   //console.log('clicked');
+	 $(document).on('click', 'td:not(.special-td)', function(){
 		   var note_id = $(this).attr('note_type');
 		   var case_id = $(this).attr('case_id');
    	if(note_id == 1){

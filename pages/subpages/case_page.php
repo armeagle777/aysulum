@@ -21,10 +21,11 @@
 
 	$sql_coi = "SELECT * FROM tb_coi a INNER JOIN users b ON a.to_coispec = b.id WHERE case_id = $case";
 	$result_coi = $conn->query($sql_coi);
-
+	$decision_type_id = '';
 	$decession_files = "SELECT * FROM tb_decisions a INNER JOIN tb_decision_types b On a.decision_type = b.decision_type_id INNER JOIN tb_decision_status c ON a.decision_status = c.decision_status_id WHERE a.case_id = $case";
-	if ($_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'head') {
+	if ($_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'head' || $_SESSION['role'] === 'officer') {
 		$decession_files .= " AND actual = 1";
+
 	}
 
 	$result_decision_file = $conn->query($decession_files);
@@ -169,8 +170,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 					if (($holder_id == $u_id && $case_status != 4 && $case_status != 3 && $sign_status_id != 8) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'devhead' || $_SESSION['role'] === 'head')) {
 						?>
 
-						<a href="#" id="return_redev" re_case="<?php echo $case ?>"
-						   sender_role="<?php echo $_SESSION['role'] ?>"><i class="fas fa-exchange-alt first_menu"></i>	Վերադարձնել լրամշակման</a>
+						<a href="#" id="return_redev" re_case="<?php echo $case ?>" sender_role="<?php echo $_SESSION['role'] ?>" proc_status="<?php echo $sign_status_id?>"><i class="fas fa-exchange-alt first_menu"></i>	Վերադարձնել լրամշակման</a>
 
 
 						<?php
@@ -178,7 +178,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 				?>
 
 				<?php
-					if (($sign_status_id != '16' && $sign_status_id != '13' && $case_status != 4 && $case_status != 3) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec')) {
+					if (($sign_status_id != '16' && $sign_status_id != 12 && $sign_status_id != '13' && $sign_status_id != '9' && $case_status != 4 && $case_status != 3) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'coispec')) {
 						?>
 						<a href="#" id="re_sign" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i
 									class="fas fa-undo-alt first_menu"></i> Վերադարձնել </a>
@@ -191,14 +191,14 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 					if (($sign_status_id == 3 || $sign_status_id == 14 || $sign_status_id == 7 || $sign_status_id == 16 || $sign_status_id == 20 || $sign_status_id == 9 || $sign_status_id == 29) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer')) {
 						?>
 
-						<a href="#" id="decision" modal_id="<?php echo $case ?>" modal_user="<?php echo $u_id ?>"> <i
+						<a href="#" id="decision" modal_id="<?php echo $case ?>" modal_user="<?php echo $u_id ?>" proc_status="<?php echo $sign_status_id ?>"> <i
 									class="far fa-paper-plane first_menu"></i> Ուղարկել հաստատման</a>
 						<?php
 					}
 				?>
 
 				<?php
-					if (($sign_status_id != '15' && $sign_status_id != '14' && $sign_status_id != '24' && $sign_status_id != '13' && $sign_status_id != '16' && $sign_status_id != '8') && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer')) {
+					if (($sign_status_id != '15' && $sign_status_id != '14' && $sign_status_id != '24' && $sign_status_id != 12 && $sign_status_id != '13' && $sign_status_id != '16' && $sign_status_id != '8') && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer')) {
 						?>
 
 						<a href="#" id="draft" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i
@@ -224,7 +224,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 					}
 
 
-					if (($inter_allow == 1 || $inter_allow == 0) && ($sign_status_id != '15' && $sign_status_id != '14' && $sign_status_id != '24' && $sign_status_id != '13' && $sign_status_id != '16' && $sign_status_id != '8') && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer')) {
+					if (($inter_allow == 1 || $inter_allow == 0) && ($sign_status_id != '15' && $sign_status_id != '14' && $sign_status_id != 12 && $sign_status_id != '24' && $sign_status_id != '13' && $sign_status_id != '8') && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'coispec' || $_SESSION['role'] === 'lawyer')) {
 						?>
 
 						<a href="#" id="intermediate" modal_id="<?php echo $case ?>" modal_case="<?php echo $u_id ?>"><i
@@ -269,7 +269,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 
 
 				<?php
-					if (($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'lawyer' || $_SESSION['role'] === 'coispec') && ($sign_status_id != 16 && $sign_status_id != '13' && $case_status != 4 && $case_status != 3)) {
+					if (($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'operator' || $_SESSION['role'] === 'officer' || $_SESSION['role'] === 'lawyer' || $_SESSION['role'] === 'coispec') && ($sign_status_id != 16 && $sign_status_id != '13' && $sign_status_id != 12 && $case_status != 4 && $case_status != 3)) {
 						?>
 
 						<a href="#" id="change_case_type" modal_id="<?php echo $case ?>"><i
@@ -456,6 +456,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 		<button class="tablinks" onclick="openCity(event, 'files')">Որոշման նախագծի շրջանառում</button>
 		<button class="tablinks" onclick="openCity(event, 'translations')">Թարգմանություններ</button>
 		<button class="tablinks" onclick="openCity(event, 'inter_msgs')">Ծանուցումներ</button>
+		<button class="tablinks" onclick="openCity(event, 'dec_history')">Որոշումների պատմություն</button>
 	</div>
 
 
@@ -1004,7 +1005,8 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 									<th class="table_a1">տեսակ</th>
 									<th class="table_a1">ամսաթիվ</th>
 									<th class="table_a1">ներբեռնել</th>
-									<th class="table_a1">համաձայնեցումներ</th>
+									<th class="table_a1">ելից #</th>
+									<th class="table_a1">կարգավիճակ</th>
 
 								</tr>
 
@@ -1017,6 +1019,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 										$case_id = $row_files['case_id'];
 										$file_id = $row_files['decision_id'];
 										$decision_status = $row_files['decision_status'];
+										$out_num = $row_files['decision_out_num'];
 										?>
 										<tr>
 											<td><?php echo $file_type ?></td>
@@ -1027,6 +1030,7 @@ WHERE a.request_actual = 1 AND b.case_id = $case";
 												                aria-hidden="true"></i> <?php echo $file_name ?>
 												</a>
 											</td>
+											<td><?php echo $out_num ?></td>
 											<td> <?php echo $decision_status ?> </td>
 										</tr>
 
@@ -2101,11 +2105,12 @@ WHERE a.case_id = $case";
 			$("#return_redev").click(function () {
 				var case_id = $(this).attr('re_case');
 				var srole = $(this).attr('sender_role');
+				var proc_status = $(this).attr('proc_status');
 				$.ajax(
 						{
 							url: "config/config.php",
 							method: "POST",
-							data: {re_case: case_id, role: srole},
+							data: {re_case: case_id, role: srole, proc_status:proc_status},
 							success: function (data) {
 								console.log(srole);
 								$('#return_to_redev').html(data);
@@ -2517,11 +2522,12 @@ WHERE a.case_id = $case";
 				//$("#coi_answer").modal({backdrop: "static"});
 				var decision_1 = $(this).attr('modal_id');
 				var user_officer = $(this).attr('modal_user');
+				var proc_status = $(this).attr('proc_status');
 
 				$.ajax({
 					url: "config/config.php",
 					method: "POST",
-					data: {decision_1: decision_1, user: user_officer},
+					data: {decision_1: decision_1, user: user_officer, proc_status:proc_status},
 					success: function (data) {
 						$('#decision_final').html(data);
 						$("#decision_final").modal({backdrop: "static"});
